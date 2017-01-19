@@ -1,2 +1,5 @@
 Manifest-Version: 1.0
+Main-Class: xample.Game
+Class-Path: lib/pi4j-core-1.1.jar
+
 

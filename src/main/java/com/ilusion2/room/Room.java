@@ -107,11 +107,7 @@ public class Room extends Canvas implements
    private boolean serverApplication; 
    
    
-   /**
-    * this object contain the hardware controller user with
-    * raspberry pi 3, with 40 pins, see this classs for more info
-    */
-   private GpioGameControl gpioGameControl;
+ 
    
    
    
@@ -616,14 +612,7 @@ public class Room extends Canvas implements
         this.serverApplication = serverApplication;
     }
 
-    public GpioGameControl getGpioGameControl() {
-        return gpioGameControl;
-    }
-
-    public void setGpioGameControl(GpioGameControl gpioGameControl) {
-        this.gpioGameControl = gpioGameControl;
-    }
-
+   
     
     
     

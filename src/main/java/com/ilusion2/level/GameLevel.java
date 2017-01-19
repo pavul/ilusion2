@@ -12,6 +12,7 @@ import com.ilusion2.room.GameState;
 import com.ilusion2.room.ImageBackground;
 import com.ilusion2.room.Room;
 import com.ilusion2.sprite.Sprite;
+import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -34,6 +35,7 @@ import java.util.Properties;
  * @author pavulzavala
  */
 public abstract class GameLevel 
+        implements GpioPinListenerDigital
 {
     //medidas del room
     protected int roomWidth; //largo total del rooom
@@ -99,6 +101,15 @@ public abstract class GameLevel
    //estado del nivel en el juego
    //variable who holds the current state of the game
    protected GameState gameState;
+   
+   
+   
+     /**
+    * this object contain the hardware controller user with
+    * raspberry pi 3, with 40 pins, see this classs for more info
+    */
+   protected GpioGameControl gpioGameControl;
+   
    
    /**
     * constructor 1, este permite setear todos los valores del room por medio
@@ -734,11 +745,19 @@ public abstract class GameLevel
     public void initGpioGameControl()
     {
     
-        if( room.getGpioGameControl() == null  )
+        if( gpioGameControl == null  )
         {
-         room.setGpioGameControl( new GpioGameControl() );
+         gpioGameControl = new GpioGameControl(); 
         }//
         
     }//
     
+//    public GpioGameControl getGpioGameControl() {
+//        return gpioGameControl;
+//    }
+//
+//    public void setGpioGameControl(GpioGameControl gpioGameControl) {
+//        this.gpioGameControl = gpioGameControl;
+//    }
+
 }//class

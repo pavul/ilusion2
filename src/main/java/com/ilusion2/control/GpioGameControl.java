@@ -187,8 +187,17 @@ public final class GpioGameControl
     }
     
     
+    /**
+     * this method return the state of a GPIO to low value
+     * @return 
+     */
+    public PinState getBtnStateLow(){ return PinState.LOW;}
     
-    
+    /**
+     * this method return the state of a GPIO to high value
+     * @return 
+     */
+    public PinState getBtnStateHigh(){ return PinState.HIGH;}
     
     
 }//class
