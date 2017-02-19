@@ -3,6 +3,7 @@ package com.ilusion2.room;
 
 
 import com.ilusion2.audio.Sound;
+import com.ilusion2.control.GpioGameControl;
 import com.ilusion2.level.GameLevel;
 import java.awt.Canvas;
 import java.awt.Graphics;
@@ -104,6 +105,15 @@ public class Room extends Canvas implements
     * to a server, in case of online game
     */
    private boolean serverApplication; 
+   
+   
+   /**
+    * this object contain the hardware controller user with
+    * raspberry pi 3, with 40 pins, see this classs for more info
+    */
+   private GpioGameControl gpioGameControl;
+   
+   
    
     /**
      * constructor 1 este constructor crea un room por default con
@@ -604,6 +614,14 @@ public class Room extends Canvas implements
      */
     public void setServerApplication(boolean serverApplication) {
         this.serverApplication = serverApplication;
+    }
+
+    public GpioGameControl getGpioGameControl() {
+        return gpioGameControl;
+    }
+
+    public void setGpioGameControl(GpioGameControl gpioGameControl) {
+        this.gpioGameControl = gpioGameControl;
     }
 
     

@@ -5,6 +5,7 @@
  */
 package com.ilusion2.level;
 
+import com.ilusion2.control.GpioGameControl;
 import com.ilusion2.control.KeyControl;
 import com.ilusion2.room.Camera;
 import com.ilusion2.room.GameState;
@@ -725,5 +726,19 @@ public abstract class GameLevel
      * 
      */
     public abstract void manageNetworkData() throws IOException ;
+    
+    
+    /**
+     * create the instace of GpioGameControl
+     */
+    public void initGpioGameControl()
+    {
+    
+        if( room.getGpioGameControl() == null  )
+        {
+         room.setGpioGameControl( new GpioGameControl() );
+        }//
+        
+    }//
     
 }//class

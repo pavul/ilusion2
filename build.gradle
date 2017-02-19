@@ -1,8 +1,8 @@
 apply plugin:"java"
 
 
-archivesBaseName = "ilusion"
-version = "1"
+archivesBaseName = "ilusion2"
+version = "0"
 
 repositories
 {

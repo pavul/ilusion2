@@ -207,6 +207,11 @@ public class Camera implements CameraMovement
         return marginTop;
     }
 
+    /**
+     * * this method specifies the top boundary that the camera
+     * has to check when a sprite is approaching to the top edge
+     * @param marginTop
+     */
     public void setMarginTop( int marginTop ) {
         this.marginTop = marginTop;
     }
@@ -215,6 +220,11 @@ public class Camera implements CameraMovement
         return marginBottom;
     }
 
+    /**
+     * * this method specifies the bottom boundary that the camera
+     * has to check when a sprite is approaching to the bottom edge
+     * @param marginBottom
+     */
     public void setMarginBottom( int marginBottom ) {
         this.marginBottom = marginBottom;
     }
@@ -238,7 +248,7 @@ public class Camera implements CameraMovement
             this.camx = camxMin;
             this.offsetX=camxMin;
         }
-        else if(this.camx<=camxMax)
+        else if( this.camx <= camxMax )
         {
             //establece que se muestre el room a  -roomwidth + viewXwidth
             this.camx = camxMax;
@@ -262,8 +272,9 @@ public class Camera implements CameraMovement
      * @param y 
      */
     @Override
-    public void moveY(int y) {
-        this.camy+=y; 
+    public void moveY( int y )
+    {
+        this.camy += y; 
         
         //establece que se muestre el room a cero
         if(this.camy>=camyMin)
