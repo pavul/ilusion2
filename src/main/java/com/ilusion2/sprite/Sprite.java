@@ -9,6 +9,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Map;
 import javax.imageio.ImageIO;
@@ -230,17 +232,19 @@ public class Sprite implements Movement {
      * todos los frames, especificandole el ancho y alto de los mismos, este
      * saca el numero de frames automaticamente
      * NOTA: la ruta de la imagen a poner debe de estar en un paquete llamado "res"
-     *el valor seria el siguiente: Sprite(32,32,"/res/player.png");
+     *el valor seria el siguiente: Sprite(32,32,"/res/player.png", this );
      * @param frameWidth
      * @param imgRoute
      * @param frameHeight
+     * @param <error>
+     * @param ctx
      */
-    public Sprite(int frameWidth, int frameHeight, String imgRoute) {
+    public Sprite( int frameWidth, int frameHeight, String imgRoute ) {
         this();
         BufferedImage bigImg = null;
-        try {
-//            bigImg= ImageIO.read(new File("sheet.png"));
-            bigImg = ImageIO.read(this.getClass().getResource(imgRoute));
+        try 
+        {
+            bigImg = ImageIO.read( this.getClass().getResource( imgRoute) );
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
@@ -280,6 +284,47 @@ public class Sprite implements Movement {
         this.h = frameHeight;
     }// Const 6
 
+    
+    public Sprite( int frameWidth, int frameHeight, BufferedImage bufImg ) {
+        this( );
+
+        int bmpRows = bufImg.getHeight() / frameHeight;
+        int bmpCols = bufImg.getWidth() / frameWidth;
+
+        if (bmpRows < 1) {
+            bmpRows = 1;
+        }
+        if (bmpCols < 1) {
+            bmpCols = 1;
+        }
+
+        //por ejemplo si 4 columnas y 5 renglones, son 20 frames
+        int totalFrames = bmpRows * bmpCols;
+
+        this.frames = new Image[totalFrames];
+
+        int contx = 0, conty = 0;
+        for (int xx = 0; xx < totalFrames; xx++) {
+            this.frames[xx] = bufImg.getSubimage(frameWidth * contx,
+                    frameHeight * conty, frameWidth, frameHeight);
+            contx++;
+            if (contx == bmpCols) {
+                contx = 0;
+                if (conty < bmpRows) {
+                    conty++;
+                }
+                // while(conty<bmpRows)conty++;
+            }
+
+        }// for
+        this.currentFrame = this.frames.length - 1;
+        this.lastFrame = this.frames.length - 1;
+        this.w = frameWidth;
+        this.h = frameHeight;
+    }// Const 7
+
+    
+    
     /* 
      * /CONSTRUCTORES
      */
