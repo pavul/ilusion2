@@ -7,6 +7,7 @@ package com.ilusion2.level;
 
 import com.ilusion2.control.GpioGameControl;
 import com.ilusion2.control.KeyControl;
+import com.ilusion2.control.MouseControl;
 import com.ilusion2.room.Camera;
 import com.ilusion2.room.GameState;
 import com.ilusion2.room.ImageBackground;
@@ -15,9 +16,11 @@ import com.ilusion2.sprite.Sprite;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -42,6 +45,11 @@ public abstract class GameLevel
     protected int roomHeight; //alto total del room
     protected int viewWidth; //porcion de ancho del room que se ve en pantalla
     protected int viewHeight; //porcion de alto del room que se ve en pantalla
+    
+    //these variables are use to fit the game view in the device screen
+    //if is gonna be player on full screen
+    protected double xScale = 1;
+    protected double yScale = 1;
     
 //    protected Sprite player;
     
@@ -77,9 +85,11 @@ public abstract class GameLevel
    //using this instance
    protected Room room;
    
-   //control del teclado
-   //player control
+   /**
+    * keyboard and mouse controls
+    */
    protected KeyControl keyControl;
+   protected MouseControl mouseControl;
    
    //medidas de los tiles, ancho y alto y numero de columnas y renglones
    //if the level uses tiles, then is usefull to know how many:
@@ -132,6 +142,8 @@ public abstract class GameLevel
        enemyPool = new ArrayList<>();
        
 //       mp3Player = new MP3Player();
+
+    
        
    init();
    }//const
@@ -244,12 +256,18 @@ public abstract class GameLevel
    public void render(Graphics g)
    {
    
+       //this part of the cpde handles the full screen image
+       //depending on the scale values created by the room class
+       //when the game start
+       ((Graphics2D)g).scale( xScale, yScale );
+       
        switch(gameState)
                {
                    case LOADING:
                        break;
                    case PLAYING:
-       
+                     
+                       
                     //variable de la camara
                     //this will translating the view port
                     //to cam coordinates this makes the camera
@@ -391,6 +409,7 @@ public abstract class GameLevel
      */
     public void drawBgColor(Graphics2D g2,Color color)
     {
+       
         g2.setColor(color);
         g2.fillRect(0, 0, roomWidth, roomHeight);
     }//
@@ -550,8 +569,7 @@ public abstract class GameLevel
      * lo que refiere a la ejecucion del control del juego, puede ser
      * teclado, mouse o joystick
      * 
-     * the implementation of this metod must have how the player
-     * can control the main character of the game
+     * this method should have player mouse and key control
      * 
      */
     public abstract void updateControl();
@@ -725,7 +743,30 @@ public abstract class GameLevel
     public void removeKeyListener(Component component)
     {
     component.removeKeyListener( keyControl );
-    }    
+    }//  
+    
+    
+    /**
+     * tunction that add the mouseListener to the current level ( canvas )
+     * @param component 
+     */
+    public void addMouseListener(Component component )
+    {
+        if( mouseControl == null )
+        { mouseControl =  new MouseControl();}
+        
+        component.addMouseListener( mouseControl );
+    }//
+    
+    /**
+     * this function remove the mouse control attached to this level
+     * @param component 
+     */
+    public void removeMouseControl( Component component )
+    {
+    component.removeMouseListener(mouseControl);
+    }//
+    
     
     /**
      * funcion donde va la logica que debe de tener el nivel para manejar los
@@ -760,4 +801,18 @@ public abstract class GameLevel
 //        this.gpioGameControl = gpioGameControl;
 //    }
 
+    /**
+     * this ethod changes the scale to change the game view port 
+     * @param xScale
+     * @param yScale 
+     */
+    public void setGraphicScale( double xScale, double yScale )
+    {
+    this.xScale = xScale;
+    this.yScale = yScale;
+    }
+    
+    
+    
+    
 }//class

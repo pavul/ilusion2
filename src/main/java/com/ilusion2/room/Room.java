@@ -4,6 +4,7 @@ package com.ilusion2.room;
 
 import com.ilusion2.audio.Sound;
 import com.ilusion2.control.GpioGameControl;
+import com.ilusion2.exception.EmptyLevelStackException;
 import com.ilusion2.level.GameLevel;
 import java.awt.Canvas;
 import java.awt.Graphics;
@@ -16,6 +17,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 import com.ilusion2.net.ClientSocket;
 import com.ilusion2.net.Server;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 
 
 /**
@@ -33,7 +36,7 @@ public class Room extends Canvas implements
     private static final long serialVersionUID = -6489796311509601114L;
 
     //numeros que va a tener el buffer
-    protected final int BUFFER_NUMBER=3;
+    protected final int BUFFER_NUMBER = 3;
     
     //thread principal del juego
     //principal thread of the game
@@ -43,6 +46,9 @@ public class Room extends Canvas implements
     //indicate if the game is running or not
     protected boolean running;
     
+    //this flag indicate when a room is loaded to 
+    //show it in full screen mode
+    protected boolean fullScreen = false;
     
     //variable para pausar el juego
     //this variable is a flag that indicate if the game is paued
@@ -52,7 +58,14 @@ public class Room extends Canvas implements
    //we store FPS count
     protected int frames; //contador de FPS
    
-   protected int offsetX;  //x_ofset del room para que se renderize el area del dibujo
+    protected int offsetX;  //x_ofset del room para que se renderize el area del dibujo
+   
+   
+   //these variables are use to fit the game view in the device screen
+    //if is gonna be player on full screen
+    protected double xScale = 1;
+    protected double yScale = 1;
+    
    
 //   protected GameState gameState; //estado del juego
    
@@ -107,10 +120,6 @@ public class Room extends Canvas implements
    private boolean serverApplication; 
    
    
- 
-   
-   
-   
     /**
      * constructor 1 este constructor crea un room por default con
      * width 640 y heigth 480, se toma la referencia de la ventana que se ve
@@ -122,11 +131,28 @@ public class Room extends Canvas implements
      * @param lvltoLoad primer nivel a cargar
      * @param levelStack listado de niveles que hay en el juego
      */
-    public Room(String lvltoLoad, Map<String, GameLevel>levelStack)
+    public Room(String lvltoLoad, Map<String, GameLevel>levelStack, boolean fullScreen) 
+           throws EmptyLevelStackException 
     {
         fps = 60;//setea por default a 60 frames por segundo
+        
+        this.fullScreen = fullScreen;
+        
+        if( null == levelStack )
+        {
+            System.out.println("::: level stack es nulo");
+            throw new NullPointerException( "Level Stack cannot be null" );
+        }
+        if( levelStack.isEmpty() )
+            throw new EmptyLevelStackException( "Level Stack should have at least one level" );
+        
+        
         this.levelStack = levelStack;
-        this.firsLvlToLoad = lvltoLoad;
+        
+        //if there is no current level it will take the first of the stack
+//        this.currentLevel = levelStack.get( lvltoLoad );
+         firsLvlToLoad = lvltoLoad;
+         loadLvl( firsLvlToLoad );
     }//
     
  
@@ -170,7 +196,7 @@ public class Room extends Canvas implements
     public final synchronized void gameStart() 
     {
             //nivel a cargar por default, este se establece en el constructor 
-            loadLvl( firsLvlToLoad );
+            //loadLvl( firsLvlToLoad );
             running = true;  
             gameThread = new Thread( this );
             gameThread.start();       
@@ -484,30 +510,47 @@ public class Room extends Canvas implements
      * @param levelToLoad
        * @return 
        */
-      public synchronized boolean loadLvl(String levelToLoad)
+      public synchronized boolean loadLvl( String levelToLoad )
       {
+          //first we check if the level to load is already loaded
+//          if( currentLevel.equals( levelStack.get( levelToLoad )  )  )
+//          {
+//              System.out.println(" ::: regreso false, el nivel ya esta cargado ");
+//              return false;
+//          
+//          }
+          
           System.out.println(" SE CARGA NIVEL: "+levelToLoad);
           if(currentLevel != null)
           {
-              //si hay nivel se elimina y se pone a null para liberar recursos 
+          //si hay nivel se elimina y se pone a null para liberar recursos 
+          //if there is level we delete it and remove the listeners to free
+          //resources
           currentLevel.disposeLevel();
           currentLevel.removeKeyListener( this );
           
           //se quitan los sonidos de fondo del nivel
-//          currentLevel.getMp3Player().pause();
-//          currentLevel.getMp3Player().removeAll();
+          //currentLevel.getMp3Player().pause();
+          //currentLevel.getMp3Player().removeAll();
           
           currentLevel = null;
-          }//
+          }// !=null
           
           //se establece el nuevo nivel actual
           currentLevel =  levelStack.get( levelToLoad );
           
           //se establece el keyListener
-          currentLevel.addKeyListener(this);
+          currentLevel.addKeyListener( this );
+          
+          //enable mouse listener
+          currentLevel.addMouseListener( this );
+          
           
           //
-          currentLevel.setRoom(this);
+          currentLevel.setRoom( this );
+          
+          if( fullScreen )
+              setFullScreen();
           
           try
           {
@@ -614,9 +657,73 @@ public class Room extends Canvas implements
 
    
     
+    /**
+     * this function make the game fit the screen device, actualy is gonna 
+     * scale the game keeping the aspect ratio, for example:
+     * game view 480 x 320 (aspect ratio 1.5) 
+     * its gonna be scaled to 1350 x 900 ( aspect ratio 1.777)
+     * the xScale = 2.8125 and for yScale = 2.8125
+     * NOTE: this function have to be called 
+     */
+    private void setFullScreen()
+    {
+    
+        Dimension windowSize = getScaledWindowSize();
+        
+    //finally we set the scale to the level
+    currentLevel.setGraphicScale(  
+            windowSize.getWidth() / currentLevel.getViewWidth(), 
+            windowSize.getHeight() / currentLevel.getViewHeight() );
+    
+    }//seFullScreen
+
+    /**
+    * this method reset xScale and yScale to 1, so the 
+    * game will be shown with the normal size
+    */    
+    private void setNormalScreenMode()
+    {
+    xScale = 1;
+    yScale = 1;
+    }//
+
+    public void setFullScreen(boolean atFullScreen) 
+    {
+        this.fullScreen = atFullScreen;
+    }//
     
     
     
+    
+    
+    /**
+     * this method return a dimension object with the width and heigth
+     * of the game at full screen.
+     * NOTE: use this function afther set atFullScreen to true
+     * @return 
+     */
+    public Dimension getScaledWindowSize()
+    {
+    
+    //get Screen size to scale the game
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    
+    //we get current device width and heigth
+    double deviceWidth = screenSize.getWidth();
+    double deviceHeight = screenSize.getHeight();
+      
+    //System.out.println( "valores del device: "+deviceWidth +" - "+deviceHeight );
+    
+    //then we get the new width that must have the game,
+    //keeping the aspect ratio
+    float aspectRatio = (float)currentLevel.getViewWidth() / (float)currentLevel.getViewHeight();
+   
+    double fixedWidth = deviceHeight * ( aspectRatio  );
+        
+    screenSize.setSize( fixedWidth, deviceHeight );
+    
+    return screenSize;
+    }//
     
 }//class
 
