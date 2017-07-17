@@ -981,19 +981,27 @@ public class Sprite implements Movement {
     }//
   
     
+    
+    /**
+     * this method process the jump ( y position ) of the player
+     * when it jump
+     */
     public void processJump()
     {
         if(jump)
         {
         
-//             jumpForce -= Config.Config.GRAVITY;
-//            float j= (jumpForce * -1);
-//                  jumpValue += 0.098;
-                  jumpValue += gravity; //este valor define que tan largo brinca
-            if(jumpValue >= jumpForce+2)
-            {jumpValue = jumpForce+2;}
+            //este valor define que tan largo brinca
+            //jumpvalue means how higher the player jumps
+            jumpValue += gravity; 
             
-            y+=jumpValue;
+            //every tick the jump get a limit
+                if( jumpValue >= jumpForce + 2 )
+                {
+                    jumpValue = jumpForce + 2;
+                }
+            
+            y += jumpValue;
             
             
 //            if(y>=350) 

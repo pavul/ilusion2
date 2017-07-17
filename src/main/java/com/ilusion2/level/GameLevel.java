@@ -256,7 +256,7 @@ public abstract class GameLevel
    public void render(Graphics g)
    {
    
-       //this part of the cpde handles the full screen image
+      //this part of the cpde handles the full screen image
        //depending on the scale values created by the room class
        //when the game start
        ((Graphics2D)g).scale( xScale, yScale );
@@ -299,6 +299,7 @@ public abstract class GameLevel
                        break;
                }//such
        
+        
             
    }//renderiza fondo, foreground y HUD del juego
    
