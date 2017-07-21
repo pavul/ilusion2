@@ -252,52 +252,104 @@ public class Collision
             int centerX = x + halfWidth;
             int centerY = y + halfHeigth;
             
-		String side=Config.COLISION_NONE;         
+		String side=Config.COLISION_NONE;        
+                
+                //get distance vectors
 		float vx=s1.getCenterX()-centerX;
 		float vy=s1.getCenterY()-centerY;
 		
-		float combinedHalfWidth=s1.getHalfWidth()+halfWidth;
-		float combinedHalfHeight=s1.getHalfHeight()+halfHeigth;
+                
+		float combinedHalfWidth = s1.getHalfWidth()+halfWidth;
+		float combinedHalfHeight = s1.getHalfHeight()+halfHeigth;
             
+                
+                //collision on x axis
                 if(Math.abs(vx) < combinedHalfWidth)
 		{
+                    //collision on y axis
 			if(Math.abs(vy) < combinedHalfHeight)
 			{
+                            
+                            //collision made 
+                            
 				float overlapX=combinedHalfWidth-Math.abs(vx);
 				float overlapY=combinedHalfHeight-Math.abs(vy);
 		
-				if(overlapX>overlapY)
-				{
+//				if( overlapX >= overlapY )
+//				{
+//
+//                                    if( vy > 0 )
+//					{
+//                                            
+//                                            System.out.println("coltop");
+//                                               s1.setY( s1.getY()+overlapY );
+//                                                return Config.COLISION_TOP;
+//                                        }
+//                                    else 
+//					{
+//                                            System.out.println("colbottom "+s1.getY()+s1.getW() +" - ov"+overlapY );
+//
+//                                                s1.setY( s1.getY()-overlapY );
+//                                                
+////                                                s1.setY(s1.getY()-overlapY-2);   
+//                                                return Config.COLISION_BOTTOM;
+//					}
+//
+//				}
+//                                else 
+//				{
+//					
+//					if( vx > 0 )
+//					{
+//                                            System.out.println("coleft");
+//                                            s1.setX( s1.getX()+overlapX );
+//                                                return Config.COLISION_LEFT;
+//					}
+//					else
+//					{
+//                                            System.out.println("colrigth");
+//                                                s1.setX( s1.getX()-overlapX );
+//                                                return Config.COLISION_RIGHT;
+//					}
+//
+//		         }//
 
-                                    if(vy>0)
+
+
+                            if( overlapX < overlapY )
+                                    {
+					
+					if( vx > 0 )
 					{
-                                               s1.setY(s1.getY()+overlapY);
-                                                return Config.COLISION_TOP;
-                                        }
+                                            s1.setX( s1.getX()+overlapX );
+                                            return Config.COLISION_LEFT;
+					}
 					else
 					{
+                                            s1.setX( s1.getX()-overlapX );
+                                            return Config.COLISION_RIGHT;
+					}
 
-                                                s1.setY(s1.getY()-overlapY-2);   
-                                                return Config.COLISION_BOTTOM;
+                                    }//
+                                else
+   
+				{
+
+                                    if( vy > 0 )
+					{
+                                            s1.setY( s1.getY()+overlapY );
+                                            return Config.COLISION_TOP;
+                                        }
+                                    else 
+					{
+                                           s1.setY( s1.getY()  - overlapY );
+                                            return Config.COLISION_BOTTOM;
 					}
 
 				}
-                                else 
-				{
-					
-					if(vx>0)
-					{
+        		
 
-                                            s1.setX(s1.getX()+overlapX);
-                                                return Config.COLISION_LEFT;
-					}
-					else
-					{
-                                                s1.setX(s1.getX()-overlapX);
-                                                return Config.COLISION_RIGHT;
-					}
 
-		         }//
 			}//height
 
                         

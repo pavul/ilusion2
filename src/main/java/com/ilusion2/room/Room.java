@@ -33,6 +33,9 @@ import java.awt.Toolkit;
 public class Room extends Canvas implements 
         Runnable
 {
+    
+    public Graphics g = null;
+    
     private static final long serialVersionUID = -6489796311509601114L;
 
     //numeros que va a tener el buffer
@@ -254,7 +257,8 @@ public class Room extends Canvas implements
           return;
         
                 //se obtienen los graficos
-                Graphics g = this.getGraphicsBufferStrategy();
+//                Graphics 
+                        g = this.getGraphicsBufferStrategy();
 
 
                 if(g != null)

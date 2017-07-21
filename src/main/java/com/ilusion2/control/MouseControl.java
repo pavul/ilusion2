@@ -30,7 +30,7 @@ public class MouseControl implements MouseListener
     
     
     private boolean isPressed = false, isReleased = false;
-    private boolean isSwipe = false;
+//    private boolean isSwipe = false;
     
     
     /**
@@ -66,12 +66,11 @@ public class MouseControl implements MouseListener
     public void mousePressed(MouseEvent e)
     {
         
-           System.out.println("PRESSED at "+e.getX()+" - "+e.getY() );
+//           System.out.println("PRESSED at "+e.getX()+" - "+e.getY() );
            pointPressed.setLocation( e.getX(), e.getY() );
            isPressed = true;
            isReleased =  false;
            
-           isSwipe = true;
     }//
 
     /**
@@ -81,28 +80,12 @@ public class MouseControl implements MouseListener
     @Override
     public void mouseReleased(MouseEvent e) 
     {
-           System.out.println("released atL "+e.getX()+" - "+e.getY() );
+       //    System.out.println("released atL "+e.getX()+" - "+e.getY() );
            pointReleased.setLocation( e.getX(), e.getY() );
            
            isReleased = true;
            isPressed = false;
-           
-           
-//           if( swipeRigth(100 ) )
-//           {
-//               System.out.println("swipe rigth desde released");
-//           }
-//           
-//           
-//           if( swipeLeft( 100 ) )
-//           {
-//               System.out.println("swipe left desde released");
-//           }
-           
-           
-
-
-//           isSwipe = false;
+       
     }//
 
     

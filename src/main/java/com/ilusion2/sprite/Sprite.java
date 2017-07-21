@@ -57,7 +57,7 @@ public class Sprite implements Movement {
     private boolean animationEnd; //indica si se ha llegado al fin de la animacion
 
     private int imageSpeed; //velocidad de animacion de los frames del sprite
-    private int degrees; //variable que tiene los grados a ls que se ve el sprite
+    private double degrees; //variable que tiene los grados a ls que se ve el sprite
     
     private boolean jump; //variable para indicar si el usuario ha brincado
     private boolean executeJump; //variable para indicar si el usuario ha brincado
@@ -98,17 +98,23 @@ public class Sprite implements Movement {
     
     
     /* 
-     * CONSTRUCTORES
+     * CONSTRUCTOR
      */
+    
     /**
      * constructor que crea la instancia, hace falta definir todos los
      * parametros del script
+     * 
+     * this contrustor define few properties of this class, other
+     * have to be defined with setters
      */
-    public Sprite() {
-        this.executeJump=true;
+    public Sprite() 
+    {
+        
+        this.executeJump = true;
         this.gravity=0.37f;
-        this.jumpForce=8;
-        this.animationSpeedLimit=10;
+        this.jumpForce = 10;
+        this.animationSpeedLimit = 10;
         this.currentState = AnimationState.STANDRIGHT;
     }//cont 1
 
@@ -731,9 +737,22 @@ public class Sprite implements Movement {
                 && y >= this.y && y <= this.y + this.h);
     }//is touched
 
+    
+    
+    /**
+     * this is to move the sprite depending on the
+     * values for spdx and spdy
+     */
+    @Override
+    public void move() 
+    {
+        move(speedX,speedY);
+    }//
+    
+    
     /**
      * para mover el sprite sobre el eje X
-     *
+     *to move the sprite along X axis
      * @param speedX
      */
     @Override
@@ -837,15 +856,67 @@ public class Sprite implements Movement {
         }
     }
 
+    
+    
+    
+    /**@TODO it doesnt work for scaled screen yet
+     * calculate rotation angle from sprite center towards
+     * X & Y, and set degrees variable with that value
+     * this method can be called in update function, or
+     * when click is pressed or released
+     * @param x
+     * @param y
+     * @return 
+     */
+    public double calculateAngle( int x, int y )
+{
+        float vx = x - this.getX();
+        float vy = y - this.getY();
+        degrees =  Math.atan2( vy, vx ) * ( 180 / Math.PI ); // Math.atan2( y ,x );
+  
+//        System.out.println("angles: "+degrees );
+    return degrees;
+}
+    
+    
+    /**@TODO it doesnt work for scaled screen yet
+     * calculate rotation angle from sprite center towards
+     * another sprite center, and set degrees variable 
+     * with that value this method can be called in 
+     * update function, or when click is pressed or released
+     * @param spr
+     * @return 
+     */
+    public double calculateAngle( Sprite spr )
+{
+    
+    return calculateAngle( 
+            (int)spr.getCenterX(),
+            (int)spr.getCenterY() );
+    
+//        float vx = spr.getCenterX() - this.getX();
+//        float vy = spr.getCenterY() - this.getY();
+//        degrees =  Math.atan2( vy, vx ) * ( 180 / Math.PI ); 
+//  
+////        System.out.println("angles: "+degrees );
+//    return degrees;
+}
+        
+    
     @Override
     public String toString() {
         return "Sprite{" + "x=" + x + ", y=" + y + ", w=" + w + ", h=" + h + ", speedX=" + speedX + ", speedY=" + speedY + ", gravity=" + gravity + ", friction=" + friction + ", visible=" + visible + ", animationEnd=" + animationEnd + ", imageSpeed=" + imageSpeed + ", frames=" + frames + ", currentFrame=" + currentFrame + ", lastFrame=" + lastFrame + '}';
     }
 
-    public int getDegrees() {
+    public double getDegrees() {
         return degrees;
     }
 
+    /**
+     * with this method sprite degrees can be set and with that,
+     * you can only use drawRotate from render method
+     * @param degrees 
+     */
     public void setDegrees(int degrees) {
         this.degrees = degrees;
     }
@@ -854,26 +925,59 @@ public class Sprite implements Movement {
         return jump;
     }
 
+    
+    /**
+     * this make this sprite able to jump, this function is only to specify if the sprite 
+     * is going to jump, there is another function called processjump and there is functionality
+     * to change y axis of the sprite to make the jump, 
+     * every time this function is called, jumpvalue is reseted to default jumpForce*=-1;
+     * @param jump 
+     */
     public void setJump(boolean jump) {
         this.jump = jump;
         setJumpValue(jumpForce);
     }
 
+    
+    
+    
     public float getJumpForce() {
         return jumpForce;
         
     }
 
-    public void setJumpForce(float jumpForce) {
+    
+    
+    /**
+     * this function set the jump force, the max limit that jumpvalue
+     * will take every time jumvalue is decreased by the gravity
+     * NOTE:  jumpforce =5, jumpvalue = -5, gravity 0.37
+     * every frame: jumpvalue += gravity
+     * if( jumpvalue >= jumpforce) jumpvalue = jumpforce
+     * that is how it works!
+     * @param jumpForce 
+     */
+    public void setJumpForce(float jumpForce) 
+    {
         this.jumpForce = jumpForce;
         setJumpValue(jumpForce);
     }
     
-    public void setJumpValue(float jumpValue)
+    
+    /**
+     * this set the jump value to jumpforce * -1;
+     * this way it will then go - y Axis ( up ) and then
+     * + y Axis ( down)
+     */
+    private void setJumpValue(float jumpValue)
     {
-    this.jumpValue=jumpForce * -1;
+    this.jumpValue = jumpForce * -1;
     }
 
+    public float getJumpValue()
+    {return this.jumpValue;}
+    
+    
     public boolean isExecuteJump() {
         return executeJump;
     }
@@ -961,12 +1065,15 @@ public class Sprite implements Movement {
     
     /**
      * renderiza al sprite rotado segun los grados establecidos
+     * 
+     * render the sprite rotated the specified degrees
+     * NOTE: this function goes in render
      * @param g2
      * @param degrees
      */
     public void drawRotate(Graphics2D g2, int degrees)
     {
-        AffineTransform oldTransform =  g2.getTransform();
+             AffineTransform oldTransform =  g2.getTransform();
 //        Graphics2D g2d = (Graphics2D)g;
              g2.translate( x , y );
              AffineTransform trans = new AffineTransform();
@@ -981,6 +1088,26 @@ public class Sprite implements Movement {
     }//
   
     
+    public void drawRotate(Graphics2D g2 )
+    {
+        AffineTransform oldTransform =  g2.getTransform();
+        
+             g2.translate( x,y );
+             AffineTransform trans = new AffineTransform();
+             trans.setToIdentity();
+        
+             
+             trans.rotate( Math.toRadians( this.degrees ) , this.getHalfWidth()  , this.getHalfHeight()  );
+//             trans.rotate(  rot , this.getHalfWidth()  , this.getHalfHeight()  );
+            
+             g2.drawImage( frames[ currentFrame ] , trans, null );
+             
+    g2.setTransform(oldTransform);
+             
+    }// 
+    
+    
+    
     
     /**
      * this method process the jump ( y position ) of the player
@@ -988,28 +1115,24 @@ public class Sprite implements Movement {
      */
     public void processJump()
     {
-        if(jump)
+        if( jump )
         {
         
             //este valor define que tan largo brinca
             //jumpvalue means how higher the player jumps
+            //every time gravity is increased and eventually
+            //make jumpValue goes downward
             jumpValue += gravity; 
             
             //every tick the jump get a limit
-                if( jumpValue >= jumpForce + 2 )
+                if( jumpValue >= jumpForce )
                 {
-                    jumpValue = jumpForce + 2;
+                    jumpValue = jumpForce;
                 }
             
+//            System.out.println( y+"  jumpvalue "+jumpValue);    
             y += jumpValue;
             
-            
-//            if(y>=350) 
-//            {
-//                y=350; 
-//                jump=false;
-//                setJumpValue(jumpForce);
-//            }
         }//
     
     }//
@@ -1062,6 +1185,8 @@ public class Sprite implements Movement {
            setY(  roomBoundBottom - getH() );
            }
     }
+
+    
     
      
 }//class
