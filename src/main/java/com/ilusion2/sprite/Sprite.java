@@ -5,6 +5,7 @@
  */
 package com.ilusion2.sprite;
 
+import com.ilusion2.level.GameLevel;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
@@ -12,6 +13,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
@@ -42,6 +45,20 @@ public class Sprite implements Movement {
     public static final int ANIM_BACKWARD = 11; //valor de la animacion hacia atras
     public static final int ANIM_FRAME = 12; //valor de la animacion por ciertos frames
 
+    
+    
+    /**
+     * with this id we can retrieve a particular sprite
+     */
+    private static int spriteId = 10_000;
+    
+    /**
+     * this label is to group sprites for example:
+     * player, enemy, desctructable object, wheatever
+     * what programmer wants and supply their needs
+     */
+    private String label="";
+    
     private float x; //coordenada x del sprite
     private float y; //coordenada y del sprite
     private float w; //coordenada x del sprite
@@ -110,7 +127,7 @@ public class Sprite implements Movement {
      */
     public Sprite() 
     {
-        
+        this.spriteId += 1;
         this.executeJump = true;
         this.gravity=0.37f;
         this.jumpForce = 10;
@@ -716,7 +733,8 @@ public class Sprite implements Movement {
      * @param frame
      * @return
      */
-    public Image getImageFrame(int frame) {
+    public Image getImageFrame(int frame) 
+    {
         if (frame < 0 || frame > frames.length - 1) {
             return frames[FRAME_FIRSTFRAME];
         }
@@ -893,14 +911,202 @@ public class Sprite implements Movement {
     return calculateAngle( 
             (int)spr.getCenterX(),
             (int)spr.getCenterY() );
-    
-//        float vx = spr.getCenterX() - this.getX();
-//        float vy = spr.getCenterY() - this.getY();
-//        degrees =  Math.atan2( vy, vx ) * ( 180 / Math.PI ); 
-//  
-////        System.out.println("angles: "+degrees );
-//    return degrees;
 }
+    
+    
+    /**
+     * this function return the near sprite to this sprite
+     * that is inside view port of the game
+     * @return 
+     */
+    public Sprite spriteNearest( List<Sprite>spriteList, GameLevel level )
+    {
+        
+        //if there is not list return nulll
+        if( spriteList.isEmpty() )return null;
+        
+        
+        List<Sprite> nearList = new ArrayList<>();
+        
+        //get all sprites inside gameView
+        for( Sprite spr : spriteList )
+        {
+        
+            if( spr.isInsideView(level) )
+            {
+            nearList.add(spr);
+            }
+            
+            
+        }//for
+        
+        
+        
+        int[] magList = new int[ spriteList.size() ];
+        for( int i=0; i< spriteList.size() ;i+=1 )
+        {
+            
+            Sprite spr = spriteList.get( i );
+            
+            float vx = spr.getCenterX() - this.getCenterX();
+            float vy = spr.getCenterY() - this.getCenterY();
+            float mag = (float) Math.sqrt((vx * vx) + (vy * vy));
+		
+	    magList[ i ] = (int)mag;
+            
+                
+        }
+        
+        
+        //getthing the min value Pos of the array
+        int minValue = magList[0];
+        int minValuePos = 0; 
+        for ( int i = 1; i < magList.length; i++) 
+        {
+            if ( magList[i] < minValue ) 
+            {
+                minValue = magList[ i ];
+                minValuePos = i;
+            }
+        }//    
+        
+    
+     return spriteList.get( minValuePos );
+    }
+    
+    
+    /**
+     * @param spriteList
+     * @param level * @TODO quit al repeated code
+     * this function return the near sprite to this sprite
+     * that is inside view port of the game
+     * @param range
+     * @return 
+     */
+    public Sprite spriteNearest( List<Sprite>spriteList, GameLevel level, int range )
+    {
+        
+        //if there is not list return nulll
+        if( spriteList.isEmpty() )return null;
+        
+        
+        List<Sprite> nearList = new ArrayList<>();
+        
+        //get all sprites inside gameView
+        for( Sprite spr : spriteList )
+        {
+        
+            if( spr.isInsideView(level) )
+            {
+            nearList.add(spr);
+            }
+            
+            
+        }//for
+        
+        
+        
+        int[] magList = new int[ spriteList.size() ];
+        for( int i=0; i< spriteList.size() ;i+=1 )
+        {
+            
+            Sprite spr = spriteList.get( i );
+            
+            float vx = spr.getCenterX() - this.getCenterX();
+            float vy = spr.getCenterY() - this.getCenterY();
+            float mag = (float) Math.sqrt((vx * vx) + (vy * vy));
+		
+            //if distance is less or equal than permited range
+            //then put inside the array to check later
+            if( mag <= range )
+            {
+                magList[ i ] = (int)mag;
+            }
+	    
+        }
+        
+        
+        //getthing the min value Pos of the array
+        int minValue = magList[0];
+        int minValuePos = 0; 
+        for ( int i = 1; i < magList.length; i++) 
+        {
+            if ( magList[i] < minValue ) 
+            {
+                minValue = magList[ i ];
+                minValuePos = i;
+            }
+        }//    
+        
+    
+     return spriteList.get( minValuePos );
+    }//
+    
+    
+    public void orbit( Sprite spr, int radio )
+    {
+        
+        this.x = spr.getCenterX() + ( (int)Math.cos( ( double) degrees ) * radio );
+        this.y = spr.getCenterY() - ( (int)Math.sin( ( double) degrees ) * radio );
+        
+    }//
+    
+    /**
+     * this function will change X and y position of this sprite to
+     * orbit along centerx and centery, the distance will be the radio
+     * @param centerX x acis of the center to orbit
+     * @param centerY y acis of the center to orbit
+     * @param angle angle to orbit
+     * @param radio distance from the center to orbit
+     */
+    public void orbit( float centerX, float centerY, int angle, int radio )
+    {
+        
+        
+        System.out.println("cx -"+centerX+"  cy -"+centerY);
+        
+        this.x = centerX + ( (float)Math.cos( Math.toRadians( angle ) ) * radio );
+        this.y = centerY - ( (float)Math.sin( Math.toRadians( angle ) ) * radio );
+        //NOTE: if is centerY + will be clockwise, if is centerY - will be counter clockwise
+        
+        
+    }//
+    
+    
+    
+    
+    /**
+     * to know if the sprite center is inside the view
+     * NOTE: check if level has 0 cordinate in X and Y exis
+     * @param level
+     * @return true if the center sprite is inside the view , false otherwise
+     
+     */
+    public  boolean isInsideView( GameLevel level )
+    {
+    return ( getCenterX() >= 0 && 
+             getCenterX() <= ( 0 + level.getViewWidth() ) &&  
+            getCenterY()>= 0 &&
+            getCenterY() <= ( 0 + level.getViewHeight()) );
+    
+    }
+    
+    /**
+     * checl wheter the sprite is outside the view, usually
+     * to put out of the game, delete , etc.
+     * NOTE: check if level has 0 cordinate in X and Y exis
+     * @param level
+     * @return 
+     */
+    public  boolean isOutsidePort( GameLevel level )
+    {
+        
+        return ( getCenterX() < 0 ||
+                 getCenterX() > level.getViewWidth() ||
+                getCenterY() < 0 ||
+                getCenterY() > level.getViewHeight() ); 
+    
+    }
         
     
     @Override
@@ -1017,6 +1223,26 @@ public class Sprite implements Movement {
     public void setRoomBoundBottom(int roomBoundBottom) {
         this.roomBoundBottom = roomBoundBottom;
     }
+
+    public static int getSpriteId() {
+        return spriteId;
+    }
+
+    public static void setSpriteId(int spriteId) {
+        Sprite.spriteId = spriteId;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+    
+    
+    
+    
     
     /**
      * funcion que establece los frames inicial y final de la subanimacion 
@@ -1073,37 +1299,49 @@ public class Sprite implements Movement {
      */
     public void drawRotate(Graphics2D g2, int degrees)
     {
+        if(visible)
+        {
              AffineTransform oldTransform =  g2.getTransform();
-//        Graphics2D g2d = (Graphics2D)g;
+             //Graphics2D g2d = (Graphics2D)g;
              g2.translate( x , y );
              AffineTransform trans = new AffineTransform();
              trans.setToIdentity();
              
-//             trans.setTransform(identity);
+            //trans.setTransform(identity);
              trans.rotate( Math.toRadians(degrees), this.getHalfWidth()  , this.getHalfHeight() );
              g2.drawImage(frames[currentFrame], trans, null);
              
-    g2.setTransform(oldTransform);
-             
+            g2.setTransform(oldTransform);
+        
+        }
+          
     }//
   
     
-    public void drawRotate(Graphics2D g2 )
+      /**
+     * renderiza al sprite rotado segun los grados establecidos
+     * 
+     * render the sprite rotated , to make this work build in 
+     * degrees variable must be set each step
+     * NOTE: this function goes in render
+     * @param g2
+     */
+    public void drawRotate( Graphics2D g2 )
     {
-        AffineTransform oldTransform =  g2.getTransform();
+        if(visible)
+        {
+             AffineTransform oldTransform =  g2.getTransform();
         
              g2.translate( x,y );
              AffineTransform trans = new AffineTransform();
              trans.setToIdentity();
-        
-             
              trans.rotate( Math.toRadians( this.degrees ) , this.getHalfWidth()  , this.getHalfHeight()  );
-//             trans.rotate(  rot , this.getHalfWidth()  , this.getHalfHeight()  );
-            
              g2.drawImage( frames[ currentFrame ] , trans, null );
              
-    g2.setTransform(oldTransform);
-             
+             g2.setTransform(oldTransform);
+         
+        }
+            
     }// 
     
     

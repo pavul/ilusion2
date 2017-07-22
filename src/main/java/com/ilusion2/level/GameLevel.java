@@ -66,9 +66,9 @@ public abstract class GameLevel
     //against solid tiles
     protected ArrayList<int[]> colisionTileMaps; //listado de mapas de colisiones de tiles
     
-    //pool de enemigos, almacena todos los sprites de enemigos
-    //pool for enemies, to handle all enemies by group, not one by one
-   protected ArrayList<Sprite> enemyPool;
+    
+    //pool for all the sprites, to handle all enemies by group, not one by one
+   protected ArrayList<Sprite> spritePool;
     
    //camara del room
    //Camera Object, used to control what part of the level is
@@ -139,7 +139,7 @@ public abstract class GameLevel
        imgbg= new ArrayList<>();
        tileMaps =  new ArrayList<>();
        colisionTileMaps= new ArrayList<>();
-       enemyPool = new ArrayList<>();
+       spritePool = new ArrayList<>();
        
 //       mp3Player = new MP3Player();
 
@@ -558,7 +558,7 @@ public abstract class GameLevel
     colisionTileMaps = null; //listado de mapas de colisiones de tiles
     
     //pool de enemigos
-    enemyPool = null;
+    spritePool = null;
     
     cam = null;
     
@@ -633,12 +633,12 @@ public abstract class GameLevel
         this.colisionTileMaps = colisionTileMaps;
     }
 
-    public ArrayList<Sprite> getEnemyPool() {
-        return enemyPool;
+    public ArrayList<Sprite> getSpritePool() {
+        return spritePool;
     }
 
-    public void setEnemyPool(ArrayList<Sprite> enemyPool) {
-        this.enemyPool = enemyPool;
+    public void setSpritePool(ArrayList<Sprite> enemyPool) {
+        this.spritePool = enemyPool;
     }
 
     public Camera getCam() {
