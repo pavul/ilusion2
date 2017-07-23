@@ -186,6 +186,8 @@ public class Sprite implements Movement {
     /**
      * constructor 5 se crean los frames de animacion con una imagen como stip
      *
+     * it create an animation with a strip image, but developer must
+     * define how many frames and the heigth and width of these
      * @param numFrames
      * @param w
      * @param h

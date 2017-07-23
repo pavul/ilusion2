@@ -456,7 +456,7 @@ public abstract class GameLevel
     public void drawBgColor(Graphics2D g2,Color color, int x, int y, int w, int h,float alpha)
     {
         g2.setColor(color);
-        g2.fillRect(x, y, w, h);
+        g2.fillRect( x, y, w, h );
     }//
     
     
@@ -472,7 +472,7 @@ public abstract class GameLevel
      */
     public void drawBgImage(Graphics2D g2,Image img, int x, int y)
     {
-    g2.drawImage(img, x, y, null);
+    g2.drawImage( img, x, y, null );
     }//
     
     
