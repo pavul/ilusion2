@@ -94,13 +94,19 @@ public class Room extends Canvas implements
    
    
    //objeto para hacer las transiciones del room
-   //this object help room to make transition animations, when
-   //a level change to another
+   /**
+    * this transition object is to show transition animations
+    * from one level to another
+    */
    protected Transition transition;
     
    //para saber los frames count
    //these variables are used for testing purposes, to know
    //the ammount of frames counted each cicle
+   /**
+    * this is to now frame count, this variable
+    * can be also shown in HUD data for testing purposes 
+    */
    protected int frameCount=1; //30 fps
    int count;//
    int fps=60;
@@ -109,7 +115,16 @@ public class Room extends Canvas implements
    //these variables are only useful if we are using
    //server/client architecture, i mean, an online game
    //@TODO still need a lot of work
+   /**
+    * if this game is for multiplayer, then this will create
+    * the server socket
+    */
    Server gameServer;
+   
+   /**
+    * client socket in case this game need to connect to a multiplayer
+    * game
+    */
    ClientSocket gameClient;
    
    /**
@@ -524,41 +539,58 @@ public class Room extends Canvas implements
 //          
 //          }
           
-          System.out.println(" SE CARGA NIVEL: "+levelToLoad);
-          if(currentLevel != null)
-          {
-          //si hay nivel se elimina y se pone a null para liberar recursos 
-          //if there is level we delete it and remove the listeners to free
-          //resources
-          currentLevel.disposeLevel();
-          currentLevel.removeKeyListener( this );
+//          if( null == levelStack.get( levelToLoad ) )
+//          {
+//          levelStack.get( levelToLoad ) = new MazeXample( 480, 320, 480, 320, null);
+//          }
+//          
           
-          //se quitan los sonidos de fondo del nivel
-          //currentLevel.getMp3Player().pause();
-          //currentLevel.getMp3Player().removeAll();
-          
-          currentLevel = null;
-          }// !=null
+          //savig current level in previous level
+          GameLevel previousLevel = currentLevel;
           
           //se establece el nuevo nivel actual
+          //current level now has the new reference
           currentLevel =  levelStack.get( levelToLoad );
           
           //se establece el keyListener
+          //ading keylisterner to curlevel
           currentLevel.addKeyListener( this );
           
-          //enable mouse listener
+          //ading mouselisterner to curlevel
           currentLevel.addMouseListener( this );
           
           
-          //
+          //currentLevel now has this room
           currentLevel.setRoom( this );
           
           if( fullScreen )
               setFullScreen();
           
+          
+            if(previousLevel != null)
+          {
+          //si hay nivel se elimina y se pone a null para liberar recursos 
+          //if there is level we delete it and remove the listeners to free
+          //resources
+//          previousLevel.disposeLevel();
+          previousLevel.removeKeyListener( this );
+          previousLevel.removeMouseControl( this );
+          
+          //se quitan los sonidos de fondo del nivel
+          //currentLevel.getMp3Player().pause();
+          //currentLevel.getMp3Player().removeAll();
+          
+//          currentLevel = null;
+          }// !=null
+          
           try
           {
-              currentLevel.init();
+              //if level is not marked as persistent
+              //then it will init all again ( start over again the level )
+              if( !currentLevel.isPersistent() )
+              {
+                currentLevel.init();
+              }
 //              gameState = GameState.PLAYING;
               return true;
           }

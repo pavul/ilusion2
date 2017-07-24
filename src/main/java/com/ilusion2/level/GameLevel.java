@@ -55,40 +55,67 @@ public abstract class GameLevel
     
     //almacena las imagenes de background que se pueden utilizar
     //this stores all images used for background
+    /**
+     * store images with x, y , width and heigth values
+     */
     protected ArrayList<ImageBackground> imgbg; 
    
     //almacena los arrelgos de entero que idica cuales tiles se muestran ene l fondo
     //stores int arrays used to indicate what tiles will be shown on the screen
+    /**
+     * this array contain all tile maps used for this level, those tile
+     * maps can be used to put backgrounds with tiles
+     */
     protected ArrayList<int[]> tileMaps; //listado de mapas de tiles
     
     //almacena los arrelgos de entero que indica en que tiles se deben de checar colisiones
     //stores int arrays who are used to check collisions betwen players/enemies
     //against solid tiles
+    /**
+     * colisionTileMaps define which tile of tileMap is solid, that means that the
+     * player will collide with those marked as solid
+     */
     protected ArrayList<int[]> colisionTileMaps; //listado de mapas de colisiones de tiles
     
     
     //pool for all the sprites, to handle all enemies by group, not one by one
+    /**
+     * this sprite pool contains all the sprites in the level, to look them by
+     * id, label, etc
+     */
    protected ArrayList<Sprite> spritePool;
     
    //camara del room
    //Camera Object, used to control what part of the level is
    //shown on the screen
+   /**
+    * if the level is to large, camera will show in screen the port view, 
+    * just a part of the level in screen not the whole level
+    */
    protected Camera cam;
    
-   //instancia del room, para obtenersus propiedades
-   //se necesita para tomar el keylistener del control del jugador
-   //tambien para cambiar a diferentes niveles desde la pantalla actual
-   //
-   //this is the room instance, is very useful because we can obtain
-   //some properties like keylistener for player controller
-   //and if we want to change from one level to another, we can do that
-   //using this instance
+   
+   /**
+    * instancia del room, para obtenersus propiedades
+   se necesita para tomar el keylistener del control del jugador
+   tambien para cambiar a diferentes niveles desde la pantalla actual
+   
+   this is the room instance, is very useful because we can obtain
+   some properties like keylistener for player controller
+   and if we want to change from one level to another, we can do that
+   using this instance 
+    */
    protected Room room;
    
    /**
-    * keyboard and mouse controls
+    * object to manage input for keyboard evets
     */
    protected KeyControl keyControl;
+   
+   /**
+    * object to manage input from mouse, at this
+    * point pressed and released
+    */
    protected MouseControl mouseControl;
    
    //medidas de los tiles, ancho y alto y numero de columnas y renglones
@@ -102,6 +129,9 @@ public abstract class GameLevel
    
    //objeto para el archivo de propiedades
    //we can use a properties file to store text values used in the game
+   /**
+    * this object will contain properties file for this level
+    */
    protected Properties properties;
    
    //objeto reproductor de musica de fondo
@@ -110,15 +140,19 @@ public abstract class GameLevel
    
    //estado del nivel en el juego
    //variable who holds the current state of the game
+   /**
+    * this game state indicate if the game is playing, 
+    * stoped, paused, game over, etc.
+    */
    protected GameState gameState;
-   
-   
    
      /**
     * this object contain the hardware controller user with
     * raspberry pi 3, with 40 pins, see this classs for more info
     */
    protected GpioGameControl gpioGameControl;
+   
+   protected boolean persistent = false;
    
    
    /**
@@ -242,7 +276,7 @@ public abstract class GameLevel
     * metodo que ejecuta la actualizacion de estado del juego
     * this method need to be implemented by the concret level
     */
-   public abstract void update();
+    public  abstract  void update();
 //   {}//
    
    /**
@@ -705,6 +739,16 @@ public abstract class GameLevel
         this.properties = properties;
     }
 
+    public boolean isPersistent() {
+        return persistent;
+    }
+
+    public void setPersistent(boolean persistent) {
+        this.persistent = persistent;
+    }
+
+    
+    
 //    public MP3Player getMp3Player() {
 //        return mp3Player;
 //    }
