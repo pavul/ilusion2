@@ -747,6 +747,14 @@ public abstract class GameLevel
         this.persistent = persistent;
     }
 
+    public GameState getGameState() {
+        return gameState;
+    }
+
+    public void setGameState(GameState gameState) {
+        this.gameState = gameState;
+    }
+
     
     
 //    public MP3Player getMp3Player() {
@@ -807,7 +815,7 @@ public abstract class GameLevel
      * this function remove the mouse control attached to this level
      * @param component 
      */
-    public void removeMouseControl( Component component )
+    public void removeMouseListener( Component component )
     {
     component.removeMouseListener(mouseControl);
     }//

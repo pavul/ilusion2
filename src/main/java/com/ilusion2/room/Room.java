@@ -174,6 +174,25 @@ public class Room extends Canvas implements
     }//
     
  
+    
+    /**
+     * this constructor accept the game level that is gonna be
+     * loaded/shown
+     * @param gamelevel 
+     */
+    public Room( GameLevel gamelevel , boolean fullScreen )
+    {
+    
+        fps = 60;//setea por default a 60 frames por segundo
+        this.fullScreen = fullScreen;
+         
+        this.fullScreen = fullScreen;
+        
+         loadLvl( gamelevel );
+        
+    }//
+    
+    
     /**
      * constructor 2 este constructor crea un room por default con
      * width 640 y heigth = width /12 * 9, se toma la referencia de la ventana que se ve
@@ -574,7 +593,7 @@ public class Room extends Canvas implements
           //resources
 //          previousLevel.disposeLevel();
           previousLevel.removeKeyListener( this );
-          previousLevel.removeMouseControl( this );
+          previousLevel.removeMouseListener( this );
           
           //se quitan los sonidos de fondo del nivel
           //currentLevel.getMp3Player().pause();
@@ -599,7 +618,33 @@ public class Room extends Canvas implements
               return false;
           }
           
-      }
+      }//load level
+      
+       public synchronized boolean loadLvl( GameLevel gamelevel )
+      {
+          
+          //if game state is changed, it supposed to not throw
+          //any null pointer exception
+        currentLevel.setGameState( GameState.LEVEL_CHANGE );
+          
+        GameLevel previousLevel = currentLevel;
+          
+        //current level now has the level must show
+        currentLevel = gamelevel;
+        
+        //if not persisten init the level again
+        if( !currentLevel.isPersistent() )
+        {
+            //this automatically changes gameState
+            //the state to PLAYING
+            currentLevel.init();
+            
+        }//
+        
+        previousLevel = null;
+        
+          return true;
+      }//loadlevel2
       
       /**
        * funcion que inicia el servidor del juego, este es un socket
