@@ -569,8 +569,9 @@ public class GameManager extends Canvas implements
        * from certain level to another, then the current level is then eraded
        * from memory and the listeners attached to it, too
        * 
-     * @param levelToLoad
+       * @param levelToLoad
        * @return 
+       * @deprecated used until examples are done with new method
        */
       public synchronized boolean loadLvl( String levelToLoad )
       {
