@@ -315,19 +315,19 @@ public class GameManager extends Canvas implements
                 //Graphics 
                 g = this.getGraphicsBufferStrategy();
 
-
+           
                 if(g != null)
                 {
                    try
                    {
-                      currentLevel.render( g );  
+                      currentLevel.render( (Graphics2D) g );  
                    }
                    catch(Exception e)
                    {  
                    e.printStackTrace();
                    }
 
-                this.closeGraphicsBufferStrategy(g, this.getBufferStrategy());
+                this.closeGraphicsBufferStrategy( (Graphics2D) g, this.getBufferStrategy());
 
                 }//if !=null
         
@@ -602,7 +602,6 @@ public class GameManager extends Canvas implements
           //ading mouselisterner to curlevel
           currentLevel.addMouseListener( this );
           
-          
           //currentLevel now has this room
           currentLevel.setRoom( this );
           
@@ -632,7 +631,7 @@ public class GameManager extends Canvas implements
               //then it will init all again ( start over again the level )
               if( !currentLevel.isPersistent() )
               {
-                currentLevel.init();
+                   currentLevel.init();
               }
 //              gameState = GameState.PLAYING;
               return true;
@@ -644,17 +643,52 @@ public class GameManager extends Canvas implements
           
       }//load level
       
+      
+      /**
+       * this function is used to load a new level
+       * @param gamelevel
+       * @return 
+       */
        public synchronized boolean loadLvl( GameLevel gamelevel )
       {
+         
+          //save in another place the level that gonna change
+         //and remove listeners
+         GameLevel previousLevel = currentLevel;
+         
           
-          //if game state is changed, it supposed to not throw
-          //any null pointer exception
-        currentLevel.setGameState( GameState.LOADING );
+          /**
+           * if is the first time to load the game level, then
+           * this current level will be null
+           */
+          if( null != currentLevel )
+          {
+            //if current level != null means this is not
+            //the first level to load
+            currentLevel.setGameState( GameState.LOADING );
+            
+            
+            //if current level != null means this is not the 
+            //the first level to load, so it can remove listeners
+            previousLevel.removeKeyListener( this );
+            previousLevel.removeMouseListener( this );
+            
+          }//
           
-        GameLevel previousLevel = currentLevel;
+         
           
         //current level now has the level must show
         currentLevel = gamelevel;
+        currentLevel.addKeyListener( this );
+        currentLevel.addMouseListener( this );
+        
+        //currentLevel now has this room
+        currentLevel.setRoom( this );
+          
+        if( fullScreen )
+           setFullScreen();
+        
+        
         
         //if not persisten init the level again
         if( !currentLevel.isPersistent() )
@@ -672,6 +706,8 @@ public class GameManager extends Canvas implements
       
        
        /**
+        * THIS IS USED TO IMPLEMENT YOUR OWN WAY TO CHANGE FROM
+        * ONE LEVEL TO ANOTHER...
         * this method help to game manager set the required level, 
         * but with special implementacion,by if the level to load
         * have diferent settings, etc

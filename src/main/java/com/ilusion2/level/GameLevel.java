@@ -14,6 +14,7 @@ import com.ilusion2.gamemanager.ImageBackground;
 import com.ilusion2.gamemanager.GameManager;
 import com.ilusion2.sprite.Sprite;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -48,10 +49,31 @@ public abstract class GameLevel
     
     //these variables are use to fit the game view in the device screen
     //if is gonna be player on full screen
+    /**
+     * value of scale on X axis to render this screen when
+     * full screen is set to true
+     */
     protected double xScale = 1;
+    /**
+     * value of scale on Y axis to render this screen when
+     * full screen is set to true
+     */
     protected double yScale = 1;
     
-//    protected Sprite player;
+    /**
+     * this is the value for alpha channel
+     * value of 0 means transparent
+     * value of 1 means opaque
+     * @see https://docs.oracle.com/javase/tutorial/2d/advanced/compositing.html
+     */
+    protected float alpha = 0f;
+    
+    /**
+     * this is the composite to set alpha value and composite rule
+     * @see https://docs.oracle.com/javase/tutorial/2d/advanced/compositing.html
+     */
+    protected AlphaComposite alphaComposite;
+    
     
     //almacena las imagenes de background que se pueden utilizar
     //this stores all images used for background
@@ -164,6 +186,12 @@ public abstract class GameLevel
     */
    public GameLevel()
    {
+       
+       //this is alpha composite to use in games, with an alpha channel
+//       alphaComposite = 
+//               AlphaComposite.getInstance( AlphaComposite.SRC_OVER , alpha);
+       
+       
        // al iniciar el nivel se pone el gamestate en cargando
        //when level starts the state is LOADING
        gameState = GameState.LOADING;
@@ -237,8 +265,7 @@ public abstract class GameLevel
      * @param viewHeight
      * @param imgbg
     */
-   public GameLevel(int roomWidth, int roomHeight, int viewWidth, int viewHeight,
-           ArrayList<ImageBackground> imgbg)
+   public GameLevel(int roomWidth, int roomHeight, int viewWidth, int viewHeight)
    {
         this();
         
@@ -287,64 +314,22 @@ public abstract class GameLevel
      * NOTE: you have to respect that order otherwise only blackground will be render
      * @param g
     */
-   public void render(Graphics g)
+   public void render(Graphics2D g2)
    {
-   
+       
        //this part of the cpde handles the full screen image
        //depending on the scale values created by the room class
        //when the game start
-       ((Graphics2D)g).scale( xScale, yScale );
+       g2.scale( xScale, yScale );
        
         //this function is user to render background
-        renderBackground( g );
+        renderBackground( g2 );
                     
         //this function us user to render foreground
-        renderForeground( g );
+        renderForeground( g2 );
                     
         //this function is user to render HUD
-        renderHUD( g );
-       
-       
-       
-//       switch(gameState)
-//               {
-//                   case LOADING:
-//                       break;
-//                   case PLAYING:
-//                     
-//                       
-//                    //variable de la camara
-//                    //this will translating the view port
-//                    //to cam coordinates this makes the camera
-//                    //show other parts of the entire level
-//                    g.translate( cam.getCamx( ), cam.getCamy( ) );
-//
-//                    //this function is user to render background
-//                    renderBackground( g );
-//                    
-////                    this function us user to render foreground
-//                    renderForeground( g );
-//                    
-////                    this function is user to render HUD
-//                    renderHUD( g );
-//       
-//                       break;
-//                   case GAMEOVER:
-//                       break;
-//                   case COMPLETED:
-//                       break;
-//                   case PAUSED:
-//                       break;
-//                   case STOPPED:
-//                       break;
-//                   case DIALOGUING:
-//                    renderBackground( g );
-//                    renderForeground( g );
-//                    renderHUD( g );
-//                       break;
-//               }//such
-//       
-        
+        renderHUD( g2 );
             
    }//renderiza fondo, foreground y HUD del juego
    
@@ -364,7 +349,7 @@ public abstract class GameLevel
     * 
     */
    public void init()
-   {   
+   {
         initData();
         initSound();
         initBg();
@@ -419,7 +404,7 @@ public abstract class GameLevel
     * imageBackgrounds or tileBackgrounds, or both
     * @param g 
     */
-   public abstract void renderBackground(Graphics g);
+   public abstract void renderBackground(Graphics2D g);
    
    /**
     * funcion que tiene la logica para dibujar todo el frente (sprites, otros objetos que no
@@ -429,7 +414,7 @@ public abstract class GameLevel
     * objects who are used in gameplay
     * @param g 
     */
-   public abstract void renderForeground(Graphics g);
+   public abstract void renderForeground(Graphics2D g);
 //   {}
    
    /**
@@ -438,7 +423,7 @@ public abstract class GameLevel
     * the implementation must have all loginc to render HUD of the game
     * @param g 
     */
-   public abstract void renderHUD(Graphics g);
+   public abstract void renderHUD(Graphics2D g);
 //   {}
    
    
