@@ -1,5 +1,5 @@
 
-package com.ilusion2.room;
+package com.ilusion2.gamemanager;
 
 
 import com.ilusion2.audio.Sound;
@@ -30,27 +30,37 @@ import java.awt.Toolkit;
  * 
  * @author pavulzavala
  */
-public class Room extends Canvas implements 
+public class GameManager extends Canvas implements 
         Runnable
 {
+    private static final long serialVersionUID = -6489796311509601114L;
     
+    /**
+     * graphics object for rendering
+     */
     public Graphics g = null;
     
-    private static final long serialVersionUID = -6489796311509601114L;
-
     //numeros que va a tener el buffer
     protected final int BUFFER_NUMBER = 3;
     
-    //thread principal del juego
-    //principal thread of the game
+    /**
+     *
+     thread principal del juego
+     principal thread of the game
+     */
     protected Thread gameThread;
     
-    //variable indica si el juego esta corriendo o no
-    //indicate if the game is running or not
+    
+    /**
+     *variable indica si el juego esta corriendo o no
+     indicate if the game is running or not 
+     */
     protected boolean running;
     
-    //this flag indicate when a room is loaded to 
-    //show it in full screen mode
+   /**
+    this flag indicate when a room is loaded to 
+    show it in full screen mode
+    */
     protected boolean fullScreen = false;
     
     //variable para pausar el juego
@@ -74,22 +84,32 @@ public class Room extends Canvas implements
    
 //   this variable saves the reference to current level that we can
 //   use when we wan to change lvl or use tome util methods
+    /**
+     * this contains the reference to the current level 
+     * that is rendered
+     */
    protected GameLevel currentLevel;
    
    //esta estructura se utiliza para guardar aqui todos los objetos que
    //necesitan estar en todo el juego, pueden ser datos como el usuario
    //, puntajes, upgrades, etc/
-   //this structure is used to store all data that is persistent
-   //between levels, like, score, upgrades, items, general HUD, etc, because each
-   //level can set new ammount of data when it starts
+   /**
+    *this structure is used to store all data that is persistent
+    between levels, like, score, upgrades, items, general HUD, etc, because each
+    level can set new ammount of data when it starts
+    */
    protected Map< String, ? >persistentData;
    
    
    //stack que mantiene todos los niveles
-   //this is the stack where we have all levels for the game
+   /**
+    * this is the stack where we have all levels for the game
+    */
    Map<String, GameLevel> levelStack;
    
-   //this variable is to stablish first level to load for default
+   /**
+    * this variable is to stablish first level to load for default
+    */
    String firsLvlToLoad;
    
    
@@ -107,9 +127,9 @@ public class Room extends Canvas implements
     * this is to now frame count, this variable
     * can be also shown in HUD data for testing purposes 
     */
-   protected int frameCount=1; //30 fps
+   protected int frameCount = 1; //30 fps
    int count;//
-   int fps=60;
+   int fps = 60;
    
    //variables para cliente servidor
    //these variables are only useful if we are using
@@ -149,7 +169,8 @@ public class Room extends Canvas implements
      * @param lvltoLoad primer nivel a cargar
      * @param levelStack listado de niveles que hay en el juego
      */
-    public Room(String lvltoLoad, Map<String, GameLevel>levelStack, boolean fullScreen) 
+    public GameManager(String lvltoLoad, Map<String, 
+            GameLevel>levelStack, boolean fullScreen) 
            throws EmptyLevelStackException 
     {
         fps = 60;//setea por default a 60 frames por segundo
@@ -158,7 +179,7 @@ public class Room extends Canvas implements
         
         if( null == levelStack )
         {
-            System.out.println("::: level stack es nulo");
+            System.out.println("::: level stack is null");
             throw new NullPointerException( "Level Stack cannot be null" );
         }
         if( levelStack.isEmpty() )
@@ -168,7 +189,7 @@ public class Room extends Canvas implements
         this.levelStack = levelStack;
         
         //if there is no current level it will take the first of the stack
-//        this.currentLevel = levelStack.get( lvltoLoad );
+        //this.currentLevel = levelStack.get( lvltoLoad );
          firsLvlToLoad = lvltoLoad;
          loadLvl( firsLvlToLoad );
     }//
@@ -180,7 +201,7 @@ public class Room extends Canvas implements
      * loaded/shown
      * @param gamelevel 
      */
-    public Room( GameLevel gamelevel , boolean fullScreen )
+    public GameManager( GameLevel gamelevel , boolean fullScreen )
     {
     
         fps = 60;//setea por default a 60 frames por segundo
@@ -287,22 +308,24 @@ public class Room extends Canvas implements
         if(serverApplication) return;
            
         
-        if(this.getGraphicsBufferStrategy() ==null )
-          return;
+        if( this.getGraphicsBufferStrategy() == null )
+            return;
         
                 //se obtienen los graficos
-//                Graphics 
-                        g = this.getGraphicsBufferStrategy();
+                //Graphics 
+                g = this.getGraphicsBufferStrategy();
 
 
                 if(g != null)
                 {
                    try
                    {
-                      currentLevel.render(g);  
+                      currentLevel.render( g );  
                    }
                    catch(Exception e)
-                   {  }
+                   {  
+                   e.printStackTrace();
+                   }
 
                 this.closeGraphicsBufferStrategy(g, this.getBufferStrategy());
 
@@ -380,26 +403,27 @@ public class Room extends Canvas implements
         if(!pause)
         {
         
-                 long now= System.nanoTime();
+                long now= System.nanoTime();
                 delta+=(now - lastTime)/ns;
                 lastTime = now;
                 while(delta >= 1)
                 {
                     
                 update();
-//                 render();
+                //render();
                 delta--;
                 
                 }
                 
                 if(running)
                     render();
+                
                 //codigo para checar los frames
                 frames++;
                 if(System.currentTimeMillis() - timer > 1000)
                 {
                 timer +=1000;
-//                System.out.println("FPS: "+frames);
+                //System.out.println("FPS: "+frames);
                 frames=0; 
                 }
              
@@ -625,7 +649,7 @@ public class Room extends Canvas implements
           
           //if game state is changed, it supposed to not throw
           //any null pointer exception
-        currentLevel.setGameState( GameState.LEVEL_CHANGE );
+        currentLevel.setGameState( GameState.LOADING );
           
         GameLevel previousLevel = currentLevel;
           
@@ -646,10 +670,24 @@ public class Room extends Canvas implements
           return true;
       }//loadlevel2
       
+       
+       /**
+        * this method help to game manager set the required level, 
+        * but with special implementacion,by if the level to load
+        * have diferent settings, etc
+        * @param levelChanger
+        * @return 
+        */
+       public synchronized boolean loadLvl( LevelChanger levelChanger )
+       {
+       return levelChanger.setLvl();
+       }
+       
+       
       /**
        * funcion que inicia el servidor del juego, este es un socket
        * 
-       * inits this room as a server for an online game
+       * inits this gamemanager as a server for an online game
        * 
        * @param port 
        */
@@ -658,7 +696,7 @@ public class Room extends Canvas implements
         try {
             gameServer = new Server(port);
         } catch (IOException ex) {
-            Logger.getLogger(Room.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Logger.getLogger(GameManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
       }//
       
@@ -688,7 +726,7 @@ public class Room extends Canvas implements
             
         } 
         catch (IOException ex) {
-            Logger.getLogger(Room.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Logger.getLogger(GameManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
       }//
       

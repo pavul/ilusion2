@@ -8,10 +8,10 @@ package com.ilusion2.level;
 import com.ilusion2.control.GpioGameControl;
 import com.ilusion2.control.KeyControl;
 import com.ilusion2.control.MouseControl;
-import com.ilusion2.room.Camera;
-import com.ilusion2.room.GameState;
-import com.ilusion2.room.ImageBackground;
-import com.ilusion2.room.Room;
+import com.ilusion2.gamemanager.Camera;
+import com.ilusion2.gamemanager.GameState;
+import com.ilusion2.gamemanager.ImageBackground;
+import com.ilusion2.gamemanager.GameManager;
 import com.ilusion2.sprite.Sprite;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import java.awt.Color;
@@ -105,7 +105,7 @@ public abstract class GameLevel
    and if we want to change from one level to another, we can do that
    using this instance 
     */
-   protected Room room;
+   protected GameManager room;
    
    /**
     * object to manage input for keyboard evets
@@ -170,12 +170,12 @@ public abstract class GameLevel
        
        //# se crean los array list
        //we create all objects level will use
-       imgbg= new ArrayList<>();
+       imgbg = new ArrayList<>();
        tileMaps =  new ArrayList<>();
-       colisionTileMaps= new ArrayList<>();
+       colisionTileMaps = new ArrayList<>();
        spritePool = new ArrayList<>();
        
-//       mp3Player = new MP3Player();
+       //mp3Player = new MP3Player();
 
     
        
@@ -290,49 +290,60 @@ public abstract class GameLevel
    public void render(Graphics g)
    {
    
-      //this part of the cpde handles the full screen image
+       //this part of the cpde handles the full screen image
        //depending on the scale values created by the room class
        //when the game start
        ((Graphics2D)g).scale( xScale, yScale );
        
-       switch(gameState)
-               {
-                   case LOADING:
-                       break;
-                   case PLAYING:
-                     
-                       
-                    //variable de la camara
-                    //this will translating the view port
-                    //to cam coordinates this makes the camera
-                    //show other parts of the entire level
-                    g.translate( cam.getCamx( ), cam.getCamy( ) );
-
-                    //this function is user to render background
-                    renderBackground( g );
+        //this function is user to render background
+        renderBackground( g );
                     
-//                    this function us user to render foreground
-                    renderForeground( g );
+        //this function us user to render foreground
+        renderForeground( g );
                     
-//                    this function is user to render HUD
-                    renderHUD( g );
+        //this function is user to render HUD
+        renderHUD( g );
        
-                       break;
-                   case GAMEOVER:
-                       break;
-                   case COMPLETED:
-                       break;
-                   case PAUSED:
-                       break;
-                   case STOPPED:
-                       break;
-                   case DIALOGUING:
-                    renderBackground( g );
-                    renderForeground( g );
-                    renderHUD( g );
-                       break;
-               }//such
        
+       
+//       switch(gameState)
+//               {
+//                   case LOADING:
+//                       break;
+//                   case PLAYING:
+//                     
+//                       
+//                    //variable de la camara
+//                    //this will translating the view port
+//                    //to cam coordinates this makes the camera
+//                    //show other parts of the entire level
+//                    g.translate( cam.getCamx( ), cam.getCamy( ) );
+//
+//                    //this function is user to render background
+//                    renderBackground( g );
+//                    
+////                    this function us user to render foreground
+//                    renderForeground( g );
+//                    
+////                    this function is user to render HUD
+//                    renderHUD( g );
+//       
+//                       break;
+//                   case GAMEOVER:
+//                       break;
+//                   case COMPLETED:
+//                       break;
+//                   case PAUSED:
+//                       break;
+//                   case STOPPED:
+//                       break;
+//                   case DIALOGUING:
+//                    renderBackground( g );
+//                    renderForeground( g );
+//                    renderHUD( g );
+//                       break;
+//               }//such
+//       
         
             
    }//renderiza fondo, foreground y HUD del juego
@@ -683,11 +694,11 @@ public abstract class GameLevel
         this.cam = cam;
     }
 
-    public Room getRoom() {
+    public GameManager getRoom() {
         return room;
     }
 
-    public void setRoom(Room room) {
+    public void setRoom(GameManager room) {
         this.room = room;
     }
 

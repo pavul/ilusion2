@@ -6,6 +6,7 @@
 package com.ilusion2.sprite;
 
 import com.ilusion2.level.GameLevel;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
@@ -87,20 +88,57 @@ public class Sprite implements Movement {
    //estas variables se checan en los metodos move, cuando tienen valor diferente de -1
    private int roomBoundLeft=-1; //limite izquierdo del room hasta donde puede llegar el sprite
    private int roomBoundRight=-1; //limite derecho del room hasta donde puede llegar el sprite
-   private int roomBoundTop=-1; //limite de cima del room hasta donde puede llegar el sprite
-   private int roomBoundBottom=-1; //limite de fondo del room hasta donde puede llegar el sprite
+   private int roomBoundTop =-1; //limite de cima del room hasta donde puede llegar el sprite
+   private int roomBoundBottom =-1; //limite de fondo del room hasta donde puede llegar el sprite
    
+   /**
+    * animation speed counter to now at what number of this a frame must change
+    */
    private int animationSpeed; //velocidad a la que se debe de mostrar la animacion 
-                               //en el loop de proceso
+                               
+   /**
+    * animation speed will check this limit, if animation speed reach this limit the
+    * frame of a subanimation must change, when this frame changes animationSpeed will be
+    * set to 0 again to start the counter again
+    */
    private int animationSpeedLimit; //limite para
       
    //variables para las subanimaciones, es decir, un sprite se puede animar solamente
    //con mostrar algunos frames de las imagenes que se tienen
-   private int iniFrame;
-   private int endFrame;
+   
+//   /**
+//    * this is the initial position of the array that contains a subanimation
+//    * 
+//    
+//    */
+////   private int iniFrame;
+//   
+//   /**
+//    * this is the last position of the array that contains a subanimation
+//    */
+////   private int endFrame;
       
+   
+   
+   //THIS WILL BE ALWAYS 0 POSITION
+//   /**
+//    * initial position of the array containing subanimation
+//    */
+//   private int subanimationInitialPos = 0;
+   
+   /**
+    * current position of the subanimation array
+    */
+   private int subanimationCurrentPos = 0;
+   
+   /**
+    * last position of the array containing subanimation 
+    */
+   private int subanimationLastPos = 0;
+   
     /*
      *funcionalidad para sprites
+      image array that contains all the images that can be used by this sprite
      */
     private Image[] frames;
     private int currentFrame;
@@ -108,10 +146,13 @@ public class Sprite implements Movement {
     //    pricate Map<String, Image[]>animation;
 
     //animacion actual del sprite
-    private AnimationState currentState;
+    private AnimationState currentAnimationState;
     
     //stack de subanimaciones
-    private Map<AnimationState, int[] > SubAnimationStack;
+    /**
+     * this is used to store/use subanimation ( for non lineal animations )
+     */
+    private Map<AnimationState, int[] > subAnimationStack;
     
     
     /* 
@@ -132,7 +173,7 @@ public class Sprite implements Movement {
         this.gravity=0.37f;
         this.jumpForce = 10;
         this.animationSpeedLimit = 10;
-        this.currentState = AnimationState.STANDRIGHT;
+        this.currentAnimationState = AnimationState.STANDRIGHT;
     }//cont 1
 
     /**
@@ -622,20 +663,20 @@ public class Sprite implements Movement {
         this.animationSpeedLimit = animationSpeedLimit;
     }
 
-    public AnimationState getCurrentState() {
-        return currentState;
+    public AnimationState getCurrentAnimationState() {
+        return currentAnimationState;
     }
 
-    public void setCurrentState(AnimationState currentState) {
-        this.currentState = currentState;
+    public void setCurrentAnimationState(AnimationState currentState) {
+        this.currentAnimationState = currentState;
     }
 
     public Map<AnimationState, int[]> getSubAnimationStack() {
-        return SubAnimationStack;
+        return subAnimationStack;
     }
 
     public void setSubAnimationStack(Map<AnimationState, int[]> SubAnimationStack) {
-        this.SubAnimationStack = SubAnimationStack;
+        this.subAnimationStack = SubAnimationStack;
     }
 
 
@@ -657,6 +698,44 @@ public class Sprite implements Movement {
         }
     }//
 
+    
+    /**
+     * this method is used when the sprite has several subanimations
+     * @param g2 
+     */
+    public void drawSubanimation(Graphics2D g2) 
+    {
+        if (visible) 
+        {
+        
+        g2.drawImage(frames[ subAnimationStack.get(currentAnimationState )[ subanimationCurrentPos ] ],
+        (int) x, 
+        (int) y,
+        null);
+            
+            animationSpeed++;
+        if( animationSpeed >= animationSpeedLimit )
+        {     
+            animationSpeed = 0;
+    
+            subanimationCurrentPos ++;
+    
+    
+            //check whether the animation must begin again loop must
+            if( subanimationCurrentPos > subanimationLastPos )
+            {
+            subanimationCurrentPos = 0;
+            }
+            
+        }//if animationspeed
+    
+        
+       
+        
+        }//if visible
+        
+    }//
+    
     
     /**
      * metodo que cambialos frames del sprite, esta funcion es para que se utilice en el
@@ -710,20 +789,29 @@ public class Sprite implements Movement {
     }//
     
     
-    public void updateSubanimation()
-    {
-     animationSpeed++;
-        if( animationSpeed >= animationSpeedLimit)
-        {     
-             animationSpeed=0;
-            currentFrame++;
-            if(currentFrame >= endFrame)
-            {
-            currentFrame=iniFrame;
-            }
-        }
-        
-    }//
+    /**
+     * this function is to make the animation when the sprite have
+     * implemented subanimationstack, this function goes in update method
+     */
+//    public void updateSubanimation()
+//    {
+//            animationSpeed++;
+//        if( animationSpeed >= animationSpeedLimit )
+//        {     
+//            animationSpeed = 0;
+//            
+//            
+////            this.animation
+//            
+//            if( currentFrame == endFrame )
+//            {
+//            currentFrame = iniFrame - 1;//less one to start fom initial frame
+//            }
+//            
+//            currentFrame++;
+//        }
+//        
+//    }//
     
     
     //-- falta otro metodo draw
@@ -732,6 +820,8 @@ public class Sprite implements Movement {
      * especificado es menor o mayor al numero total de frames del sprite, este
      * regresa el primer frame
      *
+     * return image at specified frame,if specified is more of maximum
+     * or less that minimum first frame will be taken
      * @param frame
      * @return
      */
@@ -1252,39 +1342,55 @@ public class Sprite implements Movement {
      * @param iniFrame
      * @param endFrame
      */
-    public void setSubanimation(int iniFrame, int endFrame)
-    {
-        if(this.iniFrame == iniFrame && this.endFrame == endFrame)
-            return;
+//    public void setSubanimation(int iniFrame, int endFrame)
+//    {
+//        if(this.iniFrame == iniFrame && this.endFrame == endFrame)
+//          return;
         
-        this.iniFrame=iniFrame;
-        this.endFrame=endFrame;
-        this.currentFrame=iniFrame;
-        this.lastFrame=endFrame;
+//        this.iniFrame=iniFrame;
+//        this.endFrame=endFrame;
         
-    }//
+        
+//        
+//        this.currentFrame=iniFrame;
+//        this.lastFrame=endFrame;
+//        
+//    }//
 
-    /**
-     * metodo que toma un arreglo de enteros como subanimacion
-     * 
-     * @param subanimation 
-     */
-        public void setSubanimation(int [] subanimation)
-    {
-        setSubanimation(subanimation[0], subanimation[ subanimation.length-1 ]);
-    }//
+//    /**
+//     * metodo que toma un arreglo de enteros como subanimacion
+//     * 
+//     * this method takes and array of in like subanimation
+//     * @param subanimation 
+//     */
+//        public void setSubanimation(int [] subanimation)
+//    {
+//        setSubanimation(subanimation[0], subanimation[ subanimation.length-1 ]);
+//    }//
         
 /**
  * metodo que establece la subanimacion por medio de un estado de animacion,
  * este estado debe de estar cargado en el stack de subanimacion
+ * NOTE: si se implementa subanimacion, se debe de usar el metodo 
+ * drawSubanimation()
+ * 
+ * 
  * @param subanimation 
  */        
-        public void setSubanimation(AnimationState subanimation)
+     public void setSubanimation(AnimationState subanimation)
     {
-        if(SubAnimationStack == null)
-            return;
+        if(subAnimationStack == null)
+           return;
+
         
-        setSubanimation(SubAnimationStack.get(subanimation));
+        currentAnimationState = subanimation;
+        
+        subanimationCurrentPos= 0;
+        //@TODO aqui puede haber algun pedo
+        subanimationLastPos = subAnimationStack.get( subanimation ).length - 1;
+        
+        
+//        setSubanimation( subAnimationStack.get(subanimation) );
     }//
     
         
@@ -1377,6 +1483,64 @@ public class Sprite implements Movement {
     
     }//
     
+    
+    
+    /**
+     * this function show a trayectory of a ballistic object thrown away
+     * this must be on renderXXX function
+     * NOTE: needs more testing
+     * @param g2
+     * @param potency
+     * @param degrees
+     * @param numberOfPoints this is the number of point that will be shown
+     * by this function
+     * 
+     * 
+     */
+    public void drawBalisticTrayectory( 
+            Graphics2D g2, 
+            float potency, 
+            int degrees,
+            int numberOfPoints)
+    {
+    
+        //potency
+        float v0 = potency;
+        
+        float v0x =  ( (float)Math.cos( ( double) degrees )  * v0 );
+        float v0y = - ( (float)Math.sin( ( double) degrees ) * v0 );
+        
+//        System.out.println(" == vx "+v0x+" vy "+v0y);
+        
+        //initial position where point must start
+//        float x0 = ;
+//        float y0 = ;
+            
+        float g = 9.81f;
+        
+//        for( int t = 0; t < 30; t+=1 )// 30/v0 )
+        for( float t = 0; 
+             t < numberOfPoints; 
+            t+=1 ) //t =  (t + numberOfPoints/v0) )
+        {
+        
+            
+//            position of x e y along time
+            float xi = v0x * t + this.getCenterX();
+            float yi = 0.5f * g * (float)Math.pow( t, 2 ) + v0y * t +this.getCenterY();
+            
+            System.out.println(" >>> vx "+xi+" vy "+yi);
+            
+//            g2.setColor( Color.BLACK );
+//            g2.drawOval( (int)xi, (int)yi, 4, 0);
+            g2.setColor( Color.GREEN );
+            g2.drawOval( (int)xi, (int)yi, 4, 0);
+            
+        }//
+                
+        
+    }//processBalistic
+ 
     
     /**
      * checa si el sprite se va a salir por el limite izquierdo y no lo deja

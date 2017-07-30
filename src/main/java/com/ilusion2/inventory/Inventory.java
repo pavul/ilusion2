@@ -19,16 +19,50 @@ import java.util.List;
  * 
  * 
  * this class save a list of items to show them on the screen as a kind
- * of inventory
+ * of inventory, in a grid, vertical list or horizontal list
  */
 public class Inventory 
 {
-    boolean visible; //indica si se debe de dibujar el inventario o no
-    private List<Item> slots; //slots que tiene o items que va a tener
+    
+    
+    public final static int LAYOUT_GRID = 1;
+    public final static int LAYOUT_VERTICAL = 2;
+    public final static int LAYOUT_HORIZONTAL = 3;
+    
+    
+    /**
+     * indicate if the inventory must be shown on screen
+     */
+    boolean visible; 
+    
+    /**
+     * list of the items of this inventory
+     */
+    private List<Item> slots;
+    
+    /**
+     * x position where the inventory will be shown
+     */
     int x; //posicion x del inventario
+    
+    /**
+     * y position where the inventory will be shown
+     */
     int y; //posicion y del inventario
+    
+    /**
+     * indicate what slot of the inventory is selected
+     */
     int cursor; //indica que parte del inventario esta seleccionado
+    
+    /**
+     * background image for each slot
+     */
     BufferedImage bgSlot; //imagen de fondo del slot, los items van sobrepuestos de esta foto
+    
+    /**
+     * slot padding
+     */
     int padding;//el padding de cada slot, por default 20;
     
     
@@ -41,9 +75,9 @@ public class Inventory
      */
     public Inventory(List<Item> slots, int x, int y)
     {
-        this.slots=slots;
-        this.x=x;
-        this.y=y;   
+        this.slots = slots;
+        this.x = x;
+        this.y = y;   
         this.padding = 20;
     }//
     

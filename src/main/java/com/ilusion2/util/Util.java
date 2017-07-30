@@ -117,4 +117,26 @@ public class Util
     }//
     
     
+    
+    /**
+     * this function help to resolve proporsional ammounts,
+     * util if you want to get hp ammount, with a fixed width 
+     * healt bar
+     * 
+     * example 50 --> 100% hp
+     *         25 --> ?
+     * 100 x 25 = 2500 / 50 = 50%
+     * 
+     * @return 
+     */
+    public static int ruleOf3( 
+            int proporcion, 
+            int valueProportion ,
+            int unknowProportion)
+    {
+        
+       return (unknowProportion * valueProportion) / proporcion;
+        
+    }
+    
 }//class
