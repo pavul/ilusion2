@@ -11,7 +11,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 
-/**
+/** NOT TESTED
  * clase que deja un rastro de algun sprite, por lo general es algo asi como sombra
  * cuando un sprite esta en movimiento
  * @author pavulzavala

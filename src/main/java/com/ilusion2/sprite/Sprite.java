@@ -27,25 +27,15 @@ import javax.imageio.ImageIO;
  *
  * @author Ilusion
  */
-public class Sprite implements Movement {
-    
-    
-//    public static enum State
-//    {
-//    MOVELEFT, MOVERIGHT, MOVEUP, MOVEDOWN,
-//    STANDLEFT, STANDRIGHT, CRAWLEFT, CRAWRIGHT,
-//    ATTACKINGLEFT, ATTACKINGRIGHT,  ATTACKINGUP,  ATTACKINGDOWN,
-//    DEFENDINGLEFT, DEFENDINGRIGHT, DEFENDINGUP, DEFENDINGDOWN,
-//    CLIMB,DIYING, DIED, 
-//    EATINGLEFT, EATINGRIGHT, EATINGUP, EATINGDOWN
-//    }
-//    
+public class Sprite implements Movement 
+{
 
     public static final int FRAME_FIRSTFRAME = 0; //valor del primer frame de 1 animacion
     public static final int ANIM_FOWARD = 10; //valor de la animacion hacia adelante
     public static final int ANIM_BACKWARD = 11; //valor de la animacion hacia atras
     public static final int ANIM_FRAME = 12; //valor de la animacion por ciertos frames
-
+    public static final int ANIM_STOPATEND = 13; //valor de la animacion que termina si se llega al frame final
+    
     
     
     /**
@@ -703,7 +693,7 @@ public class Sprite implements Movement {
      * this method is used when the sprite has several subanimations
      * @param g2 
      */
-    public void drawSubanimation(Graphics2D g2) 
+    public void drawSubanimation(Graphics2D g2, boolean stopAtEnd ) 
     {
         if (visible) 
         {
@@ -718,14 +708,27 @@ public class Sprite implements Movement {
         {     
             animationSpeed = 0;
     
+            
             subanimationCurrentPos ++;
     
-    
-            //check whether the animation must begin again loop must
-            if( subanimationCurrentPos > subanimationLastPos )
-            {
-            subanimationCurrentPos = 0;
-            }
+                //check whether the animation must begin again loop must
+                if( subanimationCurrentPos > subanimationLastPos )
+                {
+                    
+                    //if animationforward, when is the las frame
+                    //gonna begin again
+                    if( stopAtEnd )
+                    {
+                    subanimationCurrentPos = subanimationLastPos;
+                    }
+                    else
+                    {
+                        subanimationCurrentPos = 0;       
+                    }
+                    
+                        
+                }//
+            
             
         }//if animationspeed
     
