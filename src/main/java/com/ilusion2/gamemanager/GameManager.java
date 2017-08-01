@@ -864,22 +864,60 @@ public class GameManager extends Canvas implements
     //get Screen size to scale the game
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     
-    //we get current device width and heigth
-    double deviceWidth = screenSize.getWidth();
-    double deviceHeight = screenSize.getHeight();
-      
-    //System.out.println( "valores del device: "+deviceWidth +" - "+deviceHeight );
+    /**
+     * get screen size if fullscreen is true
+     */
+    if( fullScreen )
+    {
     
-    //then we get the new width that must have the game,
-    //keeping the aspect ratio
-    float aspectRatio = (float)currentLevel.getViewWidth() / (float)currentLevel.getViewHeight();
-   
-    double fixedWidth = deviceHeight * ( aspectRatio  );
+        //we get current device width and heigth
+        double deviceWidth = screenSize.getWidth();
+        double deviceHeight = screenSize.getHeight();
+
+        //System.out.println( "valores del device: "+deviceWidth +" - "+deviceHeight );
+
+        //then we get the new width that must have the game,
+        //keeping the aspect ratio
+        float aspectRatio = (float)currentLevel.getViewWidth() / (float)currentLevel.getViewHeight();
+
+        double fixedWidth = deviceHeight * ( aspectRatio  );
+
+        screenSize.setSize( fixedWidth, deviceHeight );
         
-    screenSize.setSize( fixedWidth, deviceHeight );
+    }//
+    else
+    {
+        screenSize.setSize( this.getWidth() , this.getHeight() );
+    }
+  
     
     return screenSize;
     }//
+    
+    
+    /**
+     * this method return the view port width of the level
+     * ( width of the portion of the screen that must be show )
+     * @return 
+     */
+    @Override
+    public int getWidth()
+    {
+    return currentLevel.getViewWidth();   
+    }
+    
+    
+    /**
+     * this method return the view port heigth of the level
+     * ( heigth of the portion of the screen that must be show ) 
+     * @return 
+     */
+    @Override
+    public int getHeight()
+    {
+    return currentLevel.getViewHeight();
+    }
+    
     
 }//class
 

@@ -6,6 +6,8 @@
 package com.ilusion2.util;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
@@ -36,6 +38,31 @@ public class Util
      BufferedImage bf= ImageIO.read( java.lang.String.class.getClass().getResourceAsStream(pathFile));    
      return bf;
     }//
+    
+    
+    /**
+     * this function return a TTF ( True Type Font )font,
+     * NOTE: .ttf must be placed in resources folder, if ttf file is inside
+     * a package in resource folder then should be added like:
+     * /packageName/fontName.ttf
+     * NOTE2: only TTF file format allowed
+     * 
+     * @param loadFrom class where the font must be loaded
+     * @param pathFile
+     * @param fontSize
+     * @return
+     * @throws IOException
+     * @throws FontFormatException 
+     */
+    public  static Font  getFont( Class loadFrom,String pathFile, float fontSize )throws IOException, FontFormatException
+    {
+        InputStream is = loadFrom.getResourceAsStream( pathFile );
+
+        return Font.createFont( Font.TRUETYPE_FONT, is ).deriveFont( fontSize ) ;
+        //Font a = Font.createFont( Font.TRUETYPE_FONT, is );
+
+    }//
+    
     
     /**
      * funcion que regresa un color aleatorio

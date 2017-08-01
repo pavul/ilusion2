@@ -284,11 +284,11 @@ public abstract class GameLevel
         cam.setMarginLeft( viewWidth / 3 );
         cam.setMarginRight( ( viewWidth / 3 )  * 2 );
         
-        //se setean las variables del room
-        this.roomWidth= roomWidth;
-        this.roomHeight=roomHeight;
-        this.viewWidth=viewWidth;
-        this.viewHeight=viewHeight;
+        //gameManager and view variables setted
+        this.roomWidth = roomWidth;
+        this.roomHeight = roomHeight;
+        this.viewWidth = viewWidth;
+        this.viewHeight = viewHeight;
         this.imgbg = imgbg;
        
         
