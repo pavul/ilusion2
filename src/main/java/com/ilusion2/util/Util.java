@@ -8,6 +8,7 @@ package com.ilusion2.util;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
@@ -62,6 +63,20 @@ public class Util
         //Font a = Font.createFont( Font.TRUETYPE_FONT, is );
 
     }//
+    
+    /**
+     * this method return the width in point of the specified string when
+     * NOTE: this function have to be used inside render method
+     * some font is used
+     * @param g2
+     * @param font
+     * @param text
+     * @return 
+     */
+    public static int getStringWidth( Graphics2D g2,Font font, String text )
+    { 
+      return g2.getFontMetrics(font).stringWidth(text);
+    }
     
     
     /**

@@ -48,50 +48,50 @@ public class Sprite implements Movement
      * player, enemy, desctructable object, wheatever
      * what programmer wants and supply their needs
      */
-    private String label="";
+    protected String label="";
     
-    private float x; //coordenada x del sprite
-    private float y; //coordenada y del sprite
-    private float w; //coordenada x del sprite
-    private float h; //coordenada y del sprite
+    protected float x; //coordenada x del sprite
+    protected float y; //coordenada y del sprite
+    protected float w; //coordenada x del sprite
+    protected float h; //coordenada y del sprite
 
-    public float speedX = 0; //velocidad x que tiene el sprite
-    public float speedY = 0; //velocidad y que tiene el sprite
+    protected float speedX = 0; //velocidad x que tiene el sprite
+    protected float speedY = 0; //velocidad y que tiene el sprite
 
   
-    private float friction; //valor para friccion
+    protected float friction; //valor para friccion
 
-    private boolean visible; //indica si se renderiza el sprite o no en el room
-    private boolean animationEnd; //indica si se ha llegado al fin de la animacion
+    protected boolean visible; //indica si se renderiza el sprite o no en el room
+    protected boolean animationEnd; //indica si se ha llegado al fin de la animacion
 
-    private int imageSpeed; //velocidad de animacion de los frames del sprite
-    private double degrees; //variable que tiene los grados a ls que se ve el sprite
+    protected int imageSpeed; //velocidad de animacion de los frames del sprite
+    protected double degrees; //variable que tiene los grados a ls que se ve el sprite
     
-    private boolean jump; //variable para indicar si el usuario ha brincado
-    private boolean executeJump; //variable para indicar si el usuario ha brincado
-    private float jumpForce; //fuerza a la que brinca el sprite
-    private float jumpValue;
-    private float gravity; //valor para gravedad
+    protected boolean jump; //variable para indicar si el usuario ha brincado
+    protected boolean executeJump; //variable para indicar si el usuario ha brincado
+    protected float jumpForce; //fuerza a la que brinca el sprite
+    protected float jumpValue;
+    protected float gravity; //valor para gravedad
     
        //limites a los que es permitido llegar el sprite, es decir, el sprite no puede salir de
    //esos limites, por lo general son los limites del room en el que se encuentra
    //estas variables se checan en los metodos move, cuando tienen valor diferente de -1
-   private int roomBoundLeft=-1; //limite izquierdo del room hasta donde puede llegar el sprite
-   private int roomBoundRight=-1; //limite derecho del room hasta donde puede llegar el sprite
-   private int roomBoundTop =-1; //limite de cima del room hasta donde puede llegar el sprite
-   private int roomBoundBottom =-1; //limite de fondo del room hasta donde puede llegar el sprite
+   protected int roomBoundLeft=-1; //limite izquierdo del room hasta donde puede llegar el sprite
+   protected int roomBoundRight=-1; //limite derecho del room hasta donde puede llegar el sprite
+   protected int roomBoundTop =-1; //limite de cima del room hasta donde puede llegar el sprite
+   protected int roomBoundBottom =-1; //limite de fondo del room hasta donde puede llegar el sprite
    
    /**
     * animation speed counter to now at what number of this a frame must change
     */
-   private int animationSpeed; //velocidad a la que se debe de mostrar la animacion 
+   protected int animationSpeed; //velocidad a la que se debe de mostrar la animacion 
                                
    /**
     * animation speed will check this limit, if animation speed reach this limit the
     * frame of a subanimation must change, when this frame changes animationSpeed will be
     * set to 0 again to start the counter again
     */
-   private int animationSpeedLimit; //limite para
+   protected int animationSpeedLimit; //limite para
       
    //variables para las subanimaciones, es decir, un sprite se puede animar solamente
    //con mostrar algunos frames de las imagenes que se tienen
@@ -119,31 +119,35 @@ public class Sprite implements Movement
    /**
     * current position of the subanimation array
     */
-   private int subanimationCurrentPos = 0;
+   protected int subanimationCurrentPos = 0;
    
    /**
     * last position of the array containing subanimation 
     */
-   private int subanimationLastPos = 0;
+   protected int subanimationLastPos = 0;
    
     /*
      *funcionalidad para sprites
       image array that contains all the images that can be used by this sprite
      */
-    private Image[] frames;
-    private int currentFrame;
-    private int lastFrame;
+    protected Image[] frames;
+    protected int currentFrame;
+    protected int lastFrame;
     //    pricate Map<String, Image[]>animation;
 
     //animacion actual del sprite
-    private AnimationState currentAnimationState;
+    protected AnimationState currentAnimationState;
     
     //stack de subanimaciones
     /**
      * this is used to store/use subanimation ( for non lineal animations )
      */
-    private Map<AnimationState, int[] > subAnimationStack;
+    protected Map<AnimationState, int[] > subAnimationStack;
     
+    /**
+     * variable used to put hit points or lives to player
+     */
+    protected int hp;
     
     /* 
      * CONSTRUCTOR
@@ -1591,6 +1595,14 @@ public class Sprite implements Movement
            {
            setY(  roomBoundBottom - getH() );
            }
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
     }
 
     
