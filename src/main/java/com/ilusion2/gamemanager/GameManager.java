@@ -16,6 +16,7 @@ import com.ilusion2.net.ClientSocket;
 import com.ilusion2.net.Server;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import javax.swing.JFrame;
 
 
 /**
@@ -47,6 +48,11 @@ public class GameManager extends Canvas implements
      */
     protected Thread gameThread;
     
+    
+    /**
+     * to handle the frame
+     */
+    protected JFrame gameContainer;
     
     /**
      *variable indica si el juego esta corriendo o no
@@ -697,6 +703,11 @@ public class GameManager extends Canvas implements
             
         }//
         
+        
+        //finally we change dimensions of level
+        if( gameContainer != null )
+        gameContainer.setSize( getScaledWindowSize() );
+        
         previousLevel = null;
         
           return true;
@@ -914,6 +925,12 @@ public class GameManager extends Canvas implements
     {
     return currentLevel.getViewHeight();
     }
+
+    public void setgameContainer(JFrame gameContainer) {
+        this.gameContainer = gameContainer;
+    }
+    
+    
     
     
 }//class
