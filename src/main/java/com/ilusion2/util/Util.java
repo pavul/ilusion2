@@ -5,6 +5,8 @@
  */
 package com.ilusion2.util;
 
+import com.ilusion2.level.GameLevel;
+import com.ilusion2.sprite.Sprite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -15,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
@@ -35,7 +38,7 @@ public class Util
      */
     public  static Image getImage(String pathFile)throws FileNotFoundException, IOException
     {
-//     BufferedImage bf= ImageIO.read(imgFile);    
+     //BufferedImage bf= ImageIO.read(imgFile);    
      BufferedImage bf= ImageIO.read( java.lang.String.class.getClass().getResourceAsStream(pathFile));    
      return bf;
     }//
@@ -98,22 +101,37 @@ public class Util
      * @param min
      * @return 
      */
-    public static int generatRandomPositiveNegitiveValue(int max , int min) {
+    public static int generatRandomPositiveNegitiveValue(int max , int min) 
+    {
     //Random rand = new Random();
     int ii = -min + (int) (Math.random() * ((max - (-min)) + 1));
     return ii;
-}
+    }
     
     /**
-     * funcion que regresa el array de tiles, que acepta uno de los metodos
+     * funcion que regresa el array de imagenes, que acepta uno de los metodos
      * DRAWBGTILE
      * @param imageFile
      * @return 
      */
-    public static Image[] getArrayTiles(URL imageFile )
+    public static Image[] getArrayFrames(int numFrames, int w, int h, String imgRoute )
     {
-    
-    return null;
+         BufferedImage bigImg = null;
+        try 
+        {
+//            bigImg = ImageIO.read(this.getClass().getResource( imgRoute ) );
+         bigImg = ImageIO.read( java.lang.String.class.getClass().getResourceAsStream( imgRoute )); 
+        } 
+        catch (IOException ioe) 
+        { }
+
+        Image[] im = new Image[numFrames];
+
+        for (int i = 0; i < numFrames; i++) 
+        {
+            im[i] = bigImg.getSubimage(i * w, 0, w, h);
+        }// for
+    return im;
     }//
     
    /**
@@ -176,9 +194,39 @@ public class Util
             int valueProportion ,
             int unknowProportion)
     {
-        
-       return (unknowProportion * valueProportion) / proporcion;
-        
+       return (unknowProportion * valueProportion) / proporcion;   
     }
+    
+    
+//    /**
+//     * this function get the count number of certain sprites
+//     * that are inside of the view,
+//     * those sprites have to be grouped with label property,
+//     * this is to be used inside update method, 
+//     * @param level
+//     * @param spr
+//     * @param label
+//     * @return 
+//     */
+//    public static int getSpriteNumber(GameLevel level, List<Sprite> spritePool, String label)
+//    {
+//        int count = 0;
+//           
+//        for( Sprite spr: spritePool )
+//        {
+//            if( spr.getCenterX() >= 0 && 
+//            spr.getCenterX() <= ( 0 + level.getViewWidth() ) &&  
+//            spr.getCenterY() >= 0 &&
+//            spr.getCenterY() <= ( 0 + level.getViewHeight()) && spr.getLabel().equals( label ) )
+//            {
+//            count ++; 
+//            }//
+//        
+//        }//for
+//        
+//        
+//        
+//        return count;
+//    }//
     
 }//class

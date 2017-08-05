@@ -7,6 +7,8 @@ package com.ilusion2.physics;
 
 import com.ilusion2.config.Config;
 import com.ilusion2.sprite.Sprite;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * clase que tiene los metodos para checar colisiones entre los diferentes sprites
@@ -122,24 +124,28 @@ public class Collision
 	 * */
 	public  boolean rectangleColision(Sprite s1, Sprite s2)
 	{
-		boolean hit=false;
-		float vx=s1.getCenterX()-s2.getCenterX();
-		float vy=s1.getCenterY()-s2.getCenterY();
-		
-		float combinedHalfWidth=s1.getHalfWidth()+s2.getHalfWidth();
-		float combinedHalfHeight=s1.getHalfHeight()+s2.getHalfHeight();
-		
-		if(Math.abs(vx)<combinedHalfWidth)
-		{
-			
-		return ((Math.abs(vy) < combinedHalfHeight));
-                       
-		}//width
-//		else
-//		{
-//			return false;
-//		}
-		return hit;
+            
+            boolean hit=false;
+            float vx=s1.getCenterX()-s2.getCenterX();
+            float vy=s1.getCenterY()-s2.getCenterY();
+
+            float combinedHalfWidth=s1.getHalfWidth()+s2.getHalfWidth();
+            float combinedHalfHeight=s1.getHalfHeight()+s2.getHalfHeight();
+
+            if(Math.abs(vx)<combinedHalfWidth)
+            {
+
+                if((Math.abs(vy) < combinedHalfHeight))
+                {                      
+                    return true;
+                }
+
+            }//width
+            else
+            {
+                    return false;
+            }
+            return hit;
 		
 	}//colision rectangular
         
@@ -465,5 +471,9 @@ public class Collision
 //        System.out.println("se DIBUJAN TILES: "+nodib);
         
 //    }//
+
+    private Exception NullPointerException(String a_la_verga) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }//collision

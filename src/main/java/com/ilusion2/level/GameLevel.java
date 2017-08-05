@@ -88,7 +88,7 @@ public abstract class GameLevel
      * this array contain all tile maps used for this level, those tile
      * maps can be used to put backgrounds with tiles
      */
-    protected ArrayList<int[]> tileMaps; //listado de mapas de tiles
+//    protected ArrayList<int[]> tileMaps; //listado de mapas de tiles
     
     //almacena los arrelgos de entero que indica en que tiles se deben de checar colisiones
     //stores int arrays who are used to check collisions betwen players/enemies
@@ -97,15 +97,7 @@ public abstract class GameLevel
      * colisionTileMaps define which tile of tileMap is solid, that means that the
      * player will collide with those marked as solid
      */
-    protected ArrayList<int[]> colisionTileMaps; //listado de mapas de colisiones de tiles
-    
-    
-    //pool for all the sprites, to handle all enemies by group, not one by one
-    /**
-     * this sprite pool contains all the sprites in the level, to look them by
-     * id, label, etc
-     */
-   protected ArrayList<Sprite> spritePool;
+//    protected ArrayList< int[] > colisionTileMaps; //listado de mapas de colisiones de tiles
     
    //camara del room
    //Camera Object, used to control what part of the level is
@@ -199,9 +191,9 @@ public abstract class GameLevel
        //# se crean los array list
        //we create all objects level will use
        imgbg = new ArrayList<>();
-       tileMaps =  new ArrayList<>();
-       colisionTileMaps = new ArrayList<>();
-       spritePool = new ArrayList<>();
+//       tileMaps =  new ArrayList<>();
+//       colisionTileMaps = new ArrayList<>();
+      
        
        //mp3Player = new MP3Player();
 
@@ -583,12 +575,9 @@ public abstract class GameLevel
     
     imgbg = null; //listado de background de imagenes
    
-    tileMaps= null; //listado de mapas de tiles
+//    tileMaps= null; //listado de mapas de tiles
     
-    colisionTileMaps = null; //listado de mapas de colisiones de tiles
-    
-    //pool de enemigos
-    spritePool = null;
+//    colisionTileMaps = null; //listado de mapas de colisiones de tiles
     
     cam = null;
     
@@ -647,29 +636,23 @@ public abstract class GameLevel
         this.imgbg = imgbg;
     }
 
-    public ArrayList<int[]> getTileMaps() {
-        return tileMaps;
-    }
+//    public ArrayList<int[]> getTileMaps() {
+//        return tileMaps;
+//    }
+//
+//    public void setTileMaps(ArrayList<int[]> tileMaps) {
+//        this.tileMaps = tileMaps;
+//    }
+//
+//    public ArrayList<int[]> getColisionTileMaps() {
+//        return colisionTileMaps;
+//    }
+//
+//    public void setColisionTileMaps(ArrayList<int[]> colisionTileMaps) {
+//        this.colisionTileMaps = colisionTileMaps;
+//    }
 
-    public void setTileMaps(ArrayList<int[]> tileMaps) {
-        this.tileMaps = tileMaps;
-    }
-
-    public ArrayList<int[]> getColisionTileMaps() {
-        return colisionTileMaps;
-    }
-
-    public void setColisionTileMaps(ArrayList<int[]> colisionTileMaps) {
-        this.colisionTileMaps = colisionTileMaps;
-    }
-
-    public ArrayList<Sprite> getSpritePool() {
-        return spritePool;
-    }
-
-    public void setSpritePool(ArrayList<Sprite> enemyPool) {
-        this.spritePool = enemyPool;
-    }
+  
 
     public Camera getCam() {
         return cam;

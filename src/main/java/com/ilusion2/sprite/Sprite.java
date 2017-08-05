@@ -231,11 +231,13 @@ public class Sprite implements Movement
     public Sprite(int numFrames, int w, int h, String imgRoute) {
         this();
         BufferedImage bigImg = null;
-        try {
+        try 
+        {
 //            bigImg= ImageIO.read(new File("sheet.png"));
             bigImg = ImageIO.read(this.getClass().getResource(imgRoute));
-        } catch (IOException ioe) {
-        }
+        } 
+        catch (IOException ioe) 
+        { }
 
         Image[] im = new Image[numFrames];
 
@@ -245,8 +247,8 @@ public class Sprite implements Movement
         this.frames = im;
         this.currentFrame = this.frames.length - 1;
         this.lastFrame = this.frames.length - 1;
-        this.w = this.frames[FRAME_FIRSTFRAME].getWidth(null);
-        this.h = this.frames[FRAME_FIRSTFRAME].getHeight(null);
+        this.w = this.frames[ FRAME_FIRSTFRAME ].getWidth(null);
+        this.h = this.frames[ FRAME_FIRSTFRAME ].getHeight(null);
 
                  //ESTE CODIGO DEBE DE SERVIR PARA LOS OTROS CONSTRUCTORES
 //    BufferedImage bigImg = ImageIO.read(new File("sheet.png"));
@@ -559,8 +561,13 @@ public class Sprite implements Movement
         return frames;
     }
 
-    public void setFrames(Image[] frames) {
+    synchronized public void setFrames(Image[] frames) {
         this.frames = frames;
+        this.currentFrame = frames.length - 1;
+        this.lastFrame = frames.length - 1;
+        this.w = frames[ FRAME_FIRSTFRAME ].getWidth(null);
+        this.h = frames[ FRAME_FIRSTFRAME ].getHeight(null);
+        
     }
 
     public int getCurrentFrame() {
@@ -753,13 +760,17 @@ public class Sprite implements Movement
      */
     public boolean updateAnimation(int loop)
     {
+        //this method wont process anything if the sprite is not visible
+        if( !visible )return false;
+        
         animationSpeed++;
         if( animationSpeed >= animationSpeedLimit)
         {     
             animationSpeed=0;
             
-        
-        switch (loop) {
+            System.out.println("moving frame");
+        switch ( loop ) 
+        {
 			case 1:
 				currentFrame++;
                                     if (currentFrame >= lastFrame)
@@ -1185,8 +1196,8 @@ public class Sprite implements Movement
     {
     return ( getCenterX() >= 0 && 
              getCenterX() <= ( 0 + level.getViewWidth() ) &&  
-            getCenterY()>= 0 &&
-            getCenterY() <= ( 0 + level.getViewHeight()) );
+             getCenterY()>= 0 &&
+             getCenterY() <= ( 0 + level.getViewHeight()) );
     
     }
     

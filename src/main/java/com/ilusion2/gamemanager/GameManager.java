@@ -1,9 +1,6 @@
 
 package com.ilusion2.gamemanager;
 
-
-import com.ilusion2.audio.Sound;
-import com.ilusion2.control.GpioGameControl;
 import com.ilusion2.exception.EmptyLevelStackException;
 import com.ilusion2.level.GameLevel;
 import java.awt.Canvas;
