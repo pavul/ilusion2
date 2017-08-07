@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ilusion2.room;
+package com.ilusion2.gamemanager;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 
 /**
@@ -16,11 +17,11 @@ import java.awt.image.BufferedImage;
 public class ImageBackground 
 {
    
-    BufferedImage img;
-    int x;
-    int y;
-    int w;
-    int h;
+   private Image img;
+   private int x;
+   private int y;
+   private int w;
+   private int h;
     
     
     public ImageBackground(BufferedImage img, int x, int y)
@@ -32,11 +33,11 @@ public class ImageBackground
     this.h=img.getHeight();
     }//
 
-    public BufferedImage getImg() {
+    public Image getImg() {
         return img;
     }
 
-    public void setImg(BufferedImage img) {
+    public void setImg(Image img) {
         this.img = img;
     }
 

@@ -92,13 +92,14 @@ public class KeyControl implements KeyListener
     
     /**
      * funcion que regresa true si solo se presiona una sola vez una tecla
-     * returns true if solo one key is presed one time
+     * returns true if solo one key is presed one time, and wont execute
+     * the event again util is released
      * @param keyCode
      * @return 
      */
     public boolean isKeyPress( int keyCode )
     {
-      if( isKeyDown(keyCode ) && keyPress[ keyCode ] )
+      if( isKeyDown( keyCode ) && keyPress[ keyCode ] )
       {
       keyPress[ keyCode ] = false;
       return true;
@@ -110,6 +111,7 @@ public class KeyControl implements KeyListener
     /**
      * funcion que checa si la tecla presionada esta dentro del rango
      * check if the pressed key is inside the range of NUMKEYS
+     * defined by this class
      * @param e
      * @return 
      */

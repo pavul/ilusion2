@@ -7,6 +7,8 @@ package com.ilusion2.physics;
 
 import com.ilusion2.config.Config;
 import com.ilusion2.sprite.Sprite;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * clase que tiene los metodos para checar colisiones entre los diferentes sprites
@@ -122,24 +124,28 @@ public class Collision
 	 * */
 	public  boolean rectangleColision(Sprite s1, Sprite s2)
 	{
-		boolean hit=false;
-		float vx=s1.getCenterX()-s2.getCenterX();
-		float vy=s1.getCenterY()-s2.getCenterY();
-		
-		float combinedHalfWidth=s1.getHalfWidth()+s2.getHalfWidth();
-		float combinedHalfHeight=s1.getHalfHeight()+s2.getHalfHeight();
-		
-		if(Math.abs(vx)<combinedHalfWidth)
-		{
-			
-		return ((Math.abs(vy) < combinedHalfHeight));
-                       
-		}//width
-//		else
-//		{
-//			return false;
-//		}
-		return hit;
+            
+            boolean hit=false;
+            float vx=s1.getCenterX()-s2.getCenterX();
+            float vy=s1.getCenterY()-s2.getCenterY();
+
+            float combinedHalfWidth=s1.getHalfWidth()+s2.getHalfWidth();
+            float combinedHalfHeight=s1.getHalfHeight()+s2.getHalfHeight();
+
+            if(Math.abs(vx)<combinedHalfWidth)
+            {
+
+                if((Math.abs(vy) < combinedHalfHeight))
+                {                      
+                    return true;
+                }
+
+            }//width
+            else
+            {
+                    return false;
+            }
+            return hit;
 		
 	}//colision rectangular
         
@@ -252,52 +258,104 @@ public class Collision
             int centerX = x + halfWidth;
             int centerY = y + halfHeigth;
             
-		String side=Config.COLISION_NONE;         
+		String side=Config.COLISION_NONE;        
+                
+                //get distance vectors
 		float vx=s1.getCenterX()-centerX;
 		float vy=s1.getCenterY()-centerY;
 		
-		float combinedHalfWidth=s1.getHalfWidth()+halfWidth;
-		float combinedHalfHeight=s1.getHalfHeight()+halfHeigth;
+                
+		float combinedHalfWidth = s1.getHalfWidth()+halfWidth;
+		float combinedHalfHeight = s1.getHalfHeight()+halfHeigth;
             
+                
+                //collision on x axis
                 if(Math.abs(vx) < combinedHalfWidth)
 		{
+                    //collision on y axis
 			if(Math.abs(vy) < combinedHalfHeight)
 			{
+                            
+                            //collision made 
+                            
 				float overlapX=combinedHalfWidth-Math.abs(vx);
 				float overlapY=combinedHalfHeight-Math.abs(vy);
 		
-				if(overlapX>overlapY)
-				{
+//				if( overlapX >= overlapY )
+//				{
+//
+//                                    if( vy > 0 )
+//					{
+//                                            
+//                                            System.out.println("coltop");
+//                                               s1.setY( s1.getY()+overlapY );
+//                                                return Config.COLISION_TOP;
+//                                        }
+//                                    else 
+//					{
+//                                            System.out.println("colbottom "+s1.getY()+s1.getW() +" - ov"+overlapY );
+//
+//                                                s1.setY( s1.getY()-overlapY );
+//                                                
+////                                                s1.setY(s1.getY()-overlapY-2);   
+//                                                return Config.COLISION_BOTTOM;
+//					}
+//
+//				}
+//                                else 
+//				{
+//					
+//					if( vx > 0 )
+//					{
+//                                            System.out.println("coleft");
+//                                            s1.setX( s1.getX()+overlapX );
+//                                                return Config.COLISION_LEFT;
+//					}
+//					else
+//					{
+//                                            System.out.println("colrigth");
+//                                                s1.setX( s1.getX()-overlapX );
+//                                                return Config.COLISION_RIGHT;
+//					}
+//
+//		         }//
 
-                                    if(vy>0)
+
+
+                            if( overlapX < overlapY )
+                                    {
+					
+					if( vx > 0 )
 					{
-                                               s1.setY(s1.getY()+overlapY);
-                                                return Config.COLISION_TOP;
-                                        }
+                                            s1.setX( s1.getX()+overlapX );
+                                            return Config.COLISION_LEFT;
+					}
 					else
 					{
+                                            s1.setX( s1.getX()-overlapX );
+                                            return Config.COLISION_RIGHT;
+					}
 
-                                                s1.setY(s1.getY()-overlapY-2);   
-                                                return Config.COLISION_BOTTOM;
+                                    }//
+                                else
+   
+				{
+
+                                    if( vy > 0 )
+					{
+                                            s1.setY( s1.getY()+overlapY );
+                                            return Config.COLISION_TOP;
+                                        }
+                                    else 
+					{
+                                           s1.setY( s1.getY()  - overlapY );
+                                            return Config.COLISION_BOTTOM;
 					}
 
 				}
-                                else 
-				{
-					
-					if(vx>0)
-					{
+        		
 
-                                            s1.setX(s1.getX()+overlapX);
-                                                return Config.COLISION_LEFT;
-					}
-					else
-					{
-                                                s1.setX(s1.getX()-overlapX);
-                                                return Config.COLISION_RIGHT;
-					}
 
-		         }//
 			}//height
 
                         
@@ -413,5 +471,9 @@ public class Collision
 //        System.out.println("se DIBUJAN TILES: "+nodib);
         
 //    }//
+
+    private Exception NullPointerException(String a_la_verga) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }//collision

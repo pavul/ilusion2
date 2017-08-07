@@ -5,6 +5,8 @@
  */
 package com.ilusion2.sprite;
 
+import com.ilusion2.level.GameLevel;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
@@ -12,6 +14,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
@@ -23,93 +27,147 @@ import javax.imageio.ImageIO;
  *
  * @author Ilusion
  */
-public class Sprite implements Movement {
-    
-    
-//    public static enum State
-//    {
-//    MOVELEFT, MOVERIGHT, MOVEUP, MOVEDOWN,
-//    STANDLEFT, STANDRIGHT, CRAWLEFT, CRAWRIGHT,
-//    ATTACKINGLEFT, ATTACKINGRIGHT,  ATTACKINGUP,  ATTACKINGDOWN,
-//    DEFENDINGLEFT, DEFENDINGRIGHT, DEFENDINGUP, DEFENDINGDOWN,
-//    CLIMB,DIYING, DIED, 
-//    EATINGLEFT, EATINGRIGHT, EATINGUP, EATINGDOWN
-//    }
-//    
+public class Sprite implements Movement 
+{
 
     public static final int FRAME_FIRSTFRAME = 0; //valor del primer frame de 1 animacion
     public static final int ANIM_FOWARD = 10; //valor de la animacion hacia adelante
     public static final int ANIM_BACKWARD = 11; //valor de la animacion hacia atras
     public static final int ANIM_FRAME = 12; //valor de la animacion por ciertos frames
+    public static final int ANIM_STOPATEND = 13; //valor de la animacion que termina si se llega al frame final
+    
+    
+    
+    /**
+     * with this id we can retrieve a particular sprite
+     */
+    private static int spriteId = 10_000;
+    
+    /**
+     * this label is to group sprites for example:
+     * player, enemy, desctructable object, wheatever
+     * what programmer wants and supply their needs
+     */
+    protected String label="";
+    
+    protected float x; //coordenada x del sprite
+    protected float y; //coordenada y del sprite
+    protected float w; //coordenada x del sprite
+    protected float h; //coordenada y del sprite
 
-    private float x; //coordenada x del sprite
-    private float y; //coordenada y del sprite
-    private float w; //coordenada x del sprite
-    private float h; //coordenada y del sprite
-
-    public float speedX = 0; //velocidad x que tiene el sprite
-    public float speedY = 0; //velocidad y que tiene el sprite
+    protected float speedX = 0; //velocidad x que tiene el sprite
+    protected float speedY = 0; //velocidad y que tiene el sprite
 
   
-    private float friction; //valor para friccion
+    protected float friction; //valor para friccion
 
-    private boolean visible; //indica si se renderiza el sprite o no en el room
-    private boolean animationEnd; //indica si se ha llegado al fin de la animacion
+    protected boolean visible; //indica si se renderiza el sprite o no en el room
+    protected boolean animationEnd; //indica si se ha llegado al fin de la animacion
 
-    private int imageSpeed; //velocidad de animacion de los frames del sprite
-    private int degrees; //variable que tiene los grados a ls que se ve el sprite
+    protected int imageSpeed; //velocidad de animacion de los frames del sprite
+    protected double degrees; //variable que tiene los grados a ls que se ve el sprite
     
-    private boolean jump; //variable para indicar si el usuario ha brincado
-    private boolean executeJump; //variable para indicar si el usuario ha brincado
-    private float jumpForce; //fuerza a la que brinca el sprite
-    private float jumpValue;
-    private float gravity; //valor para gravedad
+    protected boolean jump; //variable para indicar si el usuario ha brincado
+    protected boolean executeJump; //variable para indicar si el usuario ha brincado
+    protected float jumpForce; //fuerza a la que brinca el sprite
+    protected float jumpValue;
+    protected float gravity; //valor para gravedad
     
        //limites a los que es permitido llegar el sprite, es decir, el sprite no puede salir de
    //esos limites, por lo general son los limites del room en el que se encuentra
    //estas variables se checan en los metodos move, cuando tienen valor diferente de -1
-   private int roomBoundLeft=-1; //limite izquierdo del room hasta donde puede llegar el sprite
-   private int roomBoundRight=-1; //limite derecho del room hasta donde puede llegar el sprite
-   private int roomBoundTop=-1; //limite de cima del room hasta donde puede llegar el sprite
-   private int roomBoundBottom=-1; //limite de fondo del room hasta donde puede llegar el sprite
+   protected int roomBoundLeft=-1; //limite izquierdo del room hasta donde puede llegar el sprite
+   protected int roomBoundRight=-1; //limite derecho del room hasta donde puede llegar el sprite
+   protected int roomBoundTop =-1; //limite de cima del room hasta donde puede llegar el sprite
+   protected int roomBoundBottom =-1; //limite de fondo del room hasta donde puede llegar el sprite
    
-   private int animationSpeed; //velocidad a la que se debe de mostrar la animacion 
-                               //en el loop de proceso
-   private int animationSpeedLimit; //limite para
+   /**
+    * animation speed counter to now at what number of this a frame must change
+    */
+   protected int animationSpeed; //velocidad a la que se debe de mostrar la animacion 
+                               
+   /**
+    * animation speed will check this limit, if animation speed reach this limit the
+    * frame of a subanimation must change, when this frame changes animationSpeed will be
+    * set to 0 again to start the counter again
+    */
+   protected int animationSpeedLimit; //limite para
       
    //variables para las subanimaciones, es decir, un sprite se puede animar solamente
    //con mostrar algunos frames de las imagenes que se tienen
-   private int iniFrame;
-   private int endFrame;
+   
+//   /**
+//    * this is the initial position of the array that contains a subanimation
+//    * 
+//    
+//    */
+////   private int iniFrame;
+//   
+//   /**
+//    * this is the last position of the array that contains a subanimation
+//    */
+////   private int endFrame;
       
+   
+   
+   //THIS WILL BE ALWAYS 0 POSITION
+//   /**
+//    * initial position of the array containing subanimation
+//    */
+//   private int subanimationInitialPos = 0;
+   
+   /**
+    * current position of the subanimation array
+    */
+   protected int subanimationCurrentPos = 0;
+   
+   /**
+    * last position of the array containing subanimation 
+    */
+   protected int subanimationLastPos = 0;
+   
     /*
      *funcionalidad para sprites
+      image array that contains all the images that can be used by this sprite
      */
-    private Image[] frames;
-    private int currentFrame;
-    private int lastFrame;
+    protected Image[] frames;
+    protected int currentFrame;
+    protected int lastFrame;
     //    pricate Map<String, Image[]>animation;
 
     //animacion actual del sprite
-    private AnimationState currentState;
+    protected AnimationState currentAnimationState;
     
     //stack de subanimaciones
-    private Map<AnimationState, int[] > SubAnimationStack;
+    /**
+     * this is used to store/use subanimation ( for non lineal animations )
+     */
+    protected Map<AnimationState, int[] > subAnimationStack;
     
+    /**
+     * variable used to put hit points or lives to player
+     */
+    protected int hp;
     
     /* 
-     * CONSTRUCTORES
+     * CONSTRUCTOR
      */
+    
     /**
      * constructor que crea la instancia, hace falta definir todos los
      * parametros del script
+     * 
+     * this contrustor define few properties of this class, other
+     * have to be defined with setters
      */
-    public Sprite() {
-        this.executeJump=true;
+    public Sprite() 
+    {
+        this.spriteId += 1;
+        this.executeJump = true;
         this.gravity=0.37f;
-        this.jumpForce=8;
-        this.animationSpeedLimit=10;
-        this.currentState = AnimationState.STANDRIGHT;
+        this.jumpForce = 10;
+        this.animationSpeedLimit = 10;
+        this.currentAnimationState = AnimationState.STANDRIGHT;
     }//cont 1
 
     /**
@@ -163,6 +221,8 @@ public class Sprite implements Movement {
     /**
      * constructor 5 se crean los frames de animacion con una imagen como stip
      *
+     * it create an animation with a strip image, but developer must
+     * define how many frames and the heigth and width of these
      * @param numFrames
      * @param w
      * @param h
@@ -171,11 +231,13 @@ public class Sprite implements Movement {
     public Sprite(int numFrames, int w, int h, String imgRoute) {
         this();
         BufferedImage bigImg = null;
-        try {
+        try 
+        {
 //            bigImg= ImageIO.read(new File("sheet.png"));
             bigImg = ImageIO.read(this.getClass().getResource(imgRoute));
-        } catch (IOException ioe) {
-        }
+        } 
+        catch (IOException ioe) 
+        { }
 
         Image[] im = new Image[numFrames];
 
@@ -185,8 +247,8 @@ public class Sprite implements Movement {
         this.frames = im;
         this.currentFrame = this.frames.length - 1;
         this.lastFrame = this.frames.length - 1;
-        this.w = this.frames[FRAME_FIRSTFRAME].getWidth(null);
-        this.h = this.frames[FRAME_FIRSTFRAME].getHeight(null);
+        this.w = this.frames[ FRAME_FIRSTFRAME ].getWidth(null);
+        this.h = this.frames[ FRAME_FIRSTFRAME ].getHeight(null);
 
                  //ESTE CODIGO DEBE DE SERVIR PARA LOS OTROS CONSTRUCTORES
 //    BufferedImage bigImg = ImageIO.read(new File("sheet.png"));
@@ -499,8 +561,13 @@ public class Sprite implements Movement {
         return frames;
     }
 
-    public void setFrames(Image[] frames) {
+    synchronized public void setFrames(Image[] frames) {
         this.frames = frames;
+        this.currentFrame = frames.length - 1;
+        this.lastFrame = frames.length - 1;
+        this.w = frames[ FRAME_FIRSTFRAME ].getWidth(null);
+        this.h = frames[ FRAME_FIRSTFRAME ].getHeight(null);
+        
     }
 
     public int getCurrentFrame() {
@@ -597,20 +664,20 @@ public class Sprite implements Movement {
         this.animationSpeedLimit = animationSpeedLimit;
     }
 
-    public AnimationState getCurrentState() {
-        return currentState;
+    public AnimationState getCurrentAnimationState() {
+        return currentAnimationState;
     }
 
-    public void setCurrentState(AnimationState currentState) {
-        this.currentState = currentState;
+    public void setCurrentAnimationState(AnimationState currentState) {
+        this.currentAnimationState = currentState;
     }
 
     public Map<AnimationState, int[]> getSubAnimationStack() {
-        return SubAnimationStack;
+        return subAnimationStack;
     }
 
     public void setSubAnimationStack(Map<AnimationState, int[]> SubAnimationStack) {
-        this.SubAnimationStack = SubAnimationStack;
+        this.subAnimationStack = SubAnimationStack;
     }
 
 
@@ -634,6 +701,57 @@ public class Sprite implements Movement {
 
     
     /**
+     * this method is used when the sprite has several subanimations
+     * @param g2 
+     */
+    public void drawSubanimation(Graphics2D g2, boolean stopAtEnd ) 
+    {
+        if (visible) 
+        {
+        
+        g2.drawImage(frames[ subAnimationStack.get(currentAnimationState )[ subanimationCurrentPos ] ],
+        (int) x, 
+        (int) y,
+        null);
+            
+            animationSpeed++;
+        if( animationSpeed >= animationSpeedLimit )
+        {     
+            animationSpeed = 0;
+    
+            
+            subanimationCurrentPos ++;
+    
+                //check whether the animation must begin again loop must
+                if( subanimationCurrentPos > subanimationLastPos )
+                {
+                    
+                    //if animationforward, when is the las frame
+                    //gonna begin again
+                    if( stopAtEnd )
+                    {
+                    subanimationCurrentPos = subanimationLastPos;
+                    }
+                    else
+                    {
+                        subanimationCurrentPos = 0;       
+                    }
+                    
+                        
+                }//
+            
+            
+        }//if animationspeed
+    
+        
+       
+        
+        }//if visible
+        
+    }//
+    
+    
+    /**
      * metodo que cambialos frames del sprite, esta funcion es para que se utilice en el
      * metodo de update, no en el render, loop indica si la animacion se repite hacia adelante 
      * o al reverso
@@ -642,13 +760,16 @@ public class Sprite implements Movement {
      */
     public boolean updateAnimation(int loop)
     {
+        //this method wont process anything if the sprite is not visible
+        if( !visible )return false;
+        
         animationSpeed++;
         if( animationSpeed >= animationSpeedLimit)
         {     
             animationSpeed=0;
             
-        
-        switch (loop) {
+        switch ( loop ) 
+        {
 			case 1:
 				currentFrame++;
                                     if (currentFrame >= lastFrame)
@@ -685,20 +806,29 @@ public class Sprite implements Movement {
     }//
     
     
-    public void updateSubanimation()
-    {
-     animationSpeed++;
-        if( animationSpeed >= animationSpeedLimit)
-        {     
-             animationSpeed=0;
-            currentFrame++;
-            if(currentFrame >= endFrame)
-            {
-            currentFrame=iniFrame;
-            }
-        }
-        
-    }//
+    /**
+     * this function is to make the animation when the sprite have
+     * implemented subanimationstack, this function goes in update method
+     */
+//    public void updateSubanimation()
+//    {
+//            animationSpeed++;
+//        if( animationSpeed >= animationSpeedLimit )
+//        {     
+//            animationSpeed = 0;
+//            
+//            
+////            this.animation
+//            
+//            if( currentFrame == endFrame )
+//            {
+//            currentFrame = iniFrame - 1;//less one to start fom initial frame
+//            }
+//            
+//            currentFrame++;
+//        }
+//        
+//    }//
     
     
     //-- falta otro metodo draw
@@ -707,10 +837,13 @@ public class Sprite implements Movement {
      * especificado es menor o mayor al numero total de frames del sprite, este
      * regresa el primer frame
      *
+     * return image at specified frame,if specified is more of maximum
+     * or less that minimum first frame will be taken
      * @param frame
      * @return
      */
-    public Image getImageFrame(int frame) {
+    public Image getImageFrame(int frame) 
+    {
         if (frame < 0 || frame > frames.length - 1) {
             return frames[FRAME_FIRSTFRAME];
         }
@@ -731,9 +864,22 @@ public class Sprite implements Movement {
                 && y >= this.y && y <= this.y + this.h);
     }//is touched
 
+    
+    
+    /**
+     * this is to move the sprite depending on the
+     * values for spdx and spdy
+     */
+    @Override
+    public void move() 
+    {
+        move(speedX,speedY);
+    }//
+    
+    
     /**
      * para mover el sprite sobre el eje X
-     *
+     *to move the sprite along X axis
      * @param speedX
      */
     @Override
@@ -837,15 +983,255 @@ public class Sprite implements Movement {
         }
     }
 
+    
+    
+    
+    /**@TODO it doesnt work for scaled screen yet
+     * calculate rotation angle from sprite center towards
+     * X & Y, and set degrees variable with that value
+     * this method can be called in update function, or
+     * when click is pressed or released
+     * @param x
+     * @param y
+     * @return 
+     */
+    public double calculateAngle( int x, int y )
+{
+        float vx = x - this.getX();
+        float vy = y - this.getY();
+        degrees =  Math.atan2( vy, vx ) * ( 180 / Math.PI ); // Math.atan2( y ,x );
+  
+//        System.out.println("angles: "+degrees );
+    return degrees;
+}
+    
+    
+    /**@TODO it doesnt work for scaled screen yet
+     * calculate rotation angle from sprite center towards
+     * another sprite center, and set degrees variable 
+     * with that value this method can be called in 
+     * update function, or when click is pressed or released
+     * @param spr
+     * @return 
+     */
+    public double calculateAngle( Sprite spr )
+{
+    
+    return calculateAngle( 
+            (int)spr.getCenterX(),
+            (int)spr.getCenterY() );
+}
+    
+    
+    /**
+     * this function return the near sprite to this sprite
+     * that is inside view port of the game
+     * @return 
+     */
+    public Sprite spriteNearest( List<Sprite>spriteList, GameLevel level )
+    {
+        
+        //if there is not list return nulll
+        if( spriteList.isEmpty() )return null;
+        
+        
+        List<Sprite> nearList = new ArrayList<>();
+        
+        //get all sprites inside gameView
+        for( Sprite spr : spriteList )
+        {
+        
+            if( spr.isInsideView(level) )
+            {
+            nearList.add(spr);
+            }
+            
+            
+        }//for
+        
+        
+        
+        int[] magList = new int[ spriteList.size() ];
+        for( int i=0; i< spriteList.size() ;i+=1 )
+        {
+            
+            Sprite spr = spriteList.get( i );
+            
+            float vx = spr.getCenterX() - this.getCenterX();
+            float vy = spr.getCenterY() - this.getCenterY();
+            float mag = (float) Math.sqrt((vx * vx) + (vy * vy));
+		
+	    magList[ i ] = (int)mag;
+            
+                
+        }
+        
+        
+        //getthing the min value Pos of the array
+        int minValue = magList[0];
+        int minValuePos = 0; 
+        for ( int i = 1; i < magList.length; i++) 
+        {
+            if ( magList[i] < minValue ) 
+            {
+                minValue = magList[ i ];
+                minValuePos = i;
+            }
+        }//    
+        
+    
+     return spriteList.get( minValuePos );
+    }
+    
+    
+    /**
+     * @param spriteList
+     * @param level * @TODO quit al repeated code
+     * this function return the near sprite to this sprite
+     * that is inside view port of the game
+     * @param range
+     * @return 
+     */
+    public Sprite spriteNearest( List<Sprite>spriteList, GameLevel level, int range )
+    {
+        
+        //if there is not list return nulll
+        if( spriteList.isEmpty() )return null;
+        
+        
+        List<Sprite> nearList = new ArrayList<>();
+        
+        //get all sprites inside gameView
+        for( Sprite spr : spriteList )
+        {
+        
+            if( spr.isInsideView(level) )
+            {
+            nearList.add(spr);
+            }
+            
+            
+        }//for
+        
+        
+        
+        int[] magList = new int[ spriteList.size() ];
+        for( int i=0; i< spriteList.size() ;i+=1 )
+        {
+            
+            Sprite spr = spriteList.get( i );
+            
+            float vx = spr.getCenterX() - this.getCenterX();
+            float vy = spr.getCenterY() - this.getCenterY();
+            float mag = (float) Math.sqrt((vx * vx) + (vy * vy));
+		
+            //if distance is less or equal than permited range
+            //then put inside the array to check later
+            if( mag <= range )
+            {
+                magList[ i ] = (int)mag;
+            }
+	    
+        }
+        
+        
+        //getthing the min value Pos of the array
+        int minValue = magList[0];
+        int minValuePos = 0; 
+        for ( int i = 1; i < magList.length; i++) 
+        {
+            if ( magList[i] < minValue ) 
+            {
+                minValue = magList[ i ];
+                minValuePos = i;
+            }
+        }//    
+        
+    
+     return spriteList.get( minValuePos );
+    }//
+    
+    
+    public void orbit( Sprite spr, int radio )
+    {
+        
+        this.x = spr.getCenterX() + ( (int)Math.cos( ( double) degrees ) * radio );
+        this.y = spr.getCenterY() - ( (int)Math.sin( ( double) degrees ) * radio );
+        
+    }//
+    
+    /**
+     * this function will change X and y position of this sprite to
+     * orbit along centerx and centery, the distance will be the radio
+     * @param centerX x acis of the center to orbit
+     * @param centerY y acis of the center to orbit
+     * @param angle angle to orbit
+     * @param radio distance from the center to orbit
+     */
+    public void orbit( float centerX, float centerY, int angle, int radio )
+    {
+        
+        
+        System.out.println("cx -"+centerX+"  cy -"+centerY);
+        
+        this.x = centerX + ( (float)Math.cos( Math.toRadians( angle ) ) * radio );
+        this.y = centerY - ( (float)Math.sin( Math.toRadians( angle ) ) * radio );
+        //NOTE: if is centerY + will be clockwise, if is centerY - will be counter clockwise
+        
+        
+    }//
+    
+    
+    
+    
+    /**
+     * to know if the sprite center is inside the view
+     * NOTE: check if level has 0 cordinate in X and Y exis
+     * @param level
+     * @return true if the center sprite is inside the view , false otherwise
+     
+     */
+    public  boolean isInsideView( GameLevel level )
+    {
+    return ( getCenterX() >= 0 && 
+             getCenterX() <= ( 0 + level.getViewWidth() ) &&  
+             getCenterY()>= 0 &&
+             getCenterY() <= ( 0 + level.getViewHeight()) );
+    
+    }
+    
+    /**
+     * checl wheter the sprite is outside the view, usually
+     * to put out of the game, delete , etc.
+     * NOTE: check if level has 0 cordinate in X and Y exis
+     * @param level
+     * @return 
+     */
+    public  boolean isOutsidePort( GameLevel level )
+    {
+        
+        return ( getCenterX() < 0 ||
+                 getCenterX() > level.getViewWidth() ||
+                getCenterY() < 0 ||
+                getCenterY() > level.getViewHeight() ); 
+    
+    }
+        
+    
     @Override
     public String toString() {
         return "Sprite{" + "x=" + x + ", y=" + y + ", w=" + w + ", h=" + h + ", speedX=" + speedX + ", speedY=" + speedY + ", gravity=" + gravity + ", friction=" + friction + ", visible=" + visible + ", animationEnd=" + animationEnd + ", imageSpeed=" + imageSpeed + ", frames=" + frames + ", currentFrame=" + currentFrame + ", lastFrame=" + lastFrame + '}';
     }
 
-    public int getDegrees() {
+    public double getDegrees() {
         return degrees;
     }
 
+    /**
+     * with this method sprite degrees can be set and with that,
+     * you can only use drawRotate from render method
+     * @param degrees 
+     */
     public void setDegrees(int degrees) {
         this.degrees = degrees;
     }
@@ -854,26 +1240,59 @@ public class Sprite implements Movement {
         return jump;
     }
 
+    
+    /**
+     * this make this sprite able to jump, this function is only to specify if the sprite 
+     * is going to jump, there is another function called processjump and there is functionality
+     * to change y axis of the sprite to make the jump, 
+     * every time this function is called, jumpvalue is reseted to default jumpForce*=-1;
+     * @param jump 
+     */
     public void setJump(boolean jump) {
         this.jump = jump;
         setJumpValue(jumpForce);
     }
 
+    
+    
+    
     public float getJumpForce() {
         return jumpForce;
         
     }
 
-    public void setJumpForce(float jumpForce) {
+    
+    
+    /**
+     * this function set the jump force, the max limit that jumpvalue
+     * will take every time jumvalue is decreased by the gravity
+     * NOTE:  jumpforce =5, jumpvalue = -5, gravity 0.37
+     * every frame: jumpvalue += gravity
+     * if( jumpvalue >= jumpforce) jumpvalue = jumpforce
+     * that is how it works!
+     * @param jumpForce 
+     */
+    public void setJumpForce(float jumpForce) 
+    {
         this.jumpForce = jumpForce;
         setJumpValue(jumpForce);
     }
     
-    public void setJumpValue(float jumpValue)
+    
+    /**
+     * this set the jump value to jumpforce * -1;
+     * this way it will then go - y Axis ( up ) and then
+     * + y Axis ( down)
+     */
+    private void setJumpValue(float jumpValue)
     {
-    this.jumpValue=jumpForce * -1;
+    this.jumpValue = jumpForce * -1;
     }
 
+    public float getJumpValue()
+    {return this.jumpValue;}
+    
+    
     public boolean isExecuteJump() {
         return executeJump;
     }
@@ -913,6 +1332,26 @@ public class Sprite implements Movement {
     public void setRoomBoundBottom(int roomBoundBottom) {
         this.roomBoundBottom = roomBoundBottom;
     }
+
+    public static int getSpriteId() {
+        return spriteId;
+    }
+
+    public static void setSpriteId(int spriteId) {
+        Sprite.spriteId = spriteId;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+    
+    
+    
+    
     
     /**
      * funcion que establece los frames inicial y final de la subanimacion 
@@ -920,39 +1359,55 @@ public class Sprite implements Movement {
      * @param iniFrame
      * @param endFrame
      */
-    public void setSubanimation(int iniFrame, int endFrame)
-    {
-        if(this.iniFrame == iniFrame && this.endFrame == endFrame)
-            return;
+//    public void setSubanimation(int iniFrame, int endFrame)
+//    {
+//        if(this.iniFrame == iniFrame && this.endFrame == endFrame)
+//          return;
         
-        this.iniFrame=iniFrame;
-        this.endFrame=endFrame;
-        this.currentFrame=iniFrame;
-        this.lastFrame=endFrame;
+//        this.iniFrame=iniFrame;
+//        this.endFrame=endFrame;
         
-    }//
+        
+//        
+//        this.currentFrame=iniFrame;
+//        this.lastFrame=endFrame;
+//        
+//    }//
 
-    /**
-     * metodo que toma un arreglo de enteros como subanimacion
-     * 
-     * @param subanimation 
-     */
-        public void setSubanimation(int [] subanimation)
-    {
-        setSubanimation(subanimation[0], subanimation[ subanimation.length-1 ]);
-    }//
+//    /**
+//     * metodo que toma un arreglo de enteros como subanimacion
+//     * 
+//     * this method takes and array of in like subanimation
+//     * @param subanimation 
+//     */
+//        public void setSubanimation(int [] subanimation)
+//    {
+//        setSubanimation(subanimation[0], subanimation[ subanimation.length-1 ]);
+//    }//
         
 /**
  * metodo que establece la subanimacion por medio de un estado de animacion,
  * este estado debe de estar cargado en el stack de subanimacion
+ * NOTE: si se implementa subanimacion, se debe de usar el metodo 
+ * drawSubanimation()
+ * 
+ * 
  * @param subanimation 
  */        
-        public void setSubanimation(AnimationState subanimation)
+     public void setSubanimation(AnimationState subanimation)
     {
-        if(SubAnimationStack == null)
-            return;
+        if(subAnimationStack == null)
+           return;
+
         
-        setSubanimation(SubAnimationStack.get(subanimation));
+        currentAnimationState = subanimation;
+        
+        subanimationCurrentPos= 0;
+        //@TODO aqui puede haber algun pedo
+        subanimationLastPos = subAnimationStack.get( subanimation ).length - 1;
+        
+        
+//        setSubanimation( subAnimationStack.get(subanimation) );
     }//
     
         
@@ -961,51 +1416,148 @@ public class Sprite implements Movement {
     
     /**
      * renderiza al sprite rotado segun los grados establecidos
+     * 
+     * render the sprite rotated the specified degrees
+     * NOTE: this function goes in render
      * @param g2
      * @param degrees
      */
     public void drawRotate(Graphics2D g2, int degrees)
     {
-        AffineTransform oldTransform =  g2.getTransform();
-//        Graphics2D g2d = (Graphics2D)g;
+        if(visible)
+        {
+             AffineTransform oldTransform =  g2.getTransform();
+             //Graphics2D g2d = (Graphics2D)g;
              g2.translate( x , y );
              AffineTransform trans = new AffineTransform();
              trans.setToIdentity();
              
-//             trans.setTransform(identity);
+            //trans.setTransform(identity);
              trans.rotate( Math.toRadians(degrees), this.getHalfWidth()  , this.getHalfHeight() );
              g2.drawImage(frames[currentFrame], trans, null);
              
-    g2.setTransform(oldTransform);
-             
+            g2.setTransform(oldTransform);
+        
+        }
+          
     }//
   
     
+      /**
+     * renderiza al sprite rotado segun los grados establecidos
+     * 
+     * render the sprite rotated , to make this work build in 
+     * degrees variable must be set each step
+     * NOTE: this function goes in render
+     * @param g2
+     */
+    public void drawRotate( Graphics2D g2 )
+    {
+        if(visible)
+        {
+             AffineTransform oldTransform =  g2.getTransform();
+        
+             g2.translate( x,y );
+             AffineTransform trans = new AffineTransform();
+             trans.setToIdentity();
+             trans.rotate( Math.toRadians( this.degrees ) , this.getHalfWidth()  , this.getHalfHeight()  );
+             g2.drawImage( frames[ currentFrame ] , trans, null );
+             
+             g2.setTransform(oldTransform);
+         
+        }
+            
+    }// 
+    
+    
+    
+    
+    /**
+     * this method process the jump ( y position ) of the player
+     * when it jump
+     */
     public void processJump()
     {
-        if(jump)
+        if( jump )
         {
         
-//             jumpForce -= Config.Config.GRAVITY;
-//            float j= (jumpForce * -1);
-//                  jumpValue += 0.098;
-                  jumpValue += gravity; //este valor define que tan largo brinca
-            if(jumpValue >= jumpForce+2)
-            {jumpValue = jumpForce+2;}
+            //este valor define que tan largo brinca
+            //jumpvalue means how higher the player jumps
+            //every time gravity is increased and eventually
+            //make jumpValue goes downward
+            jumpValue += gravity; 
             
-            y+=jumpValue;
+            //every tick the jump get a limit
+                if( jumpValue >= jumpForce )
+                {
+                    jumpValue = jumpForce;
+                }
             
+//            System.out.println( y+"  jumpvalue "+jumpValue);    
+            y += jumpValue;
             
-//            if(y>=350) 
-//            {
-//                y=350; 
-//                jump=false;
-//                setJumpValue(jumpForce);
-//            }
         }//
     
     }//
     
+    
+    
+    /**
+     * this function show a trayectory of a ballistic object thrown away
+     * this must be on renderXXX function
+     * NOTE: needs more testing
+     * @param g2
+     * @param potency
+     * @param degrees
+     * @param numberOfPoints this is the number of point that will be shown
+     * by this function
+     * 
+     * 
+     */
+    public void drawBalisticTrayectory( 
+            Graphics2D g2, 
+            float potency, 
+            int degrees,
+            int numberOfPoints)
+    {
+    
+        //potency
+        float v0 = potency;
+        
+        float v0x =  ( (float)Math.cos( ( double) degrees )  * v0 );
+        float v0y = - ( (float)Math.sin( ( double) degrees ) * v0 );
+        
+//        System.out.println(" == vx "+v0x+" vy "+v0y);
+        
+        //initial position where point must start
+//        float x0 = ;
+//        float y0 = ;
+            
+        float g = 9.81f;
+        
+//        for( int t = 0; t < 30; t+=1 )// 30/v0 )
+        for( float t = 0; 
+             t < numberOfPoints; 
+            t+=1 ) //t =  (t + numberOfPoints/v0) )
+        {
+        
+            
+//            position of x e y along time
+            float xi = v0x * t + this.getCenterX();
+            float yi = 0.5f * g * (float)Math.pow( t, 2 ) + v0y * t +this.getCenterY();
+            
+            System.out.println(" >>> vx "+xi+" vy "+yi);
+            
+//            g2.setColor( Color.BLACK );
+//            g2.drawOval( (int)xi, (int)yi, 4, 0);
+            g2.setColor( Color.GREEN );
+            g2.drawOval( (int)xi, (int)yi, 4, 0);
+            
+        }//
+                
+        
+    }//processBalistic
+ 
     
     /**
      * checa si el sprite se va a salir por el limite izquierdo y no lo deja
@@ -1054,6 +1606,16 @@ public class Sprite implements Movement {
            setY(  roomBoundBottom - getH() );
            }
     }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    
     
      
 }//class

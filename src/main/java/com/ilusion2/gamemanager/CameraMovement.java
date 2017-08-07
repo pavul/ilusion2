@@ -1,5 +1,5 @@
 
-package com.ilusion2.room;
+package com.ilusion2.gamemanager;
 
 /**
  *this interface is only for camera class

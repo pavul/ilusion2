@@ -12,6 +12,13 @@ package com.ilusion2.sprite;
  */
 public interface Movement 
 {
+ 
+    
+    /**
+     * this is to move the sprite depending on the
+     * values for spdx and spdy
+     */
+    public void move();
     
     /**
      * se mueve el sprite en el eje X segun  speedX

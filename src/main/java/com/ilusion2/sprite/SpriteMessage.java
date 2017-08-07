@@ -8,7 +8,7 @@ package com.ilusion2.sprite;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-/**
+/** NOT TESTED
  * clase que se usa principalmente para mostrar algunos datos como:
  * el dano provocado a los enemigos o jugadores, dinero recabado, experiencia,etc
  * es el tipico mensaje que sale cuando se golpea a un enemigo y sale un numero

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.ilusion2.room;
+package com.ilusion2.gamemanager;
 
 /**
  * clase que crea una camara que renderiza el room a lo largo de una ventana de puerto

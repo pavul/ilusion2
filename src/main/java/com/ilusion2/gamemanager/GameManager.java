@@ -1,9 +1,7 @@
 
-package com.ilusion2.room;
+package com.ilusion2.gamemanager;
 
-
-import com.ilusion2.audio.Sound;
-import com.ilusion2.control.GpioGameControl;
+import com.ilusion2.exception.EmptyLevelStackException;
 import com.ilusion2.level.GameLevel;
 import java.awt.Canvas;
 import java.awt.Graphics;
@@ -16,6 +14,9 @@ import java.util.Map;
 import java.util.logging.Logger;
 import com.ilusion2.net.ClientSocket;
 import com.ilusion2.net.Server;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import javax.swing.JFrame;
 
 
 /**
@@ -27,22 +28,43 @@ import com.ilusion2.net.Server;
  * 
  * @author pavulzavala
  */
-public class Room extends Canvas implements 
+public class GameManager extends Canvas implements 
         Runnable
 {
     private static final long serialVersionUID = -6489796311509601114L;
-
-    //numeros que va a tener el buffer
-    protected final int BUFFER_NUMBER=3;
     
-    //thread principal del juego
-    //principal thread of the game
+    /**
+     * graphics object for rendering
+     */
+    public Graphics g = null;
+    
+    //numeros que va a tener el buffer
+    protected final int BUFFER_NUMBER = 3;
+    
+    /**
+     *
+     thread principal del juego
+     principal thread of the game
+     */
     protected Thread gameThread;
     
-    //variable indica si el juego esta corriendo o no
-    //indicate if the game is running or not
+    
+    /**
+     * to handle the frame
+     */
+    protected JFrame gameContainer;
+    
+    /**
+     *variable indica si el juego esta corriendo o no
+     indicate if the game is running or not 
+     */
     protected boolean running;
     
+   /**
+    this flag indicate when a room is loaded to 
+    show it in full screen mode
+    */
+    protected boolean fullScreen = false;
     
     //variable para pausar el juego
     //this variable is a flag that indicate if the game is paued
@@ -52,48 +74,80 @@ public class Room extends Canvas implements
    //we store FPS count
     protected int frames; //contador de FPS
    
-   protected int offsetX;  //x_ofset del room para que se renderize el area del dibujo
+    protected int offsetX;  //x_ofset del room para que se renderize el area del dibujo
+   
+   
+   //these variables are use to fit the game view in the device screen
+    //if is gonna be player on full screen
+    protected double xScale = 1;
+    protected double yScale = 1;
+    
    
 //   protected GameState gameState; //estado del juego
    
 //   this variable saves the reference to current level that we can
 //   use when we wan to change lvl or use tome util methods
+    /**
+     * this contains the reference to the current level 
+     * that is rendered
+     */
    protected GameLevel currentLevel;
    
    //esta estructura se utiliza para guardar aqui todos los objetos que
    //necesitan estar en todo el juego, pueden ser datos como el usuario
    //, puntajes, upgrades, etc/
-   //this structure is used to store all data that is persistent
-   //between levels, like, score, upgrades, items, general HUD, etc, because each
-   //level can set new ammount of data when it starts
+   /**
+    *this structure is used to store all data that is persistent
+    between levels, like, score, upgrades, items, general HUD, etc, because each
+    level can set new ammount of data when it starts
+    */
    protected Map< String, ? >persistentData;
    
    
    //stack que mantiene todos los niveles
-   //this is the stack where we have all levels for the game
+   /**
+    * this is the stack where we have all levels for the game
+    */
    Map<String, GameLevel> levelStack;
    
-   //this variable is to stablish first level to load for default
+   /**
+    * this variable is to stablish first level to load for default
+    */
    String firsLvlToLoad;
    
    
    //objeto para hacer las transiciones del room
-   //this object help room to make transition animations, when
-   //a level change to another
+   /**
+    * this transition object is to show transition animations
+    * from one level to another
+    */
    protected Transition transition;
     
    //para saber los frames count
    //these variables are used for testing purposes, to know
    //the ammount of frames counted each cicle
-   protected int frameCount=1; //30 fps
+   /**
+    * this is to now frame count, this variable
+    * can be also shown in HUD data for testing purposes 
+    */
+   protected int frameCount = 1; //30 fps
    int count;//
-   int fps=60;
+   int fps = 60;
    
    //variables para cliente servidor
    //these variables are only useful if we are using
    //server/client architecture, i mean, an online game
    //@TODO still need a lot of work
+   /**
+    * if this game is for multiplayer, then this will create
+    * the server socket
+    */
    Server gameServer;
+   
+   /**
+    * client socket in case this game need to connect to a multiplayer
+    * game
+    */
    ClientSocket gameClient;
    
    /**
@@ -107,10 +161,6 @@ public class Room extends Canvas implements
    private boolean serverApplication; 
    
    
- 
-   
-   
-   
     /**
      * constructor 1 este constructor crea un room por default con
      * width 640 y heigth 480, se toma la referencia de la ventana que se ve
@@ -122,14 +172,51 @@ public class Room extends Canvas implements
      * @param lvltoLoad primer nivel a cargar
      * @param levelStack listado de niveles que hay en el juego
      */
-    public Room(String lvltoLoad, Map<String, GameLevel>levelStack)
+    public GameManager(String lvltoLoad, Map<String, 
+            GameLevel>levelStack, boolean fullScreen) 
+           throws EmptyLevelStackException 
     {
         fps = 60;//setea por default a 60 frames por segundo
+        
+        this.fullScreen = fullScreen;
+        
+        if( null == levelStack )
+        {
+            System.out.println("::: level stack is null");
+            throw new NullPointerException( "Level Stack cannot be null" );
+        }
+        if( levelStack.isEmpty() )
+            throw new EmptyLevelStackException( "Level Stack should have at least one level" );
+        
+        
         this.levelStack = levelStack;
-        this.firsLvlToLoad = lvltoLoad;
+        
+        //if there is no current level it will take the first of the stack
+        //this.currentLevel = levelStack.get( lvltoLoad );
+         firsLvlToLoad = lvltoLoad;
+         loadLvl( firsLvlToLoad );
     }//
     
  
+    
+    /**
+     * this constructor accept the game level that is gonna be
+     * loaded/shown
+     * @param gamelevel 
+     */
+    public GameManager( GameLevel gamelevel , boolean fullScreen )
+    {
+    
+        fps = 60;//setea por default a 60 frames por segundo
+        this.fullScreen = fullScreen;
+         
+        this.fullScreen = fullScreen;
+        
+         loadLvl( gamelevel );
+        
+    }//
+    
+    
     /**
      * constructor 2 este constructor crea un room por default con
      * width 640 y heigth = width /12 * 9, se toma la referencia de la ventana que se ve
@@ -170,7 +257,7 @@ public class Room extends Canvas implements
     public final synchronized void gameStart() 
     {
             //nivel a cargar por default, este se establece en el constructor 
-            loadLvl( firsLvlToLoad );
+            //loadLvl( firsLvlToLoad );
             running = true;  
             gameThread = new Thread( this );
             gameThread.start();       
@@ -224,23 +311,26 @@ public class Room extends Canvas implements
         if(serverApplication) return;
            
         
-        if(this.getGraphicsBufferStrategy() ==null )
-          return;
+        if( this.getGraphicsBufferStrategy() == null )
+            return;
         
                 //se obtienen los graficos
-                Graphics g = this.getGraphicsBufferStrategy();
+                //Graphics 
+                g = this.getGraphicsBufferStrategy();
 
-
+           
                 if(g != null)
                 {
                    try
                    {
-                      currentLevel.render(g);  
+                      currentLevel.render( (Graphics2D) g );  
                    }
                    catch(Exception e)
-                   {  }
+                   {  
+                   e.printStackTrace();
+                   }
 
-                this.closeGraphicsBufferStrategy(g, this.getBufferStrategy());
+                this.closeGraphicsBufferStrategy( (Graphics2D) g, this.getBufferStrategy());
 
                 }//if !=null
         
@@ -316,26 +406,27 @@ public class Room extends Canvas implements
         if(!pause)
         {
         
-                 long now= System.nanoTime();
+                long now= System.nanoTime();
                 delta+=(now - lastTime)/ns;
                 lastTime = now;
                 while(delta >= 1)
                 {
                     
                 update();
-//                 render();
+                //render();
                 delta--;
                 
                 }
                 
                 if(running)
                     render();
+                
                 //codigo para checar los frames
                 frames++;
                 if(System.currentTimeMillis() - timer > 1000)
                 {
                 timer +=1000;
-//                System.out.println("FPS: "+frames);
+                //System.out.println("FPS: "+frames);
                 frames=0; 
                 }
              
@@ -481,37 +572,71 @@ public class Room extends Canvas implements
        * from certain level to another, then the current level is then eraded
        * from memory and the listeners attached to it, too
        * 
-     * @param levelToLoad
+       * @param levelToLoad
        * @return 
+       * @deprecated used until examples are done with new method
        */
-      public synchronized boolean loadLvl(String levelToLoad)
+      public synchronized boolean loadLvl( String levelToLoad )
       {
-          System.out.println(" SE CARGA NIVEL: "+levelToLoad);
-          if(currentLevel != null)
-          {
-              //si hay nivel se elimina y se pone a null para liberar recursos 
-          currentLevel.disposeLevel();
-          currentLevel.removeKeyListener( this );
+          //first we check if the level to load is already loaded
+//          if( currentLevel.equals( levelStack.get( levelToLoad )  )  )
+//          {
+//              System.out.println(" ::: regreso false, el nivel ya esta cargado ");
+//              return false;
+//          
+//          }
           
-          //se quitan los sonidos de fondo del nivel
-//          currentLevel.getMp3Player().pause();
-//          currentLevel.getMp3Player().removeAll();
+//          if( null == levelStack.get( levelToLoad ) )
+//          {
+//          levelStack.get( levelToLoad ) = new MazeXample( 480, 320, 480, 320, null);
+//          }
+//          
           
-          currentLevel = null;
-          }//
+          //savig current level in previous level
+          GameLevel previousLevel = currentLevel;
           
           //se establece el nuevo nivel actual
+          //current level now has the new reference
           currentLevel =  levelStack.get( levelToLoad );
           
           //se establece el keyListener
-          currentLevel.addKeyListener(this);
+          //ading keylisterner to curlevel
+          currentLevel.addKeyListener( this );
           
-          //
-          currentLevel.setRoom(this);
+          //ading mouselisterner to curlevel
+          currentLevel.addMouseListener( this );
+          
+          //currentLevel now has this room
+          currentLevel.setGameManager( this );
+          
+          if( fullScreen )
+              setFullScreen();
+          
+          
+            if(previousLevel != null)
+          {
+          //si hay nivel se elimina y se pone a null para liberar recursos 
+          //if there is level we delete it and remove the listeners to free
+          //resources
+//          previousLevel.disposeLevel();
+          previousLevel.removeKeyListener( this );
+          previousLevel.removeMouseListener( this );
+          
+          //se quitan los sonidos de fondo del nivel
+          //currentLevel.getMp3Player().pause();
+          //currentLevel.getMp3Player().removeAll();
+          
+//          currentLevel = null;
+          }// !=null
           
           try
           {
-              currentLevel.init();
+              //if level is not marked as persistent
+              //then it will init all again ( start over again the level )
+              if( !currentLevel.isPersistent() )
+              {
+                   currentLevel.init();
+              }
 //              gameState = GameState.PLAYING;
               return true;
           }
@@ -520,12 +645,94 @@ public class Room extends Canvas implements
               return false;
           }
           
-      }
+      }//load level
       
+      
+      /**
+       * this function is used to load a new level
+       * @param gamelevel
+       * @return 
+       */
+       public synchronized boolean loadLvl( GameLevel gamelevel )
+      {
+         
+          //save in another place the level that gonna change
+         //and remove listeners
+         GameLevel previousLevel = currentLevel;
+         
+          
+          /**
+           * if is the first time to load the game level, then
+           * this current level will be null
+           */
+          if( null != currentLevel )
+          {
+            //if current level != null means this is not
+            //the first level to load
+            currentLevel.setGameState( GameState.LOADING );
+            
+            
+            //if current level != null means this is not the 
+            //the first level to load, so it can remove listeners
+            previousLevel.removeKeyListener( this );
+            previousLevel.removeMouseListener( this );
+            
+          }//
+          
+         
+          
+        //current level now has the level must show
+        currentLevel = gamelevel;
+        currentLevel.addKeyListener( this );
+        currentLevel.addMouseListener( this );
+        
+        //currentLevel now has this room
+        currentLevel.setGameManager( this );
+          
+        if( fullScreen )
+           setFullScreen();
+        
+        
+        
+        //if not persisten init the level again
+        if( !currentLevel.isPersistent() )
+        {
+            //this automatically changes gameState
+            //the state to PLAYING
+            currentLevel.init();
+            
+        }//
+        
+        
+        //finally we change dimensions of level
+        if( gameContainer != null )
+        gameContainer.setSize( getScaledWindowSize() );
+        
+        previousLevel = null;
+        
+          return true;
+      }//loadlevel2
+      
+       
+       /**
+        * THIS IS USED TO IMPLEMENT YOUR OWN WAY TO CHANGE FROM
+        * ONE LEVEL TO ANOTHER...
+        * this method help to game manager set the required level, 
+        * but with special implementacion,by if the level to load
+        * have diferent settings, etc
+        * @param levelChanger
+        * @return 
+        */
+       public synchronized boolean loadLvl( LevelChanger levelChanger )
+       {
+       return levelChanger.setLvl();
+       }
+       
+       
       /**
        * funcion que inicia el servidor del juego, este es un socket
        * 
-       * inits this room as a server for an online game
+       * inits this gamemanager as a server for an online game
        * 
        * @param port 
        */
@@ -534,7 +741,7 @@ public class Room extends Canvas implements
         try {
             gameServer = new Server(port);
         } catch (IOException ex) {
-            Logger.getLogger(Room.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Logger.getLogger(GameManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
       }//
       
@@ -564,7 +771,7 @@ public class Room extends Canvas implements
             
         } 
         catch (IOException ex) {
-            Logger.getLogger(Room.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            Logger.getLogger(GameManager.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
       }//
       
@@ -614,6 +821,114 @@ public class Room extends Canvas implements
 
    
     
+    /**
+     * this function make the game fit the screen device, actualy is gonna 
+     * scale the game keeping the aspect ratio, for example:
+     * game view 480 x 320 (aspect ratio 1.5) 
+     * its gonna be scaled to 1350 x 900 ( aspect ratio 1.777)
+     * the xScale = 2.8125 and for yScale = 2.8125
+     * NOTE: this function have to be called 
+     */
+    private void setFullScreen()
+    {
+    
+        Dimension windowSize = getScaledWindowSize();
+        
+    //finally we set the scale to the level
+    currentLevel.setGraphicScale(  
+            windowSize.getWidth() / currentLevel.getViewWidth(), 
+            windowSize.getHeight() / currentLevel.getViewHeight() );
+    
+    }//seFullScreen
+
+    /**
+    * this method reset xScale and yScale to 1, so the 
+    * game will be shown with the normal size
+    */    
+    private void setNormalScreenMode()
+    {
+    xScale = 1;
+    yScale = 1;
+    }//
+
+    public void setFullScreen(boolean atFullScreen) 
+    {
+        this.fullScreen = atFullScreen;
+    }//
+    
+    
+    
+    
+    
+    /**
+     * this method return a dimension object with the width and heigth
+     * of the game at full screen.
+     * NOTE: use this function afther set atFullScreen to true
+     * @return 
+     */
+    public Dimension getScaledWindowSize()
+    {
+    
+    //get Screen size to scale the game
+    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    
+    /**
+     * get screen size if fullscreen is true
+     */
+    if( fullScreen )
+    {
+    
+        //we get current device width and heigth
+        double deviceWidth = screenSize.getWidth();
+        double deviceHeight = screenSize.getHeight();
+
+        //System.out.println( "valores del device: "+deviceWidth +" - "+deviceHeight );
+
+        //then we get the new width that must have the game,
+        //keeping the aspect ratio
+        float aspectRatio = (float)currentLevel.getViewWidth() / (float)currentLevel.getViewHeight();
+
+        double fixedWidth = deviceHeight * ( aspectRatio  );
+
+        screenSize.setSize( fixedWidth, deviceHeight );
+        
+    }//
+    else
+    {
+        screenSize.setSize( this.getWidth() , this.getHeight() );
+    }
+  
+    
+    return screenSize;
+    }//
+    
+    
+    /**
+     * this method return the view port width of the level
+     * ( width of the portion of the screen that must be show )
+     * @return 
+     */
+    @Override
+    public int getWidth()
+    {
+    return currentLevel.getViewWidth();   
+    }
+    
+    
+    /**
+     * this method return the view port heigth of the level
+     * ( heigth of the portion of the screen that must be show ) 
+     * @return 
+     */
+    @Override
+    public int getHeight()
+    {
+    return currentLevel.getViewHeight();
+    }
+
+    public void setgameContainer(JFrame gameContainer) {
+        this.gameContainer = gameContainer;
+    }
     
     
     

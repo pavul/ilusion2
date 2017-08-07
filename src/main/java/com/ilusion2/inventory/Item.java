@@ -23,15 +23,47 @@ import java.awt.image.BufferedImage;
  */
 public class Item 
 {
-    int itemId; //item id usefull when we click on it
-    int currentQty; //current quantity of this item, skill, etc
-    int minQty; //minimal quantity who is required for this item
-    int maxQty; //maximal quantity who is required for this item
     
-    BufferedImage icon;//icon of the item
-    String label; //label, or text of this item
-    String desc; //description of this item, skill, spell, etc
-    String attr; //attribute of this item, skill, spell, etc
+    /**
+     * item id, usefull when this item is clicked
+     */
+    private int itemId; //item id usefull when we click on it
+    
+    /**
+     * quantity of this item
+     */
+    private int currentQty; //current quantity of this item, skill, etc
+    
+    /**
+     * minimum quantity that this item can accept
+     */
+    private int minQty; //minimal quantity who is required for this item
+    
+    /**
+     * maximum quantity that this item can accept
+     */
+    private int maxQty; //maximal quantity who is required for this item
+    
+    /**
+     * image of this icon
+     */
+    private BufferedImage icon;//icon of the item
+    
+    /**
+     * label/text of this icon to show in screen
+     */
+    private String label; //label, or text of this item
+    
+    /**
+     * description of this item
+     */
+    private String desc; //description of this item, skill, spell, etc
+    
+    /**
+     * if this item is for skill, spell, etc, it can be some 
+     * string containing the attribute for that.
+     */
+    private String attr; //attribute of this item, skill, spell, etc
     
     /**
      * constructor 1, este deja libre al usuario de establecer los valores con los
