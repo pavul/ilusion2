@@ -5,8 +5,6 @@
  */
 package com.ilusion2.util;
 
-import com.ilusion2.level.GameLevel;
-import com.ilusion2.sprite.Sprite;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -16,8 +14,6 @@ import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
@@ -50,7 +46,7 @@ public class Util
      * a package in resource folder then should be added like:
      * /packageName/fontName.ttf
      * NOTE2: only TTF file format allowed
-     * 
+     * NOTE3: be careful to put the name correclty with capital letters
      * @param loadFrom class where the font must be loaded
      * @param pathFile
      * @param fontSize
@@ -60,7 +56,7 @@ public class Util
      */
     public  static Font  getFont( Class loadFrom,String pathFile, float fontSize )throws IOException, FontFormatException
     {
-        InputStream is = loadFrom.getResourceAsStream( pathFile );
+        InputStream is = loadFrom.getResourceAsStream( pathFile )  ;
 
         return Font.createFont( Font.TRUETYPE_FONT, is ).deriveFont( fontSize ) ;
         //Font a = Font.createFont( Font.TRUETYPE_FONT, is );
@@ -111,7 +107,10 @@ public class Util
     /**
      * funcion que regresa el array de imagenes, que acepta uno de los metodos
      * DRAWBGTILE
-     * @param imageFile
+     * @param numFrames
+     * @param w
+     * @param h
+     * @param imgRoute
      * @return 
      */
     public static Image[] getArrayFrames(int numFrames, int w, int h, String imgRoute )
@@ -142,12 +141,13 @@ public class Util
     public static Properties getPropertyFile(String pathFile)
     {
         Properties prop = new Properties();
-        try {
-//          prop.load(new FileInputStream(pathFile));
+        try 
+        {  
           InputStream in =  java.lang.String.class.getClass().getResourceAsStream(pathFile);
           prop.load(in);
           in.close();
-          } catch (IOException e) 
+        } 
+        catch (IOException e) 
         {
             System.out.println("No se pudo cargar el Archivo de Propiedaes: "+ pathFile);
             e.printStackTrace();
@@ -187,6 +187,9 @@ public class Util
      *         25 --> ?
      * 100 x 25 = 2500 / 50 = 50%
      * 
+     * @param proporcion
+     * @param valueProportion
+     * @param unknowProportion
      * @return 
      */
     public static int ruleOf3( 

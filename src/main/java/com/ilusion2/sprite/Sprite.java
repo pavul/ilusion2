@@ -768,7 +768,6 @@ public class Sprite implements Movement
         {     
             animationSpeed=0;
             
-            System.out.println("moving frame");
         switch ( loop ) 
         {
 			case 1:

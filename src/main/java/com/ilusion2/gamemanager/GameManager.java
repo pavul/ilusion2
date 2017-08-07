@@ -607,7 +607,7 @@ public class GameManager extends Canvas implements
           currentLevel.addMouseListener( this );
           
           //currentLevel now has this room
-          currentLevel.setRoom( this );
+          currentLevel.setGameManager( this );
           
           if( fullScreen )
               setFullScreen();
@@ -687,7 +687,7 @@ public class GameManager extends Canvas implements
         currentLevel.addMouseListener( this );
         
         //currentLevel now has this room
-        currentLevel.setRoom( this );
+        currentLevel.setGameManager( this );
           
         if( fullScreen )
            setFullScreen();

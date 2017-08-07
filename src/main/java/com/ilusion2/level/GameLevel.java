@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+
 /**
  * clase que crea un nivel predeterminado, este contiene el fondo de 
  * pantalla, jugadores, tiles, etc. 
@@ -119,7 +120,7 @@ public abstract class GameLevel
    and if we want to change from one level to another, we can do that
    using this instance 
     */
-   protected GameManager room;
+   protected GameManager gm;
    
    /**
     * object to manage input for keyboard evets
@@ -169,6 +170,8 @@ public abstract class GameLevel
    protected boolean persistent = false;
    
    
+//   protected Player player;
+   
    /**
     * constructor 1, este permite setear todos los valores del room por medio
     * de sus accesors
@@ -199,7 +202,7 @@ public abstract class GameLevel
 
     
        
-   init();
+//   init();
    }//const
    
    /**
@@ -294,6 +297,10 @@ public abstract class GameLevel
    /**
     * metodo que ejecuta la actualizacion de estado del juego
     * this method need to be implemented by the concret level
+    * 
+    * this method should be used to update the game, the 
+    * implementation of how a level must be implemented
+    * should be done in the class that extends this 
     */
     public  abstract  void update();
 //   {}//
@@ -304,7 +311,7 @@ public abstract class GameLevel
      
      * this function renders background, midleground, foreground, and HUD of the game
      * NOTE: you have to respect that order otherwise only blackground will be render
-     * @param g
+     * @param g2
     */
    public void render(Graphics2D g2)
    {
@@ -350,9 +357,20 @@ public abstract class GameLevel
         gameState =  GameState.PLAYING;
    }//
    
+   
+   /**
+    * this method is used to reset all level to
+    * their initial values, 
+    * @return 
+    */
+   public abstract boolean resetLevel();
+           
+   
    /**
     * metodo para inicializar los sprites del nivel del juego
     * user for init sprites
+    * 
+    * method used to init all sprites that gonna be used in the game
     * @return 
     */
    public abstract boolean initSprite();
@@ -360,7 +378,7 @@ public abstract class GameLevel
    /**
     * funcion para iniciar el fondo de pantalla
     * 
-    * user for init backgrounds
+    * user for init backgrounds sprites, images, etc.
     * @return 
     */
    public abstract boolean initBg();
@@ -368,6 +386,9 @@ public abstract class GameLevel
    /**
     * funcion para iniciar el HUD del juego
     * user to init HUD
+    * 
+    * this function initialize all HUD sprites, 
+    * images, data and components
     * @return 
     */
    public abstract boolean initHud();
@@ -375,6 +396,9 @@ public abstract class GameLevel
    /**
     * funcion para iniciar el Sonido del juego
     * user to init sounds
+    * 
+    * function used to initialize all sounds
+    * and resources that this level is gonna use
     * @return 
     */
    public abstract  boolean initSound();
@@ -662,12 +686,12 @@ public abstract class GameLevel
         this.cam = cam;
     }
 
-    public GameManager getRoom() {
-        return room;
+    public GameManager getGameManager() {
+        return gm;
     }
 
-    public void setRoom(GameManager room) {
-        this.room = room;
+    public void setGameManager(GameManager gm) {
+        this.gm = gm;
     }
 
     public KeyControl getKeyControl() {
