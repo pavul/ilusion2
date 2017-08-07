@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.ilusion2.audio;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,9 +21,7 @@ import javazoom.jl.player.Player;
 public class MusicPlayer 
 {
     
-    
-    private FileInputStream fis;
-    private BufferedInputStream bis;
+    private InputStream is;
     
     private Player player;
     private boolean repeat; 
@@ -53,25 +46,14 @@ public class MusicPlayer
      */
     public void play( String musicFilePath ) throws FileNotFoundException, JavaLayerException, IOException, URISyntaxException
     {
-    
         
-        System.out.println("::: playing "+musicFilePath );
-        //stop previous music if exists, to start a new one
-        //this prevent to run more than one song at same time
-        
-        
-    this.musicFilePath = musicFilePath;
-        
-    fis = new FileInputStream( 
-            new File( getClass().getResource( musicFilePath ).toURI() )  );
-    
-    totalSongLength =  fis.available();
-     
-    bis = new BufferedInputStream( fis );
-    
-    player = new Player( bis );
-    
+   this.musicFilePath = musicFilePath;
    
+   is = this.getClass().getResourceAsStream( musicFilePath );
+        
+   totalSongLength =  is.available();
+   
+    player = new Player( is );
     
         new Thread()
         {
@@ -112,14 +94,11 @@ public class MusicPlayer
     
         paused = false;
         
-    fis = new FileInputStream( 
-            new File(getClass().getResource( musicFilePath ).toURI() )  );
+    is = this.getClass().getResourceAsStream( musicFilePath );
     
-    fis.skip( totalSongLength - pauseLocation );
+    is.skip( totalSongLength - pauseLocation );
     
-    bis = new BufferedInputStream( fis );
-    
-    player = new Player( bis );
+    player = new Player( is );
     
         new Thread()
         {
@@ -170,7 +149,7 @@ public class MusicPlayer
         {
             try 
             {
-                pauseLocation = fis.available();
+                pauseLocation = is.available();
                 player.close();
             } 
             catch (IOException ex) 
@@ -206,8 +185,5 @@ public class MusicPlayer
     public void setPaused(boolean paused) {
         this.paused = paused;
     }
-    
-    
-    
     
 }//class
