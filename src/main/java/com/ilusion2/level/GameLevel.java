@@ -12,16 +12,12 @@ import com.ilusion2.gamemanager.Camera;
 import com.ilusion2.gamemanager.GameState;
 import com.ilusion2.gamemanager.ImageBackground;
 import com.ilusion2.gamemanager.GameManager;
-import com.ilusion2.sprite.Sprite;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
@@ -541,12 +537,12 @@ public abstract class GameLevel
         if(cols <=0 || rows <= 0)
         {return;}
         
-        int mapIndex=0;
-        int totalTiles= cols*rows;
+        int mapIndex = 0;
+        int totalTiles = cols*rows;
         
-        int width=tileWidth;   //img[0].getWidth(this);
+        int width = tileWidth;   //img[0].getWidth(this);
         
-        int height=tileHeight; //img[0].getHeight(this);
+        int height = tileHeight; //img[0].getHeight(this);
         
         int offsetx = cam.getOffsetX();
         int offsety = cam.getOffsetY();
@@ -558,7 +554,7 @@ public abstract class GameLevel
         for(int i=0;i < rows;i++)
                 {
                         //columnas
-                    //columns
+                        //columns
                         for(int j=0;j < cols;j++)
                         {
                          //checamos si el tile esta dentro de los limites de la camara
@@ -566,7 +562,7 @@ public abstract class GameLevel
                             
                          //if tile is inside camera limits then is rendered otherwise
                          //not , this save a lot of process
-                         if(j * tileWidth  > offsetx - tileWidth 
+                         if( j * tileWidth  > offsetx - tileWidth 
                            && (j * tileWidth) + tileWidth < offsetx + cam.getViewXPort() + tileWidth 
                            && i * tileHeight > offsety - tileHeight
                            && (i * tileHeight) + tileHeight < offsety + cam.getViewYPort() + tileHeight)

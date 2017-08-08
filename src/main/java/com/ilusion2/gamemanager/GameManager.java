@@ -203,6 +203,7 @@ public class GameManager extends Canvas implements
      * this constructor accept the game level that is gonna be
      * loaded/shown
      * @param gamelevel 
+     * @param fullScreen 
      */
     public GameManager( GameLevel gamelevel , boolean fullScreen )
     {
@@ -217,37 +218,6 @@ public class GameManager extends Canvas implements
     }//
     
     
-    /**
-     * constructor 2 este constructor crea un room por default con
-     * width 640 y heigth = width /12 * 9, se toma la referencia de la ventana que se ve
-     * para poder asi cambiar de rooms
-     * @param window 
-     * @param width 
-     */
-//    public Room(int width)
-//    {
-////        this.window=window;
-//        this();
-//    this.roomWidth=width;
-//    this.roomHeight = roomWidth / 12 * 9;
-//    }//
-    
-    /**
-     * constructor 1 este constructor crea un room por default con
-     * width y heigth definidos por el usuario, se toma la referencia de la ventana que se ve
-     * para poder asi cambiar de rooms
-     * @param window 
-     * @param width 
-     * @param height 
-     */
-//    public Room(int width, int height)
-//    {
-//        this(width);
-//        this.roomHeight = height;
-//    }//
-    
-    
-    //este debe de tener el view y el offset
     
     /**
      * inicia el thread del juego
@@ -319,7 +289,7 @@ public class GameManager extends Canvas implements
                 g = this.getGraphicsBufferStrategy();
 
            
-                if(g != null)
+                if( g != null )
                 {
                    try
                    {
@@ -336,42 +306,8 @@ public class GameManager extends Canvas implements
         
     }//renderGameState
 
-//    public void renderPause()
-//    {
-//    
-//        Graphics g = this.getGraphicsBufferStrategy();
-//        
-//        if(g != null)
-//        {
-//        g.fillRect(0, 0, Config.SCREEN_WIDTH, Config.SCREEN_HEIGHT);
-//        
-////        
-//        g.setColor(Color.white);
-////        g.drawRoundRect(10, 10, Config.SCREEN_WIDTH-20, Config.SCREEN_HEIGHT - 20, 10, 10);
-////        
-////        g.setColor(Color.BLUE);
-////        g.fillRoundRect(10, 10, Config.SCREEN_WIDTH-20, Config.SCREEN_HEIGHT - 20, 10, 10);
-////        
-//        
-////        g.setColor(Util.getRandomColor());
-//        g.drawString(" PAUSE ", Config.SCREEN_WIDTH / 2, Config.SCREEN_HEIGHT / 2);
-//        }
-//        
-//        this.closeGraphicsBufferStrategy(g, this.getBufferStrategy());
-//        
-//    }//render pause
-
-//    public GameState getGameState() {
-//        return gameState;
-//    }
-//
-//    public void setGameState(GameState gameState) {
-//        this.gameState = gameState;
-//    }
     
-    
-    
-    /**
+    /**@TODO check this to render something in load STATE
      * funcion que renderiza lo que sucede en las pantallas de cargado de 
      * recursos (LOAD SCREEN)
      */
@@ -432,11 +368,7 @@ public class GameManager extends Canvas implements
              
                 
         }//pause
-//        else
-//        {
-//        renderPause();
-//        }
-               
+        
     }//uail
         
         
@@ -494,74 +426,7 @@ public class GameManager extends Canvas implements
         bs.show();
     }
 
-//    @Override
-//    public void keyTyped(KeyEvent e) 
-//    {
-//        
-//    }//
 
-//    @Override
-//    public void keyPressed(KeyEvent e) {
-        
-//        int key=e.getKeyCode();
-        
-//        mapeo de controles
-//        if(key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A)
-//        {moveLeft=true;}
-//        else if(key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D)
-//        {moveRight=true;}
-//        else if(key == KeyEvent.VK_UP || key == KeyEvent.VK_W)
-//        {moveUp=true;}
-//        else if(key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S)
-//        {moveDown=true;}
-//        
-//         if(key == KeyEvent.VK_X || key == KeyEvent.VK_K)
-//        {
-//          jumpBtn=true;    
-//        }
-    
-//    }//
-
-//    @Override
-//    public void keyReleased(KeyEvent e) {
-       
-//        int key=e.getKeyCode();
-//        
-////        mapeo de controles
-//        if(key == KeyEvent.VK_LEFT || key == KeyEvent.VK_A)
-//        {moveLeft=false;}
-//        else if(key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_D)
-//        {moveRight=false;}
-//        else if(key == KeyEvent.VK_UP || key == KeyEvent.VK_W)
-//        {moveUp=false;}
-//        else if(key == KeyEvent.VK_DOWN || key == KeyEvent.VK_S)
-//        {moveDown=false;}
-//        else if(key == KeyEvent.VK_P)
-//        {pause= !pause;}
-//    
-//        
-//        if(key == KeyEvent.VK_X || key == KeyEvent.VK_K)
-//        {
-//          jumpBtn=false;    
-//        }
-//        
-//        if(key == KeyEvent.VK_O )
-//        {
-////            if(transition != null)
-////            {
-////                transition.setOn( !transition.isOn() );
-////                if(transition.getCurrentState() == Transition.STATE_HIDE)
-////                {transition.setCurrentState(Transition.STATE_SHOWING);}
-////            }
-//          
-////            changeLvl();
-//        }
-        
-        
-//    }
-
-   
-    
     
       /**
        * metodo que sirve para cambiar el nivel o la pantalla, cambia el fondo

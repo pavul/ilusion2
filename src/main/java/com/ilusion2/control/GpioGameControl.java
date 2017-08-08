@@ -25,33 +25,78 @@ import com.pi4j.io.gpio.event.GpioPinListenerDigital;
  * 
  * this class is final because is not intended to modify the behavior
  * however you can implement your control using PI4J library.
+ * 
+ *  GpioPinDigitalInput upPad; //gpio 21
+    GpioPinDigitalInput leftPad; //gpio 22
+    GpioPinDigitalInput rigthPad; //gpio 23
+    GpioPinDigitalInput downPad; //gpio 25
+    
+    GpioPinDigitalInput redBtn; //gpio 29
+    GpioPinDigitalInput greenBtn; //gpio 28
+    GpioPinDigitalInput blueBtn; //gpio 27
+    GpioPinDigitalInput alphaBtn; //gpio 31
+    
+    GpioPinDigitalInput chooseBtn; //gpio 1
+    GpioPinDigitalInput goBtn; //gpio 2
+    
+    GpioPinDigitalInput upperLeftBtn; //gpio 3
+    GpioPinDigitalInput upperRightBtn; //gpio 4
+ * 
  */
 public final class GpioGameControl 
 {
     
-    GpioPinDigitalInput leftPad;
-    GpioPinDigitalInput rigthPad;
-    GpioPinDigitalInput upPad;
-    GpioPinDigitalInput downPad;
-    GpioPinDigitalInput redBtn;
-    GpioPinDigitalInput greenBtn;
-    GpioPinDigitalInput blueBtn;
-    GpioPinDigitalInput alphaBtn;
-    GpioPinDigitalInput goBtn;
+    GpioPinDigitalInput upPad; //gpio 21
+    GpioPinDigitalInput leftPad; //gpio 22
+    GpioPinDigitalInput rigthPad; //gpio 23
+    GpioPinDigitalInput downPad; //gpio 25
+    
+    GpioPinDigitalInput redBtn; //gpio 29
+    GpioPinDigitalInput greenBtn; //gpio 28
+    GpioPinDigitalInput blueBtn; //gpio 27
+    GpioPinDigitalInput alphaBtn; //gpio 31
+    
+    GpioPinDigitalInput chooseBtn; //gpio 1
+    GpioPinDigitalInput goBtn; //gpio 2
+    
+    GpioPinDigitalInput upperLeftBtn; //gpio 3
+    GpioPinDigitalInput upperRightBtn; //gpio 4
+    
+//    GpioPinDigitalInput screenShootBtn; NOT USED YET
     
     
     /**
      * this constructor sets the instances for each button of
      * GPIO PINS MAPPED:
-     * GPIO_21
-     * GPIO_22
-     * GPIO_23
-     * GPIO_24
-     * GPIO_25
-     * GPIO_26
-     * GPIO_27
-     * GPIO_28
-     * GPIO_29
+     * NOTE: those GPOI are free, not used by tft 3.5" and tft 5"
+     * --------------------------
+     *  TFT 3.5"                    |     TFT 5"
+     * --------------------------
+     * GPIO_1   chooseBtn           |     GPIO_0  
+     * GPIO_2   goBtn               |     GPIO_1 chooseBtn
+     * GPIO_3   upperLeft           |     GPIO_2 goBtn
+     * GPIO_4   upperRight          |     GPIO_3 upperLeft
+     * GPIO_7                       |     GPIO_4 upperRight
+     * GPIO_8                       |     GPIO_5
+     * GPIO_9                       |     GPIO_7
+     * GPIO_15                      |     GPIO_8
+     * GPIO_16                      |     GPIO_9
+     *                              |     GPIO_10
+     *                              |     GPIO_15 TXD UART
+     * GPIO_21  upBtn               |     GPIO_16 RXD UART
+     * GPIO_22  leftBtn             |     GPIO_21 upBtn
+     * GPIO_23  rightBtn            |     GPIO_22 ;eftBtn
+     * GPIO_24 /PWM0 for audio output for rpi zero
+     * GPIO_25  downBtn             |     GPIO_23 rightBtn
+     * GPIO_26 /PWM1 for audio output for rpi zero
+     * GPIO_27   blueBtn            |     GPIO_24 /PWM0 for audio rpi zero
+     * GPIO_28   greenBtn           |     GPIO_25 downBtn
+     * GPIO_29   redBtn             |     GPIO_26 /PWM1 for audio rpi zero
+     * GPIO_30                      |     GPIO_27 blueBtn
+     * GPIO_31   alphaBtn           |     GPIO_28 greenBtn
+     *                              |     GPIO_29 redBtn
+     *                              |     GPIO_30 
+     *                              |     GPIO_31 alphaBtn
      * NOTE: these gpio are mapped for pi4j library or WiringPi, there buttons
      * are mapped for pullUp resistance it means that when the button is pushed
      * you will get a low Response and when is released a high response.
@@ -62,32 +107,46 @@ public final class GpioGameControl
     public GpioGameControl( )
     {
         
+//    GpioPinDigitalInput chooseBtn; //gpio 1
+//    GpioPinDigitalInput goBtn; //gpio 2
+        
          final GpioController gpio = GpioFactory.getInstance( );
         
-         downPad = gpio.provisionDigitalInputPin( RaspiPin.GPIO_21, PinPullResistance.PULL_UP );;
+         
+         //pad buttos
+         upPad = gpio.provisionDigitalInputPin( RaspiPin.GPIO_21, PinPullResistance.PULL_UP );
          leftPad = gpio.provisionDigitalInputPin( RaspiPin.GPIO_22, PinPullResistance.PULL_UP );
-         upPad = gpio.provisionDigitalInputPin( RaspiPin.GPIO_23, PinPullResistance.PULL_UP );
-         rigthPad = gpio.provisionDigitalInputPin( RaspiPin.GPIO_24, PinPullResistance.PULL_UP );
-         goBtn = gpio.provisionDigitalInputPin( RaspiPin.GPIO_25, PinPullResistance.PULL_UP );
-         redBtn = gpio.provisionDigitalInputPin( RaspiPin.GPIO_26, PinPullResistance.PULL_UP );
+         rigthPad = gpio.provisionDigitalInputPin( RaspiPin.GPIO_23, PinPullResistance.PULL_UP );
+         downPad = gpio.provisionDigitalInputPin( RaspiPin.GPIO_25, PinPullResistance.PULL_UP );
+         
+         
+         //game buttons
+         redBtn = gpio.provisionDigitalInputPin( RaspiPin.GPIO_29, PinPullResistance.PULL_UP );
          blueBtn = gpio.provisionDigitalInputPin( RaspiPin.GPIO_27, PinPullResistance.PULL_UP );
          greenBtn = gpio.provisionDigitalInputPin( RaspiPin.GPIO_28, PinPullResistance.PULL_UP );
-         alphaBtn = gpio.provisionDigitalInputPin( RaspiPin.GPIO_29, PinPullResistance.PULL_UP );
-   
+         alphaBtn = gpio.provisionDigitalInputPin( RaspiPin.GPIO_31, PinPullResistance.PULL_UP );
+         upperLeftBtn = gpio.provisionDigitalInputPin( RaspiPin.GPIO_03, PinPullResistance.PULL_UP );
+         upperRightBtn = gpio.provisionDigitalInputPin( RaspiPin.GPIO_04, PinPullResistance.PULL_UP );
          
-         downPad.setShutdownOptions( true );
-         leftPad.setShutdownOptions( true ); 
+         //SystemControl buttons
+         chooseBtn = gpio.provisionDigitalInputPin( RaspiPin.GPIO_01, PinPullResistance.PULL_UP );
+         goBtn = gpio.provisionDigitalInputPin( RaspiPin.GPIO_02, PinPullResistance.PULL_UP );
+         
          upPad.setShutdownOptions( true );
+         leftPad.setShutdownOptions( true ); 
          rigthPad.setShutdownOptions( true ); 
-         goBtn.setShutdownOptions( true ); 
+         downPad.setShutdownOptions( true );
+         
          redBtn.setShutdownOptions( true ); 
          blueBtn.setShutdownOptions( true ); 
          greenBtn.setShutdownOptions( true );
          alphaBtn.setShutdownOptions( true );
+         upperLeftBtn.setShutdownOptions( true );
+         upperRightBtn.setShutdownOptions( true );
          
+         chooseBtn.setShutdownOptions( true );
+         goBtn.setShutdownOptions( true ); 
          
-         
-        
     }//const
     
     
@@ -100,17 +159,33 @@ public final class GpioGameControl
     public void setGpioListener( GpioPinListenerDigital pinListener )
     {
 
-         downPad.addListener( pinListener );
-         leftPad.addListener( pinListener );
          upPad.addListener( pinListener );
+         leftPad.addListener( pinListener );
          rigthPad.addListener( pinListener );
-         goBtn.addListener( pinListener );
+         downPad.addListener( pinListener );
+         
          redBtn.addListener( pinListener );
          blueBtn.addListener( pinListener );
          greenBtn.addListener( pinListener );
          alphaBtn.addListener( pinListener );
+         upperLeftBtn.addListener( pinListener );
+         upperRightBtn.addListener( pinListener );
+         
+         chooseBtn.addListener( pinListener );
+         goBtn.addListener( pinListener );
          
     }//
+
+    
+    //getter and setters
+
+    public GpioPinDigitalInput getUpPad() {
+        return upPad;
+    }
+
+    public void setUpPad(GpioPinDigitalInput upPad) {
+        this.upPad = upPad;
+    }
 
     public GpioPinDigitalInput getLeftPad() {
         return leftPad;
@@ -126,14 +201,6 @@ public final class GpioGameControl
 
     public void setRigthPad(GpioPinDigitalInput rigthPad) {
         this.rigthPad = rigthPad;
-    }
-
-    public GpioPinDigitalInput getUpPad() {
-        return upPad;
-    }
-
-    public void setUpPad(GpioPinDigitalInput upPad) {
-        this.upPad = upPad;
     }
 
     public GpioPinDigitalInput getDownPad() {
@@ -176,6 +243,14 @@ public final class GpioGameControl
         this.alphaBtn = alphaBtn;
     }
 
+    public GpioPinDigitalInput getChooseBtn() {
+        return chooseBtn;
+    }
+
+    public void setChooseBtn(GpioPinDigitalInput chooseBtn) {
+        this.chooseBtn = chooseBtn;
+    }
+
     public GpioPinDigitalInput getGoBtn() {
         return goBtn;
     }
@@ -183,7 +258,26 @@ public final class GpioGameControl
     public void setGoBtn(GpioPinDigitalInput goBtn) {
         this.goBtn = goBtn;
     }
+
+    public GpioPinDigitalInput getUpperLeftBtn() {
+        return upperLeftBtn;
+    }
+
+    public void setUpperLeftBtn(GpioPinDigitalInput upperLeftBtn) {
+        this.upperLeftBtn = upperLeftBtn;
+    }
+
+    public GpioPinDigitalInput getUpperRightBtn() {
+        return upperRightBtn;
+    }
+
+    public void setUpperRightBtn(GpioPinDigitalInput upperRightBtn) {
+        this.upperRightBtn = upperRightBtn;
+    }
     
+    
+    
+    ///getter and setters
     
     /**
      * this method return the state of a GPIO to low value
