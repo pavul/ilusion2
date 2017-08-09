@@ -109,8 +109,14 @@ public final class GpioGameControl
         
 //    GpioPinDigitalInput chooseBtn; //gpio 1
 //    GpioPinDigitalInput goBtn; //gpio 2
-        
-         final GpioController gpio = GpioFactory.getInstance( );
+        GpioController gpio = null;// = GpioFactory.getInstance( );
+        try
+        {
+        gpio = GpioFactory.getInstance( );
+        }
+        catch( Exception e)
+        {}
+         
         
          
          //pad buttos

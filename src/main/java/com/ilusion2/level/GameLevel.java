@@ -5,6 +5,8 @@
  */
 package com.ilusion2.level;
 
+import com.ilusion2.audio.MusicPlayer;
+import com.ilusion2.audio.Sound;
 import com.ilusion2.control.GpioGameControl;
 import com.ilusion2.control.KeyControl;
 import com.ilusion2.control.MouseControl;
@@ -166,6 +168,17 @@ public abstract class GameLevel
    protected boolean persistent = false;
    
    
+   /**
+    * instance used to play background .mp3 music
+    */
+   protected MusicPlayer musicPlayer;
+   
+   /**
+    * instance used to play sfx .wav sounds
+    */
+   protected Sound soundPlayer;
+   
+   
 //   protected Player player;
    
    /**
@@ -196,7 +209,9 @@ public abstract class GameLevel
        
        //mp3Player = new MP3Player();
 
+    musicPlayer = new MusicPlayer();
     
+    soundPlayer = new Sound();
        
 //   init();
    }//const
@@ -259,8 +274,6 @@ public abstract class GameLevel
    public GameLevel(int roomWidth, int roomHeight, int viewWidth, int viewHeight)
    {
         this();
-        
-        
         
         /**
          * the camera will move inside roomWIdh and roomHeight, however

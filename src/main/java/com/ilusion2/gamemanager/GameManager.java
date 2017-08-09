@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import com.ilusion2.net.ClientSocket;
 import com.ilusion2.net.Server;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javax.swing.JFrame;
@@ -68,7 +69,6 @@ public class GameManager extends Canvas implements
     
     //variable para pausar el juego
     //this variable is a flag that indicate if the game is paued
-    protected boolean pause;
     
     //variable que sirve para contar cuantos frames por segundo hay en la aplicacion
    //we store FPS count
@@ -83,41 +83,53 @@ public class GameManager extends Canvas implements
     protected double yScale = 1;
     
    
-//   protected GameState gameState; //estado del juego
    
-//   this variable saves the reference to current level that we can
-//   use when we wan to change lvl or use tome util methods
     /**
+     * this variable saves the reference to current level that we can
+       use when we wan to change lvl or use tome util methods
      * this contains the reference to the current level 
      * that is rendered
      */
    protected GameLevel currentLevel;
    
-   //esta estructura se utiliza para guardar aqui todos los objetos que
-   //necesitan estar en todo el juego, pueden ser datos como el usuario
-   //, puntajes, upgrades, etc/
+   
    /**
+    *esta estructura se utiliza para guardar aqui todos los objetos que
+     necesitan estar en todo el juego, pueden ser datos como el usuario,
+     puntajes, upgrades, etc
     *this structure is used to store all data that is persistent
     between levels, like, score, upgrades, items, general HUD, etc, because each
     level can set new ammount of data when it starts
     */
    protected Map< String, ? >persistentData;
    
-   
-   //stack que mantiene todos los niveles
    /**
-    * this is the stack where we have all levels for the game
+    * stack donde se guardan los niveles persistentes
+    * this is the stack where we have all persistent levels 
     */
    Map<String, GameLevel> levelStack;
    
+   
    /**
-    * this variable is to stablish first level to load for default
+    * this instance is used to draw loading screen
+    * customized by the developer, cuz by default
+    * it will only show "Loading..."
     */
-   String firsLvlToLoad;
+   protected LoadingRenderer loadingRenderer;
    
-   
-   //objeto para hacer las transiciones del room
    /**
+    * flag indicatig if this room is loading a level
+    */
+   protected boolean isLoading;
+   
+//   /**
+//    * this variable is to stablish first level to load for default
+//    */
+//   String firsLvlToLoad;
+   
+   
+   /**
+    * objeto para hacer las transiciones del room
     * this transition object is to show transition animations
     * from one level to another
     */
@@ -162,6 +174,7 @@ public class GameManager extends Canvas implements
    
    
     /**
+     * IMPORTANT THIS CONSTRUCTOR SHOULD NOT BE USED ANYMORE
      * constructor 1 este constructor crea un room por default con
      * width 640 y heigth 480, se toma la referencia de la ventana que se ve
      * para poder asi cambiar de rooms
@@ -171,6 +184,7 @@ public class GameManager extends Canvas implements
      * 
      * @param lvltoLoad primer nivel a cargar
      * @param levelStack listado de niveles que hay en el juego
+     * @deprecated
      */
     public GameManager(String lvltoLoad, Map<String, 
             GameLevel>levelStack, boolean fullScreen) 
@@ -193,8 +207,8 @@ public class GameManager extends Canvas implements
         
         //if there is no current level it will take the first of the stack
         //this.currentLevel = levelStack.get( lvltoLoad );
-         firsLvlToLoad = lvltoLoad;
-         loadLvl( firsLvlToLoad );
+        //         firsLvlToLoad = lvltoLoad;
+         loadLvl( lvltoLoad );
     }//
     
  
@@ -293,7 +307,29 @@ public class GameManager extends Canvas implements
                 {
                    try
                    {
-                      currentLevel.render( (Graphics2D) g );  
+                      
+                       //if level is loading then will show loading screen
+                       if( isLoading )
+                       {
+                           if( null != loadingRenderer )
+                           {
+                               loadingRenderer.renderLoading( (Graphics2D) g );
+                           }
+                           else
+                           {
+                           ( (Graphics2D) g ).setColor( Color.white );
+                           ( (Graphics2D) g ).drawString( "" , 20 ,20 );
+                           }
+                           
+                       }
+                       else
+                       {
+                      currentLevel.render( (Graphics2D) g ); 
+                       }
+                       
+                      
+                      
+                      
                    }
                    catch(Exception e)
                    {  
@@ -307,22 +343,6 @@ public class GameManager extends Canvas implements
     }//renderGameState
 
     
-    /**@TODO check this to render something in load STATE
-     * funcion que renderiza lo que sucede en las pantallas de cargado de 
-     * recursos (LOAD SCREEN)
-     */
-//    public void renderLoadState()
-//    {
-//    Graphics g = this.getGraphicsBufferStrategy();
-//    
-//    this.drawBgColor((Graphics2D)g, Color.black);
-//    g.setColor(Color.white);
-//    g.drawString("Cargando..." , roomWidth/2, roomHeight/2);
-//    
-//        this.closeGraphicsBufferStrategy(g, this.getBufferStrategy());
-//    }//
-//    
-    
 /**
  * here is where the main process of the threas is taken
  */
@@ -330,22 +350,19 @@ public class GameManager extends Canvas implements
     public final void run() 
     {
      
-    long lastTime= System.nanoTime();
-    double amountOfTicks=60.0;
-    double ns= 1000000000 / amountOfTicks;
-    double delta=0;
-    long timer= System.currentTimeMillis();
-//    int frames=0;
-    while(running)
+    long lastTime = System.nanoTime();
+    double amountOfTicks = 60.0;
+    double ns = 1000000000 / amountOfTicks;
+    double delta = 0;
+    long timer = System.currentTimeMillis();
+    //int frames=0;
+    while( running )
     {
     
-        if(!pause)
-        {
-        
-                long now= System.nanoTime();
-                delta+=(now - lastTime)/ns;
+                long now = System.nanoTime();
+                delta += (now - lastTime) / ns;
                 lastTime = now;
-                while(delta >= 1)
+                while( delta >= 1 )
                 {
                     
                 update();
@@ -365,9 +382,7 @@ public class GameManager extends Canvas implements
                 //System.out.println("FPS: "+frames);
                 frames=0; 
                 }
-             
                 
-        }//pause
         
     }//uail
         
@@ -381,9 +396,9 @@ public class GameManager extends Canvas implements
      * an auxiliar function to show some data of FPS that are
      * processed
      */
-    public final void showFPS(Graphics2D g2)
-    {
-        
+//    public final void showFPS(Graphics2D g2)
+//    {
+//        
 //    g2.setColor(Color.yellow);
 //    g2.drawString("FPS: "+frames, cam.getOffsetX() + 10, 10);
 //    g2.drawString("offsetX: "+cam.getOffsetX(), cam.getOffsetX() + 10, 30);
@@ -393,8 +408,8 @@ public class GameManager extends Canvas implements
 //    g2.drawString("offsetX+426: "+(cam.offsetX+426), cam.getOffsetX() + 10, 90);
 //    g2.drawString("playerX: "+(player.getX()), cam.getOffsetX() + 10, 110);
 //    g2.drawString("playerY: "+(player.getY()), cam.getOffsetX() + 10, 130);
-    
-    }
+//    
+//    }
     
     /**
      * funcion auxiliar para poner en los render de los estados de juego,
@@ -404,9 +419,9 @@ public class GameManager extends Canvas implements
     protected final Graphics getGraphicsBufferStrategy()
     {
         BufferStrategy bs = this.getBufferStrategy();
-        if(bs == null)
+        if( bs == null )
         {
-            this.createBufferStrategy(BUFFER_NUMBER);
+            this.createBufferStrategy( BUFFER_NUMBER );
             return null;
         }
          Graphics g = bs.getDrawGraphics();   
@@ -420,7 +435,7 @@ public class GameManager extends Canvas implements
      * @param g
      * @param bs 
      */
-    protected final void closeGraphicsBufferStrategy(Graphics g, BufferStrategy bs)
+    protected final void closeGraphicsBufferStrategy( Graphics g, BufferStrategy bs )
     {
         g.dispose();
         bs.show();
@@ -443,19 +458,6 @@ public class GameManager extends Canvas implements
        */
       public synchronized boolean loadLvl( String levelToLoad )
       {
-          //first we check if the level to load is already loaded
-//          if( currentLevel.equals( levelStack.get( levelToLoad )  )  )
-//          {
-//              System.out.println(" ::: regreso false, el nivel ya esta cargado ");
-//              return false;
-//          
-//          }
-          
-//          if( null == levelStack.get( levelToLoad ) )
-//          {
-//          levelStack.get( levelToLoad ) = new MazeXample( 480, 320, 480, 320, null);
-//          }
-//          
           
           //savig current level in previous level
           GameLevel previousLevel = currentLevel;
@@ -521,6 +523,8 @@ public class GameManager extends Canvas implements
        public synchronized boolean loadLvl( GameLevel gamelevel )
       {
          
+          isLoading = true;
+          
           //save in another place the level that gonna change
          //and remove listeners
          GameLevel previousLevel = currentLevel;
@@ -544,8 +548,6 @@ public class GameManager extends Canvas implements
             
           }//
           
-         
-          
         //current level now has the level must show
         currentLevel = gamelevel;
         currentLevel.addKeyListener( this );
@@ -557,8 +559,6 @@ public class GameManager extends Canvas implements
         if( fullScreen )
            setFullScreen();
         
-        
-        
         //if not persisten init the level again
         if( !currentLevel.isPersistent() )
         {
@@ -568,12 +568,13 @@ public class GameManager extends Canvas implements
             
         }//
         
-        
         //finally we change dimensions of level
         if( gameContainer != null )
         gameContainer.setSize( getScaledWindowSize() );
         
         previousLevel = null;
+        
+        isLoading = false;
         
           return true;
       }//loadlevel2
@@ -744,7 +745,7 @@ public class GameManager extends Canvas implements
     {
     
         //we get current device width and heigth
-        double deviceWidth = screenSize.getWidth();
+        //double deviceWidth = screenSize.getWidth();
         double deviceHeight = screenSize.getHeight();
 
         //System.out.println( "valores del device: "+deviceWidth +" - "+deviceHeight );
