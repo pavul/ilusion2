@@ -163,7 +163,7 @@ public abstract class GameLevel
     * this object contain the hardware controller user with
     * raspberry pi 3, with 40 pins, see this classs for more info
     */
-   protected GpioGameControl gpioGameControl;
+   protected static GpioGameControl gpioGameControl;
    
    protected boolean persistent = false;
    

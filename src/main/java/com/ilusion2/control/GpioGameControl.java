@@ -174,19 +174,42 @@ public final class GpioGameControl
     public void setGpioListener( GpioPinListenerDigital pinListener )
     {
 
+         upPad.removeAllListeners();
          upPad.addListener( pinListener );
+         
+         leftPad.removeAllListeners();
          leftPad.addListener( pinListener );
+         
+         rigthPad.removeAllListeners();
          rigthPad.addListener( pinListener );
+         
+         downPad.removeAllListeners();
          downPad.addListener( pinListener );
          
+         
+         redBtn.removeAllListeners();
          redBtn.addListener( pinListener );
+         
+         blueBtn.removeAllListeners();
          blueBtn.addListener( pinListener );
+         
+         greenBtn.removeAllListeners();
          greenBtn.addListener( pinListener );
+         
+         alphaBtn.removeAllListeners();
          alphaBtn.addListener( pinListener );
+         
+         upperLeftBtn.removeAllListeners();
          upperLeftBtn.addListener( pinListener );
+         
+         upperRightBtn.removeAllListeners();
          upperRightBtn.addListener( pinListener );
          
+         
+         chooseBtn.removeAllListeners();
          chooseBtn.addListener( pinListener );
+         
+         goBtn.removeAllListeners();
          goBtn.addListener( pinListener );
          
     }//
@@ -327,22 +350,22 @@ public final class GpioGameControl
     {
         
         this.gpio.shutdown();
-        
-        this.gpio.unprovisionPin( upPad );
-        this.gpio.unprovisionPin( leftPad );
-        this.gpio.unprovisionPin( rigthPad );
-        this.gpio.unprovisionPin( downPad );
-        
-        this.gpio.unprovisionPin( redBtn );
-        this.gpio.unprovisionPin( greenBtn );
-        this.gpio.unprovisionPin( blueBtn );
-        this.gpio.unprovisionPin( alphaBtn );
-        
-        this.gpio.unprovisionPin( chooseBtn );
-        this.gpio.unprovisionPin( goBtn );
-        
-        this.gpio.unprovisionPin( upperLeftBtn );
-        this.gpio.unprovisionPin( upperRightBtn );
+//        
+//        this.gpio.unprovisionPin( upPad );
+//        this.gpio.unprovisionPin( leftPad );
+//        this.gpio.unprovisionPin( rigthPad );
+//        this.gpio.unprovisionPin( downPad );
+//        
+//        this.gpio.unprovisionPin( redBtn );
+//        this.gpio.unprovisionPin( greenBtn );
+//        this.gpio.unprovisionPin( blueBtn );
+//        this.gpio.unprovisionPin( alphaBtn );
+//        
+//        this.gpio.unprovisionPin( chooseBtn );
+//        this.gpio.unprovisionPin( goBtn );
+//        
+//        this.gpio.unprovisionPin( upperLeftBtn );
+//        this.gpio.unprovisionPin( upperRightBtn );
         
     }//
 

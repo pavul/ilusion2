@@ -550,10 +550,10 @@ public class GameManager extends Canvas implements
             //removing GPIO instance if there exists, to add a new
             //one to other level
 
-            if ( currentLevel.getGpioGameControl().isOn() )
-            {
-            currentLevel.getGpioGameControl().shutDownPins();
-            }
+//            if ( currentLevel.getGpioGameControl().isOn() )
+//            {
+//            currentLevel.getGpioGameControl().shutDownPins();
+//            }
             
           }//
           
