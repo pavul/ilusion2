@@ -45,22 +45,28 @@ import com.pi4j.io.gpio.event.GpioPinListenerDigital;
  */
 public final class GpioGameControl 
 {
+    /**
+     * flag to check wheter GPIO functionality is ON/OFF
+     */
+    private boolean on;
     
-    GpioPinDigitalInput upPad; //gpio 21
-    GpioPinDigitalInput leftPad; //gpio 22
-    GpioPinDigitalInput rigthPad; //gpio 23
-    GpioPinDigitalInput downPad; //gpio 25
+    private GpioController gpio = null;
     
-    GpioPinDigitalInput redBtn; //gpio 29
-    GpioPinDigitalInput greenBtn; //gpio 28
-    GpioPinDigitalInput blueBtn; //gpio 27
-    GpioPinDigitalInput alphaBtn; //gpio 31
+    private GpioPinDigitalInput upPad; //gpio 21
+    private GpioPinDigitalInput leftPad; //gpio 22
+    private GpioPinDigitalInput rigthPad; //gpio 23
+    private GpioPinDigitalInput downPad; //gpio 25
     
-    GpioPinDigitalInput chooseBtn; //gpio 1
-    GpioPinDigitalInput goBtn; //gpio 2
+    private GpioPinDigitalInput redBtn; //gpio 29
+    private GpioPinDigitalInput greenBtn; //gpio 28
+    private GpioPinDigitalInput blueBtn; //gpio 27
+    private GpioPinDigitalInput alphaBtn; //gpio 31
     
-    GpioPinDigitalInput upperLeftBtn; //gpio 3
-    GpioPinDigitalInput upperRightBtn; //gpio 4
+    private GpioPinDigitalInput chooseBtn; //gpio 1
+    private GpioPinDigitalInput goBtn; //gpio 2
+    
+    private GpioPinDigitalInput upperLeftBtn; //gpio 3
+    private GpioPinDigitalInput upperRightBtn; //gpio 4
     
 //    GpioPinDigitalInput screenShootBtn; NOT USED YET
     
@@ -109,13 +115,16 @@ public final class GpioGameControl
         
 //    GpioPinDigitalInput chooseBtn; //gpio 1
 //    GpioPinDigitalInput goBtn; //gpio 2
-        GpioController gpio = null;// = GpioFactory.getInstance( );
+        // = GpioFactory.getInstance( );
         try
         {
         gpio = GpioFactory.getInstance( );
+        on = true;
         }
         catch( Exception e)
-        {}
+        {
+            System.out.println("::: Error on Getting Instance for GPIOFACTORY "+e.getMessage() );
+        }
          
         
          
@@ -296,6 +305,57 @@ public final class GpioGameControl
      * @return 
      */
     public PinState getBtnStateHigh(){ return PinState.HIGH;}
+
+    public GpioController getGpio() {
+        return gpio;
+    }
+
+    public void setGpio(GpioController gpio) {
+        this.gpio = gpio;
+    }
+    
+    
+    /**
+     * what this functions does is to terminate( shutdown) the streams to handle
+     * GPIO pins on RPI/RPI ZERO and after that it unprovides the pins to create
+     * the control newly
+     * EXPLANATION: when you want to load a new level a new instance it will be
+     * created, but when you load another level, then the listeners will be
+     * created
+     */
+    public void shutDownPins()
+    {
+        
+        this.gpio.shutdown();
+        
+        this.gpio.unprovisionPin( upPad );
+        this.gpio.unprovisionPin( leftPad );
+        this.gpio.unprovisionPin( rigthPad );
+        this.gpio.unprovisionPin( downPad );
+        
+        this.gpio.unprovisionPin( redBtn );
+        this.gpio.unprovisionPin( greenBtn );
+        this.gpio.unprovisionPin( blueBtn );
+        this.gpio.unprovisionPin( alphaBtn );
+        
+        this.gpio.unprovisionPin( chooseBtn );
+        this.gpio.unprovisionPin( goBtn );
+        
+        this.gpio.unprovisionPin( upperLeftBtn );
+        this.gpio.unprovisionPin( upperRightBtn );
+        
+    }//
+
+    
+    /**
+     * return true if GPIO pins are ON, false if not ( OFF )
+     * @return 
+     */
+    public boolean isOn() {
+        return on;
+    }
+    
+    
     
     
 }//class

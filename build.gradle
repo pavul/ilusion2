@@ -27,12 +27,23 @@ jar
 
 repositories
 {
+    
+   
   mavenCentral()
   mavenLocal()
+  
+    
+//    flatDir
+//    {
+//        dirs 'tinysound-1.1.1'
+//    }
 }
 
 dependencies 
 {
+    //could not find this on any repository, so i added local
+    compile files( 'tinysound-1.1.1/tinysound-1.1.1.jar' )
+    
     //pi4j used to handle GPIO pins in raspberry
     compile group: 'com.pi4j', name: 'pi4j-core', version: '1.1'
     

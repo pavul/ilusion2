@@ -546,6 +546,15 @@ public class GameManager extends Canvas implements
             previousLevel.removeKeyListener( this );
             previousLevel.removeMouseListener( this );
             
+            
+            //removing GPIO instance if there exists, to add a new
+            //one to other level
+
+            if ( currentLevel.getGpioGameControl().isOn() )
+            {
+            currentLevel.getGpioGameControl().shutDownPins();
+            }
+            
           }//
           
         //current level now has the level must show

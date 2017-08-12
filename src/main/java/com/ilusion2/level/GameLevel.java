@@ -857,10 +857,15 @@ public abstract class GameLevel
         }//
         
     }//
-    
-//    public GpioGameControl getGpioGameControl() {
-//        return gpioGameControl;
-//    }
+  
+    /**
+     * return the object to handle control with GPIO pins
+     * NOTE: USED FOR RASPBERRIES
+     * @return 
+     */
+    public GpioGameControl getGpioGameControl() {
+        return gpioGameControl;
+    }
 //
 //    public void setGpioGameControl(GpioGameControl gpioGameControl) {
 //        this.gpioGameControl = gpioGameControl;
