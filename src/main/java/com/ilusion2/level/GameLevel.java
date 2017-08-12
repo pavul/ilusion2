@@ -162,6 +162,8 @@ public abstract class GameLevel
      /**
     * this object contain the hardware controller user with
     * raspberry pi 3, with 40 pins, see this classs for more info
+    * NOTE: this object is static because if there are more than
+    * one instance of this, ti will crash when the new pins are mapped
     */
    protected static GpioGameControl gpioGameControl;
    

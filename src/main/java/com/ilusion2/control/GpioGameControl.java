@@ -169,6 +169,8 @@ public final class GpioGameControl
      * this fucntion implements the GpioPinListenerDigital to each button
      * this is when the listener is implemented in the GameLevel class to have
      * all the logic for GpioController in one place
+     * 
+     * All listeners are removed before add the new listener
      * @param pinListener
      */
     public void setGpioListener( GpioPinListenerDigital pinListener )
