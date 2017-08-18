@@ -167,6 +167,13 @@ public abstract class GameLevel
     */
    protected static GpioGameControl gpioGameControl;
    
+   
+   /**@TODO
+    * los niveles persistentes van a ser guardados en un stack de
+    * game manager, de esa manera se puede usar la misma instancia 
+    * que esta guardada y cargarla con loadLvl sin tener que 
+    * instanciar de nuevo, aun asi hay que ver como mejorar esta parte
+    */
    protected boolean persistent = false;
    
    
@@ -549,7 +556,7 @@ public abstract class GameLevel
     public void drawBgTile(Graphics2D g2,Image[] img, int[] map,int cols, int rows, 
             int tileWidth, int tileHeight)
     {
-        if(cols <=0 || rows <= 0)
+        if( cols <=0 || rows <= 0 )
         {return;}
         
         int mapIndex = 0;
@@ -582,12 +589,12 @@ public abstract class GameLevel
                            && i * tileHeight > offsety - tileHeight
                            && (i * tileHeight) + tileHeight < offsety + cam.getViewYPort() + tileHeight)
                          {
-                         if(map[mapIndex] != -1)
-                          g2.drawImage(img[map[mapIndex]], width * j, height * i, null);
+                         if( map[ mapIndex ] != -1 )
+                            g2.drawImage( img[ map[ mapIndex ] ], width * j, height * i, null );
                          }//if validacion si se dibuja
                              
                           if(mapIndex < totalTiles)
-                          mapIndex++;
+                             mapIndex++;
                         }//for cols
                 }//for rows
 

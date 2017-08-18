@@ -5,6 +5,7 @@
  */
 package com.ilusion2.util;
 
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -14,10 +15,13 @@ import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
 import javax.imageio.ImageIO;
+import tile.Tile;
 
 /**
  * clase de utilidades
@@ -231,5 +235,66 @@ public class Util
 //        
 //        return count;
 //    }//
+    
+    
+    /**
+     * this method return a list of tiles depending the value, 
+     * for example if we have {0,0,0,0,0,1,1,1,1} and you use
+     * this function like getTileList( aboveArray, 1 )
+     * it will return a list of 4 tile object with the value of one
+     * NOTE: this function was conceived to use as shorcut to
+     * list solid tiles instead to iterate the whole array of
+     * with empty and solid tiles
+     * @param tileArray
+     * @param tileValue if this value is -1 it will return the
+     * whole
+     * @return 
+     */
+    public static List<Tile> getTileList( int[] tileArray, int tileValue,
+            int tileWidth, int tileHeight, int cols, int rows )
+    {
+        
+        
+        List<Tile> tileList = new VirtualFlow.ArrayLinkedList<>();
+        
+        int mapIndex = 0;
+        int totalTiles = cols * rows;
+        
+        int tilewidth = tileWidth;
+        int tileHeigth = tileHeight;
+        
+        
+        for( int i = 0;i < rows; i++ )
+            {
+                int tiley = i * tileHeigth;
+            
+                    //for de columnas
+                    for( int j = 0 ; j < cols ; j++ )
+                    {
+                        
+                        int tilex = j * tilewidth;
+                        
+                   //@TODO check here if the tile to compute is
+                    //near the sprite to collide, to avoid extra process...
+                        
+                        //if value is -1 it will take all tiles
+                        if( tileValue == -1 )
+                        {
+                        Tile t = new Tile( tilex, tiley, tileWidth, tileHeight, tileArray[ mapIndex ] );
+                        
+                        tileList.add( t );
+                        }
+                        else if( tileArray[ mapIndex ] == tileValue )
+                        {
+                         Tile t = new Tile( tilex, tiley, tileWidth, tileHeight, tileArray[ mapIndex ] );
+                         tileList.add( t );      
+                        }//
+                        
+                    }//j
+            } //i       
+
+        
+        return tileList;
+    }
     
 }//class

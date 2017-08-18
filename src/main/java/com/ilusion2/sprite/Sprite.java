@@ -9,10 +9,9 @@ import com.ilusion2.level.GameLevel;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +67,7 @@ public class Sprite implements Movement
     protected double degrees; //variable que tiene los grados a ls que se ve el sprite
     
     protected boolean jump; //variable para indicar si el usuario ha brincado
-    protected boolean executeJump; //variable para indicar si el usuario ha brincado
+//    protected boolean executeJump; //variable para indicar si el usuario ha brincado
     protected float jumpForce; //fuerza a la que brinca el sprite
     protected float jumpValue;
     protected float gravity; //valor para gravedad
@@ -93,6 +92,23 @@ public class Sprite implements Movement
     */
    protected int animationSpeedLimit; //limite para
       
+   /**
+    * this point will serve as reference to rotate the sprite
+    * by default will be put at the center of sprite
+    */
+   protected Point pivot;
+   
+   /**
+    * this point is a reference to the point the sprite must collide 
+    * with some tiles, like slopes, basically by default will be 
+    * sprite.x and sprite.y, but if you need to check slopes colision
+    * surely you will have to set this variable to 
+    * sprite.getCenterX and sprite.y + sprite.h
+    * NOTE: to check collisions between slopes you have to use
+    * checkCollisionWithSlope, on Collision class
+    */
+   protected Point anchor;
+   
    //variables para las subanimaciones, es decir, un sprite se puede animar solamente
    //con mostrar algunos frames de las imagenes que se tienen
    
@@ -163,11 +179,17 @@ public class Sprite implements Movement
     public Sprite() 
     {
         this.spriteId += 1;
-        this.executeJump = true;
+//        this.executeJump = true;
         this.gravity=0.37f;
         this.jumpForce = 10;
         this.animationSpeedLimit = 10;
         this.currentAnimationState = AnimationState.STANDRIGHT;
+        
+        
+        this.pivot = new Point( ( int )this.getCenterX() , ( int )this.getCenterY() );
+        this.anchor = new Point( 0, 0 );
+        
+        
     }//cont 1
 
     /**
@@ -1250,7 +1272,7 @@ public class Sprite implements Movement
      */
     public void setJump(boolean jump) {
         this.jump = jump;
-        setJumpValue(jumpForce);
+        //setJumpValue(jumpForce);
     }
 
     
@@ -1284,7 +1306,7 @@ public class Sprite implements Movement
      * this way it will then go - y Axis ( up ) and then
      * + y Axis ( down)
      */
-    private void setJumpValue(float jumpValue)
+    public void setJumpValue(float jumpValue)
     {
     this.jumpValue = jumpForce * -1;
     }
@@ -1293,13 +1315,13 @@ public class Sprite implements Movement
     {return this.jumpValue;}
     
     
-    public boolean isExecuteJump() {
-        return executeJump;
-    }
-
-    public void setExecuteJump(boolean executeJump) {
-        this.executeJump = executeJump;
-    }
+//    public boolean isExecuteJump() {
+//        return executeJump;
+//    }
+//
+//    public void setExecuteJump(boolean executeJump) {
+//        this.executeJump = executeJump;
+//    }
 
     public int getRoomBoundLeft() {
         return roomBoundLeft;
@@ -1478,8 +1500,8 @@ public class Sprite implements Movement
      */
     public void processJump()
     {
-        if( jump )
-        {
+//        if( jump )
+//        {
         
             //este valor define que tan largo brinca
             //jumpvalue means how higher the player jumps
@@ -1496,7 +1518,7 @@ public class Sprite implements Movement
 //            System.out.println( y+"  jumpvalue "+jumpValue);    
             y += jumpValue;
             
-        }//
+//        }//
     
     }//
     
@@ -1613,6 +1635,22 @@ public class Sprite implements Movement
 
     public void setHp(int hp) {
         this.hp = hp;
+    }
+
+    public Point getPivot() {
+        return pivot;
+    }
+
+    public void setPivot(Point pivot) {
+        this.pivot = pivot;
+    }
+
+    public Point getAnchor() {
+        return anchor;
+    }
+
+    public void setAnchor(Point anchor) {
+        this.anchor = anchor;
     }
 
     

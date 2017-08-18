@@ -196,7 +196,6 @@ public class GameManager extends Canvas implements
         
         if( null == levelStack )
         {
-            System.out.println("::: level stack is null");
             throw new NullPointerException( "Level Stack cannot be null" );
         }
         if( levelStack.isEmpty() )
@@ -224,9 +223,6 @@ public class GameManager extends Canvas implements
     
         fps = 60;//setea por default a 60 frames por segundo
         this.fullScreen = fullScreen;
-         
-        this.fullScreen = fullScreen;
-        
          loadLvl( gamelevel );
         
     }//
@@ -575,6 +571,7 @@ public class GameManager extends Canvas implements
             //the state to PLAYING
             currentLevel.init();
             
+            System.out.println(" currentLvl INIT");
         }//
         
         //finally we change dimensions of level
@@ -582,7 +579,6 @@ public class GameManager extends Canvas implements
         gameContainer.setSize( getScaledWindowSize() );
         
         previousLevel = null;
-        
         isLoading = false;
         
           return true;
