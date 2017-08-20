@@ -334,6 +334,12 @@ public abstract class GameLevel
    public void render(Graphics2D g2)
    {
        
+       /**
+        * this is used to move the camera when is created
+        */
+//       if( null != cam)
+//       g2.translate( cam.getCamx(), cam.getCamy() );
+       
        //this part of the cpde handles the full screen image
        //depending on the scale values created by the room class
        //when the game start

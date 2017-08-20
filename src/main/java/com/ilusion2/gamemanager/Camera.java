@@ -22,29 +22,85 @@ public class Camera implements CameraMovement
      * para ver que se mueva la escena a la izquierda, se debe de mover la camara en Y
      */
     
+    /**
+     * x axis position of cammera
+     */
     int camx; //posicion x en que se encuentra la camara
+    
+    /**
+     * y axis position of cammera
+     */
     int camy; //posicion y en que se encuentra la camara
     
+    /**
+     * minimum value alowed for camera on X axis
+     * expected value 0
+     */
     int camxMin; //posicion minima que tiene la camara, por lo general 0 en eje x
+    
+    /**
+     * maximum value alowed for camera on X axis
+     * expected value roomWidth
+     */
     int camxMax; //posicion maxima para mover la camara -roomWidth + viewxport
+    
+    /**
+     * minimum value alowed for camera on Y axis
+     * expected value 0
+     */
     int camyMin; //posicion minima que tiene la camara, por lo general 0 en eje y
+    
+    /**
+     * maximum value alowed for camera on Y axis
+     * value expected roomHeigth
+     */
     int camyMax; //posicion maxima para mover la camara -roomHeigth +viewyport
     
-    
-    int roomWidth; //el ancho del room del nivel este puede ser de muchos pizeles de ancho
+    /**
+     * a room can be huge, but we arent show everything, to show a part of the 
+     * room there will be viewport
+     */
+    int roomWidth; //el ancho del room del nivel este puede ser de muchos pixeles de ancho
     int roomHeigth; //el alto del room del nivel este puede ser de muchos pizeles de alto
     int viewXPort; //el ancho de porcion de pantalla que se vera del nivel
     int viewYPort; //el alto de porcion de pantalla que se vera del nivel
     
+    /**
+     * this is a value that will be in the same place always on the viewport, 
+     * if some level is implementing camera and want to show HUD, that
+     * hud must take offsetX and offsetY to show that HUD always in the same place
+     */
     int offsetX; //posicion estatica que siempre esta en el view de la ventana
     // es decir, si se pone un texto en x = offsetX, siempre se vera en esa posicion
+   
+    /**
+     * this is a value that will be in the same place always on the viewport, 
+     * if some level is implementing camera and want to show HUD, that
+     * hud must take offsetX and offsetY to show that HUD always in the same place
+     */
     int offsetY;//lo mismo que offsetX, pero para el eje Y
     
     //margenes para que cuando pasa el personaje se muevan la camara de la pantalla y
     //muestre mas espacio del room, por default estan inactivos con el valor -1
+    
+    /**
+     * left margin to check if the player is reaching that to move the camera to left
+     */
     int marginLeft= -1; 
+    
+    /**
+     * right margin to check if the player is reaching that to move the camera to right
+     */
     int marginRight= -1;
+    
+    /**
+     * top margin to check if the player is reaching that to move the camera to top
+     */
     int marginTop= -1;
+    
+    /**
+     * bottom margin to check if the player is reaching that to move the camera to bottom
+     */
     int marginBottom= -1;
             
     
@@ -54,6 +110,8 @@ public class Camera implements CameraMovement
      * are the boundaries of the camera ),
      * and the portion that has to show in the screen ( viewXPort, viewYPort )
      * 
+     * create a camera object definig the size for the room and the size for 
+     * the view port to show in the screen
      * 
      * @param roomWidth
      * @param roomHeight
@@ -63,19 +121,17 @@ public class Camera implements CameraMovement
     public Camera(int roomWidth, int roomHeight, int viewXPort,int viewYPort)
     {
         
-        this.roomWidth=roomWidth;
-        this.roomHeigth=roomHeight;
-        this.viewXPort=viewXPort;
-        this.viewYPort=viewYPort;
+        this.roomWidth = roomWidth;
+        this.roomHeigth = roomHeight;
+        this.viewXPort = viewXPort;
         this.viewYPort = viewYPort;
         
-        this.camxMin=0;
-        this.camxMax=-roomWidth+viewXPort;
-        this.offsetX=camx;
-        
-        this.camyMin=0;
-        this.camyMax=-roomHeight+viewYPort;
-        this.offsetY=camy;
+        this.camxMin = 0;
+        this.camxMax = -roomWidth + viewXPort;
+        this.offsetX = camx;
+        this.camyMin = 0;
+        this.camyMax = -roomHeight + viewYPort;
+        this.offsetY = camy;
         
     }//const1
 

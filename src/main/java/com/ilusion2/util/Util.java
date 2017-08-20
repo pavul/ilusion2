@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -134,6 +135,7 @@ public class Util
         {
             im[i] = bigImg.getSubimage(i * w, 0, w, h);
         }// for
+        
     return im;
     }//
     
@@ -255,7 +257,7 @@ public class Util
     {
         
         
-        List<Tile> tileList = new VirtualFlow.ArrayLinkedList<>();
+        List<Tile> tileList = new ArrayList<>();
         
         int mapIndex = 0;
         int totalTiles = cols * rows;
@@ -274,8 +276,8 @@ public class Util
                         
                         int tilex = j * tilewidth;
                         
-                   //@TODO check here if the tile to compute is
-                    //near the sprite to collide, to avoid extra process...
+                       //@TODO check here if the tile to compute is
+                       //near the sprite to collide, to avoid extra process...
                         
                         //if value is -1 it will take all tiles
                         if( tileValue == -1 )
@@ -290,6 +292,7 @@ public class Util
                          tileList.add( t );      
                         }//
                         
+                        mapIndex++;
                     }//j
             } //i       
 

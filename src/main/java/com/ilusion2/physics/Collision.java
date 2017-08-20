@@ -7,8 +7,8 @@ package com.ilusion2.physics;
 
 import com.ilusion2.config.Config;
 import com.ilusion2.sprite.Sprite;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
+import tile.Tile;
 
 /**
  * clase que tiene los metodos para checar colisiones entre los diferentes sprites
@@ -41,6 +41,45 @@ public class Collision
     }
     
     
+    
+    /**
+         * this function return the total distance from one point to another
+         * @param coor1 X or Y cordinate of point 1
+         * @param val1 Width or Heigth of point 1
+         * @param coor2 X or Y coordinate of point 2
+         * @param val2 Width or Heigth of point 1
+         * example 
+         * float vx = getDistance( 100, 32, 200, 32 ); //on X
+         * float vy = getDistance( 145, 32, 300, 32); //on Y
+         * 
+         * @return 
+         * 
+         */
+           public float getDistance(float coor1, float val1, float coor2, float val2 )
+        {
+            
+            float v = (coor1 + val1 / 2) - (coor2 + val2 / 2 );
+
+            return Math.abs( v );
+            
+        }
+           
+           /**
+            * this function is used to combine the half parts from
+            * 2 rects, circles or other shapes as well 2 sprites
+            * @param half1
+            * @param half2
+            * this will process something like:
+            * float combinedHalfHeight = h / 2 + h2 / 2; 
+            * @return 
+            */
+           public float getCombineHalf( float half1, float half2 )
+           {
+           return (half1 / 2) + (half2 / 2);
+           }
+        
+           
+           
     
      /**
       * metodo que checa si hay colision circular entre 2 sprites
@@ -112,6 +151,10 @@ public class Collision
     
     
         
+        
+        
+     
+        
         /**
          * funcion que checa si hay una colision rectangular entre 2 sprites
 	 * Example:  sprite.rectangleColision(enemy);
@@ -124,40 +167,53 @@ public class Collision
 	 * */
 	public  boolean rectangleColision(Sprite s1, Sprite s2)
 	{
+//            boolean hit = false;
+//            float vx=s1.getCenterX() - s2.getCenterX();
+//            float vy=s1.getCenterY() - s2.getCenterY();
+//
+//            float combinedHalfWidth=s1.getHalfWidth()+s2.getHalfWidth();
+//            float combinedHalfHeight=s1.getHalfHeight()+s2.getHalfHeight();
+//
+//            if(Math.abs(vx)<combinedHalfWidth)
+//            {
+//                return ( (Math.abs(vy) < combinedHalfHeight) );
+//            }
+//            return hit;
             
-            boolean hit=false;
-            float vx=s1.getCenterX()-s2.getCenterX();
-            float vy=s1.getCenterY()-s2.getCenterY();
-
-            float combinedHalfWidth=s1.getHalfWidth()+s2.getHalfWidth();
-            float combinedHalfHeight=s1.getHalfHeight()+s2.getHalfHeight();
-
-            if(Math.abs(vx)<combinedHalfWidth)
-            {
-                return ( (Math.abs(vy) < combinedHalfHeight) );
-            }
-            return hit;
+            return rectangleColision(s1.getX(),s1.getY(), s1.getW(), s1.getH(),
+                    s2.getX(),s2.getY(), s2.getW(), s2.getH());
 		
 	}//colision rectangular
         
         
+        
+        /**
+         * * funcion que checa si hay una colision rectangular entre 2 
+         * rectangulos
+         * 
+         * checks if there is rectangle collision  between 2 rectalgles
+         * @param x
+         * @param y
+         * @param w
+         * @param h
+         * @param x2
+         * @param y2
+         * @param w2
+         * @param h2
+         * @return 
+         */
         public  boolean rectangleColision(
-                int x, int y, int w, int h,
-                int x2, int y2, int w2, int h2)
-	{
-            
+                float x, float y, float w, float h,
+                float x2, float y2, float w2, float h2)
+	{            
             boolean hit=false;
-            float vx = x + w / 2 - x2 + w2 / 2;//  s1.getCenterX() - s2.getCenterX();
-            float vy = y + h / 2 - y2 + h2 / 2;//   s1.getCenterY() - s2.getCenterY();
 
-            
-            //@TODO i can improve this more, creating proper variables
-            float combinedHalfWidth = w/2 +w2/2; //  s1.getHalfWidth()+s2.getHalfWidth();
-            float combinedHalfHeight = h/2 +h2/2; //  s1.getHalfHeight()+s2.getHalfHeight();
+            float combinedHalfWidth = getCombineHalf( w, w2 );//  w/2 +w2/2; //  s1.getHalfWidth()+s2.getHalfWidth();
+            float combinedHalfHeight = getCombineHalf( h, h2 );//   h/2 +h2/2; //  s1.getHalfHeight()+s2.getHalfHeight();
 
-            if(Math.abs(vx)<combinedHalfWidth)
+            if( getDistance( x, w , x2, w2 ) < combinedHalfWidth )
             {
-                return ( (Math.abs(vy) < combinedHalfHeight) );
+                return ( getDistance(y, h, y2, h2) < combinedHalfHeight );
             }
             return hit;
 		
@@ -183,16 +239,21 @@ public class Collision
 	 * */
 	public String blockRectangle(Sprite s1,Sprite s2,boolean move ,boolean bouncing)
 	{
-		String side="";
-		float vx=s1.getCenterX()-s2.getCenterX();
-		float vy=s1.getCenterY()-s2.getCenterY();
+		String side = Config.COLISION_NONE;
+		float vx = getDistance( s1.getX(), s1.getW(), s2.getX(), s2.getW() );//   s1.getCenterX()-s2.getCenterX();
+////		float vy = s1.getCenterY()-s2.getCenterY();
+		float vy = getDistance( s1.getY(), s1.getH(), s2.getY(), s2.getH() );
 		
-		float combinedHalfWidth=s1.getHalfWidth()+s2.getHalfWidth();
-		float combinedHalfHeight=s1.getHalfHeight()+s2.getHalfHeight();
+//		float combinedHalfWidth=s1.getHalfWidth()+s2.getHalfWidth();
+//		float combinedHalfHeight=s1.getHalfHeight()+s2.getHalfHeight();
+		float combinedHalfWidth = getCombineHalf( s1.getW() , s2.getW() );// s1.getHalfWidth()+s2.getHalfWidth();
+		float combinedHalfHeight = getCombineHalf( s1.getY() , s2.getY() );// s1.getHalfHeight()+s2.getHalfHeight();
 		
-		if(Math.abs(vx)<combinedHalfWidth)
+//		if(Math.abs(vx)<combinedHalfWidth)
+		if( getDistance( s1.getX(), s1.getW(), s2.getX(), s2.getW() ) < combinedHalfWidth )
 		{
-			if(Math.abs(vy)<combinedHalfHeight)
+//			if(Math.abs(vy)<combinedHalfHeight)
+			if( getDistance( s1.getY(), s1.getH(), s2.getY(), s2.getH() ) < combinedHalfHeight )
 			{
 				float overlapX=combinedHalfWidth-Math.abs(vx);
 				float overlapY=combinedHalfHeight-Math.abs(vy);
@@ -201,13 +262,13 @@ public class Collision
 				{
 					if(vy>0)
 					{
-						side="TOP";
+						side = Config.COLISION_TOP;
 						if(move)s2.setY(s2.getY()-1);
 						s1.setY(s1.getY()+overlapY);
                                          }
 					else
 					{
-						side="BOTTOM";
+						side = Config.COLISION_BOTTOM;
 						if(move)s2.setY(s2.getY()+1);
                                                 s1.setY(s1.getY()-overlapY);
                                                 
@@ -217,33 +278,25 @@ public class Collision
 				else
 				{
 					
-					if(vx>0)
+					if( vx > 0 )
 					{
-						side="LEFT";
+						side= Config.COLISION_LEFT;
 						if(move)s2.setX(s2.getX()-1);
 						s1.setX(s1.getX()+overlapX);
 					}
 					else
 					{
-						side="RIGHT";
+						side = Config.COLISION_RIGHT;
 						if(move)s2.setX(s2.getX()+1);
 						s1.setX(s1.getX()-overlapX);
 					}
 					if(bouncing)s1.setSpeedX(s1.getSpeedX()*-1);
 		         }//
-			}//height
-			else
-			{
-				side="";
-//				side="NONE";
-			}
+		
+                        }//height
 			
 		}//width
-		else
-		{
-			side="";
-//			side="NONE";
-		}
+		
 		return side;
 		
 	}//colision con rectangulos, pero     
@@ -271,7 +324,7 @@ public class Collision
 	 * @return NONE if there is not a colision and  TOP, BOTTOM, RIGHT< LEFT if there are
 	 * 
 	 * */
-	public String blockRectangle(Sprite s1,int x, int y, int width,int height)
+	public String blockRectangle( Sprite s1, int x, int y, int width, int height )
 	{
             int halfWidth = width / 2;
             int halfHeigth = height / 2;
@@ -281,19 +334,27 @@ public class Collision
 		String side = Config.COLISION_NONE;        
                 
                 //get distance vectors
-		float vx=s1.getCenterX()-centerX;
-		float vy=s1.getCenterY()-centerY;
-		
+		float vx = s1.getCenterX() - centerX;
+		float vy = s1.getCenterY() - centerY;
                 
-		float combinedHalfWidth = s1.getHalfWidth()+halfWidth;
+                
+                //float v = coor1 + val1 / 2 - coor2 + val2 / 2;
+//                float vx = getDistance( s1.getX(), s1.getW(), x, width );//  s1.getCenterX()-centerX;
+//                float vy = getDistance( s1.getY(), s1.getH(), y, height ); //s1.getCenterY()-centerY;
+//                /.,
+                
+//		float combinedHalfWidth = getCombineHalf( s1.getW(), width );//   s1.getHalfWidth()+halfWidth;
+//		float combinedHalfHeight = getCombineHalf( s1.getH(), height );//  s1.getHalfHeight()+halfHeigth;
+            
+                float combinedHalfWidth = s1.getHalfWidth()+halfWidth;
 		float combinedHalfHeight = s1.getHalfHeight()+halfHeigth;
             
                 
                 //collision on x axis
-                if( Math.abs(vx) < combinedHalfWidth )
+                if( Math.abs( vx ) < combinedHalfWidth )
 		{
                     //collision on y axis
-			if(Math.abs(vy) < combinedHalfHeight)
+			if( Math.abs( vy ) < combinedHalfHeight)
 			{
                             
                             //collision made 
@@ -332,12 +393,9 @@ public class Collision
 					}
 
 				}
-        		
-
 
 			}//height
-
-                        
+        
 		}//width
                 
 		return side;
@@ -373,7 +431,7 @@ public class Collision
                 int tileHeight)
         {
             String side= Config.COLISION_NONE;
-            String aux="";
+            
             if(cols <=0 || rows <= 0)
             {
                 //arrojar excepcion aqui
@@ -395,19 +453,17 @@ public class Collision
                     for( int j = 0 ; j < cols ; j++ )
                     {
                         
-                        
                    //@TODO check here if the tile to compute is
                     //near the sprite to collide, to avoid extra process...
-                        
                         
                     if( colisionMap[ mapIndex ] == 1)
                      {
                          int tilex = j * tilewidth;
                          
                         side = blockRectangle(spr, tilex, tiley, tilewidth,tileHeigth);
-                        if (side.equals(Config.COLISION_BOTTOM))
+                        if ( side.equals( Config.COLISION_BOTTOM ) )
                         {
-                        aux=Config.COLISION_BOTTOM;
+                            return Config.COLISION_BOTTOM;
                         }
                       
                      }//if validacion si se checa colision
@@ -418,16 +474,98 @@ public class Collision
                       
                     }//for cols
             }//for rows
-      
-//          System.out.println("-checkColsionTile se regreso SIDE: "+side);
-        
-          if(!aux.equals(""))
-          {
-          side=aux;
-          }
-          
+     
           return side;
         }//checkcolisiontile
+        
+        
+        public  String checkColsionTile(Sprite spr,
+                List<Tile> tileList)
+        {
+            String side= Config.COLISION_NONE;
+            
+//            if(cols <=0 || rows <= 0)
+//            {
+//                //arrojar excepcion aqui
+//            return side;
+//            }
+//        
+//        int mapIndex = 0;
+//        int totalTiles = cols * rows;
+        
+//        int tilewidth = tileWidth;
+//        int tileHeigth = tileHeight;
+//      
+//      //for de renglones
+//         for( int i = 0;i < rows; i++ )
+//            {
+//                int tiley = i * tileHeigth;
+//            
+//                    //for de columnas
+//                    for( int j = 0 ; j < cols ; j++ )
+//                    {
+//                        
+//                   //@TODO check here if the tile to compute is
+//                    //near the sprite to collide, to avoid extra process...
+//                        
+//                    if( colisionMap[ mapIndex ] == 1)
+//                     {
+//                         int tilex = j * tilewidth;
+//                         
+//                        side = blockRectangle(spr, tilex, tiley, tilewidth,tileHeigth);
+//                        if ( side.equals( Config.COLISION_BOTTOM ) )
+//                        {
+//                            return Config.COLISION_BOTTOM;
+//                        }
+//                      
+//                     }//if validacion si se checa colision
+//                 
+//                      if( mapIndex < totalTiles )
+//                      mapIndex++;
+//                      
+//                      
+//                    }//for cols
+//            }//for rows
+     
+
+//        tileList.forEach( tile -> 
+//        {
+//          if (  blockRectangle( spr, tile.getX(),tile.getY(), tile.getW(), tile.getH() )
+//          .equals(Config.COLISION_BOTTOM ) 
+//                  )
+//          {
+//              
+//              return null;
+////              side = Config.COLISION_BOTTOM;
+//          }
+//            
+//        });
+
+
+//            for( Tile tile : tileList)
+//            {
+//
+//                if( blockRectangle( spr, tile.getX(),tile.getY(), tile.getW(), tile.getH() )
+//                                            .equals(Config.COLISION_BOTTOM ) )
+//                {
+//                return Config.COLISION_BOTTOM;
+//                }
+//
+//            }//
+
+
+        Tile t = tileList.stream().filter
+                (
+                        tile -> blockRectangle( spr, tile.getX(),tile.getY(), tile.getW(), tile.getH() )
+                                .equals(Config.COLISION_BOTTOM )
+                        
+                ).findFirst().orElse( null );
+        
+                if( null != t )side = Config.COLISION_BOTTOM;
+
+          return side;
+        }//checkcolisiontile
+        
         
         
         /**
@@ -710,6 +848,20 @@ public class Collision
 //        
 //        
 //        
+        
+        
+/**
+ * method that checks if there is a collision in the bottom, 
+ * this is supposed to check a fake collision in th
+         * @param s
+         * @param fakeY
+         * @param colisionMap
+         * @param cols
+         * @param rows
+         * @param tileWidth
+         * @param tileHeight
+         * @return 
+         */
           public  boolean checkColsionFree( 
                     Sprite s,
                     int fakeY,
@@ -742,14 +894,81 @@ public class Collision
                     for( int j = 0 ; j < cols ; j++ )
                     {
                         
-                    if( colisionMap[ mapIndex ] == 1)
+                    if( colisionMap[ mapIndex ] == 1 )
                      {
                          int tilex = j * tilewidth;
-//                   /.,      
                    
-                 return  rectangleColision(
-                         ( int )s.getX(), ( int )s.getY() + fakeY, ( int )s.getW(), ( int )s.getH(),
-                         tilex, tiley, tileWidth, tileHeight);
+            int halfWidth = tileWidth/2;
+            int halfHeigth = tileHeight/2;
+            int centerX = tilex +  halfWidth;
+            int centerY = tiley +  halfHeigth;
+            
+//		String side = Config.COLISION_NONE;        
+                
+                //get distance vectors
+		float vx = s.getCenterX() - centerX;
+		float vy = s.getCenterY() + fakeY - centerY;
+                
+		float combinedHalfWidth = s.getHalfWidth() + halfWidth;
+		float combinedHalfHeight = s.getHalfHeight() + halfHeigth;
+            
+                
+                //collision on x axis
+                if( Math.abs(vx) < combinedHalfWidth )
+		{
+                    //collision on y axis
+			if(Math.abs(vy) < combinedHalfHeight)
+			{
+                            
+                            //collision made 
+                            
+				float overlapX=combinedHalfWidth-Math.abs(vx);
+				float overlapY=combinedHalfHeight-Math.abs(vy);
+		
+//                            if( overlapX < overlapY )
+//                                    {
+//					
+//					if( vx > 0 )
+//					{
+//                                            s1.setX( s1.getX()+overlapX );
+//                                            return Config.COLISION_LEFT;
+//					}
+//					else
+//					{
+//                                            s1.setX( s1.getX()-overlapX );
+//                                            return Config.COLISION_RIGHT;
+//					}
+//
+//                                    }//
+//                                else
+                               if( overlapX > overlapY )
+				{
+
+                                    if( vy > 0 )
+					{
+//                                            s1.setY( s1.getY()+overlapY );
+//                                            return Config.COLISION_TOP;
+                                        }
+                                    else 
+					{
+//                                           s1.setY( s1.getY()  - overlapY );
+//                                            return Config.COLISION_BOTTOM;
+                                            return true;
+					}
+
+				}
+
+			}//height
+        
+		}//width
+
+                   
+                   
+                   
+                   
+//                 return  rectangleColision(
+//                         ( int )s.getX(), ( int )s.getY() + fakeY, ( int )s.getW(), ( int )s.getH(),
+//                         tilex, tiley, tileWidth, tileHeight);
 //                int x, int y, int w, int h,
 //                int x2, int y2, int w2, int h2);
 //                   
@@ -791,18 +1010,7 @@ public class Collision
                     }//for cols
             }//for rows
       
-//          return "NONE";
           return false;
         }//checkcolisiontile
-//        
-//        
-        
-//        public boolean checkCollionFree()
-//        {
-//            
-//            
-//        }
-//        
-        
-        
+
 }//collision
