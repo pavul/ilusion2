@@ -850,7 +850,8 @@ public class Collision
 //        
         
         
-/**
+/** @ TODO IMPTOBR THIS METHOD TO MAKE IT CHECK FOR A TILELIST AND
+ * TO SPECIFY THE SIDE OF THE FREE COLLISION UP, DOWN, LEFT OR RIGHT
  * method that checks if there is a collision in the bottom, 
  * this is supposed to check a fake collision in th
          * @param s

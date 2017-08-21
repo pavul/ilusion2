@@ -24,7 +24,10 @@ import java.util.List;
 public class Inventory 
 {
     
-    
+    /**
+     * those constants indicate the layout to show
+     * the inventory, vertical | horizontal line or as grid
+     */
     public final static int LAYOUT_GRID = 1;
     public final static int LAYOUT_VERTICAL = 2;
     public final static int LAYOUT_HORIZONTAL = 3;
@@ -43,17 +46,17 @@ public class Inventory
     /**
      * x position where the inventory will be shown
      */
-    int x; //posicion x del inventario
+    private int x; //posicion x del inventario
     
     /**
      * y position where the inventory will be shown
      */
-    int y; //posicion y del inventario
+    private int y; //posicion y del inventario
     
     /**
      * indicate what slot of the inventory is selected
      */
-    int cursor; //indica que parte del inventario esta seleccionado
+    private int cursor; //indica que parte del inventario esta seleccionado
     
     /**
      * background image for each slot
@@ -78,7 +81,7 @@ public class Inventory
         this.slots = slots;
         this.x = x;
         this.y = y;   
-        this.padding = 20;
+        this.padding = 0;
     }//
     
     
@@ -90,13 +93,12 @@ public class Inventory
      * @param width 
      * @param height 
      */
-    public void drawGrid(Graphics g, int rows, int columns, int width, int height)
+    public void drawGrid(Graphics2D g2, int rows, int columns, int width, int height)
     {
         
-        x = 64;
-        y = 64;
+//        x = 64;
+//        y = 64;
         
-        Graphics2D g2 = (Graphics2D)g;
         
         if(columns <=0 || rows <= 0 || slots.isEmpty())
         {return;}
@@ -135,12 +137,10 @@ public class Inventory
      * funcion que dibuja el inventario de manera de lista vertical
      * @param g 
      */
-    public void drawLine(Graphics g, boolean drawLabel)
+    public void drawLine(Graphics2D g2, boolean drawValue)
     {
     
         if(slots.isEmpty())return;
-        
-        Graphics2D g2 = (Graphics2D)g;
         
         int len = slots.size();
         
@@ -159,18 +159,90 @@ public class Inventory
             }   
             
             //para mostrar el texto
-            if( drawLabel )
+            if( drawValue )
             {
 //                int stringW = g.getFont().getM    slots.get( i ).getLabel() );
 //                int stringH = g.getFontMetrics().  ( slots.get( i ).getLabel() );
                 
-            g2.drawString(  slots.get( i ).getLabel(), 
+//            g2.drawString(  slots.get( i ).getLabel(), 
+            g2.drawString(  "x "+slots.get( i ).getCurrentQty() , 
                             width + slots.get(i).getIcon().getWidth() ,
-                            heigth );
+                            heigth + slots.get(i).getIcon().getHeight() );
             }
              
         }//for
         
     }//
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+    }
+
+    public List<Item> getSlots() {
+        return slots;
+    }
+
+    public void setSlots(List<Item> slots) {
+        this.slots = slots;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getCursor() {
+        return cursor;
+    }
+
+    public void setCursor(int cursor) {
+        this.cursor = cursor;
+    }
+
+    public BufferedImage getBgSlot() {
+        return bgSlot;
+    }
+
+    public void setBgSlot(BufferedImage bgSlot) {
+        this.bgSlot = bgSlot;
+    }
+
+    public int getPadding() {
+        return padding;
+    }
+
+    public void setPadding(int padding) {
+        this.padding = padding;
+    }
+    
+    
+    /**
+     * getters & setters
+     */
+    
+   
+    
+    
+    
+    
+    
+     /**
+     * /getters & setters
+     */
     
 }//class

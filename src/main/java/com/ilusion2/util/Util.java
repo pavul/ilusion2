@@ -239,28 +239,94 @@ public class Util
 //    }//
     
     
+//    /**
+//     * this method return a list of tiles depending the value, 
+//     * for example if we have {0,0,0,0,0,1,1,1,1} and you use
+//     * this function like getTileList( aboveArray, 1 )
+//     * it will return a list of 4 tile object with the value of one
+//     * NOTE: this function was conceived to use as shorcut to
+//     * list solid tiles instead to iterate the whole array of
+//     * with empty and solid tiles
+//     * @param tileArray
+//     * @param tileValue if this value is -1 it will return the
+//     * whole
+//     * @return 
+//     */
+//    public static List<Tile> getTileList( int[] tileArray, int tileValue,
+//            int tileWidth, int tileHeight, int cols, int rows )
+//    {
+//        
+//        
+//        List<Tile> tileList = new ArrayList<>();
+//        
+//        int mapIndex = 0;
+//        int totalTiles = cols * rows;
+//        
+//        int tilewidth = tileWidth;
+//        int tileHeigth = tileHeight;
+//        
+//        
+//        for( int i = 0;i < rows; i++ )
+//            {
+//                int tiley = i * tileHeigth;
+//            
+//                    //for de columnas
+//                    for( int j = 0 ; j < cols ; j++ )
+//                    {
+//                        
+//                        int tilex = j * tilewidth;
+//                        
+//                       //@TODO check here if the tile to compute is
+//                       //near the sprite to collide, to avoid extra process...
+//                        
+//                        //if value is -1 it will take all tiles
+//                        if( tileValue == -1 )
+//                        {
+//                        Tile t = new Tile( tilex, tiley, tileWidth, tileHeight, tileArray[ mapIndex ] );
+//                        
+//                        tileList.add( t );
+//                        }
+//                        else if( tileArray[ mapIndex ] == tileValue )
+//                        {
+//                         Tile t = new Tile( tilex, tiley, tileWidth, tileHeight, tileArray[ mapIndex ] );
+//                         tileList.add( t );      
+//                        }//
+//                        
+//                        mapIndex++;
+//                    }//j
+//            } //i       
+//
+//        
+//        return tileList;
+//    }
+    
+    
+    
     /**
-     * this method return a list of tiles depending the value, 
+     *  * this method return a list of tiles depending the value, 
      * for example if we have {0,0,0,0,0,1,1,1,1} and you use
      * this function like getTileList( aboveArray, 1 )
      * it will return a list of 4 tile object with the value of one
      * NOTE: this function was conceived to use as shorcut to
      * list solid tiles instead to iterate the whole array of
      * with empty and solid tiles
-     * @param tileArray
-     * @param tileValue if this value is -1 it will return the
-     * whole
+     * @param tileArray 
+     * @param tileWidth
+     * @param tileHeight
+     * @param cols
+     * @param rows
+     * @param valueToSelect if this value is -1 it will return the whole array transformed in tiles objects
      * @return 
      */
-    public static List<Tile> getTileList( int[] tileArray, int tileValue,
-            int tileWidth, int tileHeight, int cols, int rows )
+    public static List<Tile> getTileList( int[] tileArray,
+            int tileWidth, int tileHeight, int cols, int rows, int... valueToSelect )
     {
         
         
         List<Tile> tileList = new ArrayList<>();
         
         int mapIndex = 0;
-        int totalTiles = cols * rows;
+//        int totalTiles = cols * rows;
         
         int tilewidth = tileWidth;
         int tileHeigth = tileHeight;
@@ -279,18 +345,37 @@ public class Util
                        //@TODO check here if the tile to compute is
                        //near the sprite to collide, to avoid extra process...
                         
-                        //if value is -1 it will take all tiles
-                        if( tileValue == -1 )
-                        {
-                        Tile t = new Tile( tilex, tiley, tileWidth, tileHeight, tileArray[ mapIndex ] );
+                       
+                       for( int val : valueToSelect )
+                       {
+                           if( val == -1 )
+                           {
+                               Tile t = new Tile( tilex, tiley, tileWidth, tileHeight, tileArray[ mapIndex ] );
                         
-                        tileList.add( t );
-                        }
-                        else if( tileArray[ mapIndex ] == tileValue )
-                        {
-                         Tile t = new Tile( tilex, tiley, tileWidth, tileHeight, tileArray[ mapIndex ] );
-                         tileList.add( t );      
-                        }//
+                               tileList.add( t );
+                               break;
+                           }
+                           else if( val == tileArray[ mapIndex ] )
+                           {
+                               Tile t = new Tile( tilex, tiley, tileWidth, tileHeight, tileArray[ mapIndex ] );
+                               tileList.add( t );
+                               break;
+                           }
+                           
+                       }
+                       
+//                        //if value is -1 it will take all tiles
+//                        if( tileValue == -1 )
+//                        {
+//                        Tile t = new Tile( tilex, tiley, tileWidth, tileHeight, tileArray[ mapIndex ] );
+//                        
+//                        tileList.add( t );
+//                        }
+//                        else if( tileArray[ mapIndex ] == tileValue )
+//                        {
+//                         Tile t = new Tile( tilex, tiley, tileWidth, tileHeight, tileArray[ mapIndex ] );
+//                         tileList.add( t );      
+//                        }//
                         
                         mapIndex++;
                     }//j
@@ -299,5 +384,9 @@ public class Util
         
         return tileList;
     }
+    
+    
+    
+    
     
 }//class
