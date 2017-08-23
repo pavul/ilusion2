@@ -959,26 +959,28 @@ public class Sprite implements Movement
     }
 
     /**
-     * moveTo(Sprite sprite, int speed) EXAMPLE: sprite.moveTo(enemy,5);<br />
-     * function that move the sprite to the direction of the sprite parameter
-     * this function dont move the sprite on his own, thou must use
-     * sprite.movespeed();
-     *
+     * moveTo(Sprite sprite, int speed) EXAMPLE: sprite.moveTo(enemy,5); 
+     * function that set X and Y speed and degrees sprite direction,
+     * this function wont move the sprite, this only set the speed values,
+     * to move the sprite you have to call sprite.move() method on update loop.
+     * NOTE: this can be used once to set direction and speed for a buller for example
      * @param sprite
      * @param speed
      *
      */
     @Override
     public void moveTo(Sprite sprite, int speed) {
-        if (speed > 0) {
-            float vx = sprite.getCenterX() - this.getCenterX();
-            float vy = sprite.getCenterY() - this.getCenterY();
-            float mag = (float) Math.sqrt((vx * vx) + (vy * vy));
-            float spdx = vx / mag; //saco la direccion de x
-            float spdy = vy / mag; //saco la direccion de y
-            this.setSpeedX(spdx * speed);
-            this.setSpeedY(spdy * speed);
-        }
+//        if (speed > 0) {
+//            float vx = sprite.getCenterX() - this.getCenterX();
+//            float vy = sprite.getCenterY() - this.getCenterY();
+//            float mag = (float) Math.sqrt((vx * vx) + (vy * vy));
+//            float spdx = vx / mag; //saco la direccion de x
+//            float spdy = vy / mag; //saco la direccion de y
+//            this.setSpeedX(spdx * speed);
+//            this.setSpeedY(spdy * speed);
+//        }
+        
+        moveTo( sprite.getCenterX(), sprite.getCenterY(), speed);
     }
 
     /**
@@ -1088,7 +1090,6 @@ public class Sprite implements Movement
                 
         }
         
-        
         //getthing the min value Pos of the array
         int minValue = magList[0];
         int minValuePos = 0; 
@@ -1101,7 +1102,6 @@ public class Sprite implements Movement
             }
         }//    
         
-    
      return spriteList.get( minValuePos );
     }
     
