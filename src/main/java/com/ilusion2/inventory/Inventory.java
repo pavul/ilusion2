@@ -5,7 +5,6 @@
  */
 package com.ilusion2.inventory;
 
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -59,6 +58,7 @@ public class Inventory
     private int cursor; //indica que parte del inventario esta seleccionado
     
     /**
+     * @TODO add this to inventory to show this as background
      * background image for each slot
      */
     BufferedImage bgSlot; //imagen de fondo del slot, los items van sobrepuestos de esta foto
@@ -66,7 +66,8 @@ public class Inventory
     /**
      * slot padding
      */
-    int padding;//el padding de cada slot, por default 20;
+    int paddingX;//el padding a lo ancho
+    int paddingY;//el padding a lo alto
     
     
     /**
@@ -81,13 +82,14 @@ public class Inventory
         this.slots = slots;
         this.x = x;
         this.y = y;   
-        this.padding = 0;
+        this.paddingX = 0;
+        this.paddingY = 0;
     }//
     
     
     /**
      * funcion que dibuja el inventario en forma de grid
-     * @param g 
+     * @param g2
      * @param rows 
      * @param columns 
      * @param width 
@@ -96,28 +98,24 @@ public class Inventory
     public void drawGrid(Graphics2D g2, int rows, int columns, int width, int height)
     {
         
-//        x = 64;
-//        y = 64;
-        
-        
         if(columns <=0 || rows <= 0 || slots.isEmpty())
         {return;}
         
-        int index=0;
-        int totalSlots= slots.size()-1;
+        int index = 0;
+        int totalSlots = slots.size() -1;
         
-        //renglones
-        for(int i=0;i < rows;i++)
+        //rows
+        for( int i = 0 ; i < rows ; i++ )
                 {
-                        //columnas
-                        for(int j=0;j < columns;j++)
+                        //columns
+                        for( int j = 0 ; j < columns ; j++ )
                         {
-                         if(slots.get(index).getIcon() != null)
+                         if( slots.get( index ).getIcon() != null )
                          {
-                             //dibujar imagen
+                             //draw img
                                   g2.drawImage(slots.get(index).getIcon(), 
-                                  x + ( width * j ), 
-                                  y +( height * i ), 
+                                  x + ( width * j ) + paddingX, 
+                                  y + ( height * i ) + paddingY, 
                                   null);
                                   //cantidad que se tiene
                                   //etiqueta
@@ -134,8 +132,15 @@ public class Inventory
     
     
     /**
-     * funcion que dibuja el inventario de manera de lista vertical
-     * @param g 
+     * funcion que dibuja el inventario de manera de lista vertical 
+     * 
+     * this function draw the inventory in vertical list,
+     * if draw value is true then it will show the value 
+     * of the item.
+     * NOTE: the color of the text must be set before
+     * call this method
+     * @param g2
+     * @param drawValue
      */
     public void drawLine(Graphics2D g2, boolean drawValue)
     {
@@ -146,8 +151,8 @@ public class Inventory
         
         for( int i = 0 ; i < len; i++ )
         {
-            int width = x + slots.get(i).getIcon().getWidth() + padding;
-            int heigth = y + (slots.get(i).getIcon().getHeight() * i) + padding;
+            int width = x + slots.get(i).getIcon().getWidth() + paddingX;
+            int heigth = y + (slots.get(i).getIcon().getHeight() * i) + paddingY;
         
             //primero se muestran los iconos
             if( slots.get(i).getIcon() != null )
@@ -174,6 +179,16 @@ public class Inventory
         
     }//
 
+    
+    
+    
+    
+    /**
+     * getters & setters
+     */
+    
+    
+    
     public boolean isVisible() {
         return visible;
     }
@@ -222,22 +237,22 @@ public class Inventory
         this.bgSlot = bgSlot;
     }
 
-    public int getPadding() {
-        return padding;
+    public int getPaddingX() {
+        return paddingX;
     }
 
-    public void setPadding(int padding) {
-        this.padding = padding;
+    public void setPaddingX(int paddingX) {
+        this.paddingX = paddingX;
     }
-    
-    
-    /**
-     * getters & setters
-     */
-    
-   
-    
-    
+
+    public int getPaddingY() {
+        return paddingY;
+    }
+
+    public void setPaddingY(int paddingY) {
+        this.paddingY = paddingY;
+    }
+
     
     
     

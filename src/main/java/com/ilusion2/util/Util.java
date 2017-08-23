@@ -33,7 +33,7 @@ public class Util
     
     /**
      * funcion que regresa un objeto imagen segun la ruta que del archivo
-     * @param imgFile
+     * @param pathFile
      * @return 
      * @throws java.io.FileNotFoundException 
      */
@@ -156,7 +156,6 @@ public class Util
         catch (IOException e) 
         {
             System.out.println("No se pudo cargar el Archivo de Propiedaes: "+ pathFile);
-            e.printStackTrace();
         }//
         
       return prop;
@@ -326,7 +325,7 @@ public class Util
         List<Tile> tileList = new ArrayList<>();
         
         int mapIndex = 0;
-//        int totalTiles = cols * rows;
+        //int totalTiles = cols * rows;
         
         int tilewidth = tileWidth;
         int tileHeigth = tileHeight;

@@ -38,9 +38,15 @@ public class Sprite implements Movement
     
     
     /**
+     * internal counter in the sprite class to create
+     * diferent spriteID
+     */
+    private static int idCounter = 10_000;
+    
+    /**
      * with this id we can retrieve a particular sprite
      */
-    private static int spriteId = 10_000;
+    private int spriteId;
     
     /**
      * this label is to group sprites for example:
@@ -178,9 +184,10 @@ public class Sprite implements Movement
      */
     public Sprite() 
     {
-        this.spriteId += 1;
-//        this.executeJump = true;
-        this.gravity=0.37f;
+        
+        //setting the id for this sprite
+        spriteId = ++idCounter;
+        this.gravity = 0.37f;
         this.jumpForce = 10;
         this.animationSpeedLimit = 10;
         this.currentAnimationState = AnimationState.STANDRIGHT;
@@ -1355,13 +1362,17 @@ public class Sprite implements Movement
         this.roomBoundBottom = roomBoundBottom;
     }
 
-    public static int getSpriteId() {
+    public int getSpriteId() {
         return spriteId;
     }
 
-    public static void setSpriteId(int spriteId) {
-        Sprite.spriteId = spriteId;
-    }
+    /**
+     * we cannot set manually this sprite ID
+     * @return 
+     */
+//    public static void setSpriteId(int spriteId) {
+//        Sprite.spriteId = spriteId;
+//    }
 
     public String getLabel() {
         return label;

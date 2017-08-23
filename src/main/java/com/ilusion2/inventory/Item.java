@@ -147,6 +147,30 @@ public class Item
     public void setLabel(String label) {
         this.label = label;
     }
+
+    public int getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public String getAttr() {
+        return attr;
+    }
+
+    public void setAttr(String attr) {
+        this.attr = attr;
+    }
     
     
     
