@@ -199,6 +199,18 @@ public class Sprite implements Movement
         
     }//cont 1
 
+    
+    /**
+     * xScale of the sprite by default 1
+     */
+    protected float xScale = 1;
+    
+    /**
+     * yScale of the sprite by default 1
+     */
+    protected float yScale = 1;
+    
+    
     /**
      * constructor que crea el sprite, pero solo con las dimensiones de W y H,
      * en la posicion x = 0 e y = 0
@@ -1068,21 +1080,18 @@ public class Sprite implements Movement
         
         List<Sprite> nearList = new ArrayList<>();
         
-        //get all sprites inside gameView
-        for( Sprite spr : spriteList )
+        spriteList.forEach( spr ->
         {
-        
             if( spr.isInsideView(level) )
             {
             nearList.add(spr);
             }
-            
-            
-        }//for
+        } );
         
         
         
         int[] magList = new int[ spriteList.size() ];
+        
         for( int i=0; i< spriteList.size() ;i+=1 )
         {
             
@@ -1181,11 +1190,9 @@ public class Sprite implements Movement
     }//
     
     
-    public void orbit( Sprite spr, int radio )
-    {
-        
-        this.x = spr.getCenterX() + ( (int)Math.cos( ( double) degrees ) * radio );
-        this.y = spr.getCenterY() - ( (int)Math.sin( ( double) degrees ) * radio );
+    public void orbit( Sprite spr,float angle, int radio )
+    { 
+        orbit(  spr.getCenterX(), spr.getCenterY(), angle, radio );
         
     }//
     
@@ -1197,7 +1204,7 @@ public class Sprite implements Movement
      * @param angle angle to orbit
      * @param radio distance from the center to orbit
      */
-    public void orbit( float centerX, float centerY, int angle, int radio )
+    public void orbit( float centerX, float centerY, float angle, int radio )
     {
         
         
@@ -1224,7 +1231,7 @@ public class Sprite implements Movement
     {
     return ( getCenterX() >= 0 && 
              getCenterX() <= ( 0 + level.getViewWidth() ) &&  
-             getCenterY()>= 0 &&
+             getCenterY() >= 0 &&
              getCenterY() <= ( 0 + level.getViewHeight()) );
     
     }
@@ -1312,6 +1319,7 @@ public class Sprite implements Movement
      * this set the jump value to jumpforce * -1;
      * this way it will then go - y Axis ( up ) and then
      * + y Axis ( down)
+     * @param jumpValue
      */
     public void setJumpValue(float jumpValue)
     {
@@ -1475,6 +1483,33 @@ public class Sprite implements Movement
           
     }//
   
+    
+    /**
+     * this methos is to show an scaled sprite on screen
+     * @param g2 
+     */
+    public void drawScaled( Graphics2D g2 )
+    {
+        
+        if( visible )
+        {
+             AffineTransform oldTransform =  g2.getTransform();
+             //Graphics2D g2d = (Graphics2D)g;
+             g2.translate( x , y );
+             AffineTransform trans = new AffineTransform();
+             trans.setToIdentity();
+             
+            //trans.setTransform(identity);
+             trans.scale( xScale, yScale );
+             g2.drawImage( frames[ currentFrame ], trans, null );
+             
+            g2.setTransform(oldTransform);
+        
+        }
+          
+    }//
+    
+    
     
       /**
      * renderiza al sprite rotado segun los grados establecidos
@@ -1664,7 +1699,21 @@ public class Sprite implements Movement
         this.anchor = anchor;
     }
 
-    
-    
+    public float getxScale() {
+        return xScale;
+    }
+
+    public void setxScale( float xScale ) {
+        this.xScale = xScale;
+    }
+
+    public float getyScale() {
+        return yScale;
+    }
+
+    public void setyScale( float yScale ) {
+        this.yScale = yScale;
+    }
+
      
 }//class

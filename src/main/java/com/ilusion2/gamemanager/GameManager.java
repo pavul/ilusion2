@@ -184,6 +184,7 @@ public class GameManager extends Canvas implements
      * 
      * @param lvltoLoad primer nivel a cargar
      * @param levelStack listado de niveles que hay en el juego
+     * @param fullScreen
      * @deprecated
      */
     public GameManager(String lvltoLoad, Map<String, 
@@ -743,6 +744,9 @@ public class GameManager extends Canvas implements
     //get Screen size to scale the game
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     
+    
+        System.out.println("pantalla pixels "+screenSize);
+    
     /**
      * get screen size if fullscreen is true
      */
@@ -762,6 +766,17 @@ public class GameManager extends Canvas implements
         double fixedWidth = deviceHeight * ( aspectRatio  );
 
         screenSize.setSize( fixedWidth, deviceHeight );
+        
+//      xScale = (float)currentLevel.getViewWidth() / fixedWidth;
+//      yScale = (float)currentLevel.getViewHeight() / screenSize.getHeight();
+      
+        
+        
+        System.out.println("X "+  fixedWidth /(float)currentLevel.getViewWidth() );
+        System.out.println("Y "+  screenSize.getHeight() /(float)currentLevel.getViewHeight() );
+        currentLevel.setGraphicScale( 
+                fixedWidth/(float)currentLevel.getViewWidth() , 
+                screenSize.getHeight() /(float)currentLevel.getViewHeight());
         
     }//
     else

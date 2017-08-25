@@ -14,10 +14,13 @@ import com.ilusion2.gamemanager.Camera;
 import com.ilusion2.gamemanager.GameState;
 import com.ilusion2.gamemanager.ImageBackground;
 import com.ilusion2.gamemanager.GameManager;
+import com.ilusion2.util.Util;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.io.IOException;
@@ -188,6 +191,8 @@ public abstract class GameLevel
    protected Sound soundPlayer;
    
    
+   Font font;
+   
 //   protected Player player;
    
    /**
@@ -221,8 +226,18 @@ public abstract class GameLevel
     musicPlayer = new MusicPlayer();
     
     soundPlayer = new Sound();
-       
-//   init();
+            //   init();
+
+    
+        try 
+        {
+            font = Util.getFont( this.getClass() , "/font/PressStart2P.ttf", 12 );
+        }
+        catch ( FontFormatException |IOException ex) 
+        {
+            System.out.println("::: error to load font "+ex.getMessage() );
+        }
+    
    }//const
    
    /**
@@ -278,7 +293,6 @@ public abstract class GameLevel
      * @param roomHeight
      * @param viewWidth
      * @param viewHeight
-     * @param imgbg
     */
    public GameLevel(int roomWidth, int roomHeight, int viewWidth, int viewHeight)
    {
@@ -343,6 +357,7 @@ public abstract class GameLevel
        //this part of the cpde handles the full screen image
        //depending on the scale values created by the room class
        //when the game start
+       System.out.println(":::scales "+xScale+" "+yScale);
        g2.scale( xScale, yScale );
        
         //this function is user to render background
@@ -353,7 +368,7 @@ public abstract class GameLevel
                     
         //this function is user to render HUD
         renderHUD( g2 );
-            
+        
    }//renderiza fondo, foreground y HUD del juego
    
    /**
@@ -475,6 +490,7 @@ public abstract class GameLevel
      * metodo que renderiza en pantalla el fondo, del color especificado
      * 
      * this metod is used to render a background of certain color
+     * in the whole screen
      * @param g2
      * @param color 
      */
@@ -507,29 +523,29 @@ public abstract class GameLevel
     }//
     
     
-      /**
-     * metodo que renderiza en pantalla un color, en la posicion X e Y con
-     * un ancho y alto definido y con transparencia definida por "alpha"
-     * 
-     * * this metod is used to render a background of certain color
-     * defining coordinates X e y, with an specific heigth and width
-     * but also you can stablish alpha value
-     * 
-     * @param g2
-     * @param color
-     * @param x
-     * @param y
-     * @param w
-     * @param h 
-     * @param alpha 
-     */
-    public void drawBgColor(Graphics2D g2,Color color, int x, int y, int w, int h,float alpha)
-    {
-        g2.setColor(color);
-        g2.fillRect( x, y, w, h );
-    }//
-    
-    
+//      /**
+//     * metodo que renderiza en pantalla un color, en la posicion X e Y con
+//     * un ancho y alto definido y con transparencia definida por "alpha"
+//     * 
+//     * * this metod is used to render a background of certain color
+//     * defining coordinates X e y, with an specific heigth and width
+//     * but also you can stablish alpha value
+//     * 
+//     * @param g2
+//     * @param color
+//     * @param x
+//     * @param y
+//     * @param w
+//     * @param h 
+//     * @param alpha 
+//     */
+//    public void drawBgColor(Graphics2D g2,Color color, int x, int y, int w, int h,float alpha)
+//    {
+//        g2.setColor(color);
+//        g2.fillRect( x, y, w, h );
+//    }//
+//    
+//    
     /**
      * metodo que renderiza en pantalla alguna imagen, en la posicion X e Y
      * 
@@ -622,10 +638,6 @@ public abstract class GameLevel
     {
     
     imgbg = null; //listado de background de imagenes
-   
-//    tileMaps= null; //listado de mapas de tiles
-    
-//    colisionTileMaps = null; //listado de mapas de colisiones de tiles
     
     cam = null;
     
@@ -684,23 +696,6 @@ public abstract class GameLevel
         this.imgbg = imgbg;
     }
 
-//    public ArrayList<int[]> getTileMaps() {
-//        return tileMaps;
-//    }
-//
-//    public void setTileMaps(ArrayList<int[]> tileMaps) {
-//        this.tileMaps = tileMaps;
-//    }
-//
-//    public ArrayList<int[]> getColisionTileMaps() {
-//        return colisionTileMaps;
-//    }
-//
-//    public void setColisionTileMaps(ArrayList<int[]> colisionTileMaps) {
-//        this.colisionTileMaps = colisionTileMaps;
-//    }
-
-  
 
     public Camera getCam() {
         return cam;
@@ -782,18 +777,6 @@ public abstract class GameLevel
         this.gameState = gameState;
     }
 
-    
-    
-//    public MP3Player getMp3Player() {
-//        return mp3Player;
-//    }
-//
-//    public void setMp3Player(MP3Player mp3Player) {
-//        this.mp3Player = mp3Player;
-//    }
-    
-    
-    
     // </getters and setters>
    
      /**
@@ -830,7 +813,7 @@ public abstract class GameLevel
      * tunction that add the mouseListener to the current level ( canvas )
      * @param component 
      */
-    public void addMouseListener(Component component )
+    public void addMouseListener( Component component )
     {
         if( mouseControl == null )
         { mouseControl =  new MouseControl();}
@@ -881,11 +864,8 @@ public abstract class GameLevel
     public GpioGameControl getGpioGameControl() {
         return gpioGameControl;
     }
-//
-//    public void setGpioGameControl(GpioGameControl gpioGameControl) {
-//        this.gpioGameControl = gpioGameControl;
-//    }
-
+    
+    
     /**
      * this ethod changes the scale to change the game view port 
      * @param xScale
