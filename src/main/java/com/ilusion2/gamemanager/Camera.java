@@ -62,8 +62,8 @@ public class Camera implements CameraMovement
      */
     int roomWidth; //el ancho del room del nivel este puede ser de muchos pixeles de ancho
     int roomHeigth; //el alto del room del nivel este puede ser de muchos pizeles de alto
-    int viewXPort; //el ancho de porcion de pantalla que se vera del nivel
-    int viewYPort; //el alto de porcion de pantalla que se vera del nivel
+    float viewXPort; //el ancho de porcion de pantalla que se vera del nivel
+    float viewYPort; //el alto de porcion de pantalla que se vera del nivel
     
     /**
      * this is a value that will be in the same place always on the viewport, 
@@ -86,22 +86,22 @@ public class Camera implements CameraMovement
     /**
      * left margin to check if the player is reaching that to move the camera to left
      */
-    int marginLeft= -1; 
+    float marginLeft= -1; 
     
     /**
      * right margin to check if the player is reaching that to move the camera to right
      */
-    int marginRight= -1;
+    float marginRight= -1;
     
     /**
      * top margin to check if the player is reaching that to move the camera to top
      */
-    int marginTop= -1;
+    float marginTop= -1;
     
     /**
      * bottom margin to check if the player is reaching that to move the camera to bottom
      */
-    int marginBottom= -1;
+    float marginBottom= -1;
             
     
     /**
@@ -199,19 +199,19 @@ public class Camera implements CameraMovement
         this.roomHeigth = roomHeigth;
     }
 
-    public int getViewXPort() {
+    public float getViewXPort() {
         return viewXPort;
     }
 
-    public void setViewXPort(int viewXPort) {
+    public void setViewXPort(float viewXPort) {
         this.viewXPort = viewXPort;
     }
 
-    public int getViewYPort() {
+    public float getViewYPort() {
         return viewYPort;
     }
 
-    public void setViewYPort(int viewYPort) {
+    public void setViewYPort(float viewYPort) {
         this.viewYPort = viewYPort;
     }
 
@@ -231,7 +231,7 @@ public class Camera implements CameraMovement
         this.offsetY = offsetY;
     }
 
-    public int getMarginLeft() {
+    public float getMarginLeft() {
         return marginLeft;
     }
 
@@ -240,13 +240,13 @@ public class Camera implements CameraMovement
      * has to check when a sprite si approaching to the left edge
      * @param marginLeft 
      */
-    public void setMarginLeft(int marginLeft) {
+    public void setMarginLeft(float marginLeft) {
         this.marginLeft = marginLeft;
     }
 
     
     
-    public int getMarginRight() {
+    public float getMarginRight() {
         return marginRight;
     }
 
@@ -255,11 +255,11 @@ public class Camera implements CameraMovement
      * has to check when a sprite si approaching to the right edge
      * @param marginRight
      */
-    public void setMarginRight( int marginRight ) {
+    public void setMarginRight( float marginRight ) {
         this.marginRight = marginRight;
     }
 
-    public int getMarginTop() {
+    public float getMarginTop() {
         return marginTop;
     }
 
@@ -268,11 +268,11 @@ public class Camera implements CameraMovement
      * has to check when a sprite is approaching to the top edge
      * @param marginTop
      */
-    public void setMarginTop( int marginTop ) {
+    public void setMarginTop( float marginTop ) {
         this.marginTop = marginTop;
     }
 
-    public int getMarginBottom() {
+    public float getMarginBottom() {
         return marginBottom;
     }
 
@@ -281,7 +281,7 @@ public class Camera implements CameraMovement
      * has to check when a sprite is approaching to the bottom edge
      * @param marginBottom
      */
-    public void setMarginBottom( int marginBottom ) {
+    public void setMarginBottom( float marginBottom ) {
         this.marginBottom = marginBottom;
     }
     

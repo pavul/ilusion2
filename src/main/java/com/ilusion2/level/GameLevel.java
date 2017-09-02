@@ -46,8 +46,8 @@ public abstract class GameLevel
     //medidas del room
     protected int roomWidth; //largo total del rooom
     protected int roomHeight; //alto total del room
-    protected int viewWidth; //porcion de ancho del room que se ve en pantalla
-    protected int viewHeight; //porcion de alto del room que se ve en pantalla
+    protected float viewWidth; //porcion de ancho del room que se ve en pantalla
+    protected float viewHeight; //porcion de alto del room que se ve en pantalla
     
     //these variables are use to fit the game view in the device screen
     //if is gonna be player on full screen
@@ -357,7 +357,7 @@ public abstract class GameLevel
        //this part of the cpde handles the full screen image
        //depending on the scale values created by the room class
        //when the game start
-       System.out.println(":::scales "+xScale+" "+yScale);
+//       System.out.println(":::scales "+xScale+" "+yScale);
        g2.scale( xScale, yScale );
        
         //this function is user to render background
@@ -672,19 +672,19 @@ public abstract class GameLevel
         this.roomHeight = roomHeight;
     }
 
-    public int getViewWidth() {
+    public float getViewWidth() {
         return viewWidth;
     }
 
-    public void setViewWidth(int viewWidth) {
+    public void setViewWidth(float viewWidth) {
         this.viewWidth = viewWidth;
     }
 
-    public int getViewHeight() {
+    public float getViewHeight() {
         return viewHeight;
     }
 
-    public void setViewHeight(int viewHeight) {
+    public void setViewHeight(float viewHeight) {
         this.viewHeight = viewHeight;
     }
 

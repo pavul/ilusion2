@@ -1014,4 +1014,140 @@ public class Collision
           return false;
         }//checkcolisiontile
 
+          
+      /**
+     * funtion that check colision along y axis and returns TOP and BOTTOM collision
+     * NOTE: this function should be used on update method for a game that implement
+     * gravity
+     * @param s
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+           */
+          public void blockYAxisRectangles( Sprite s, float x, float y, float width, float height )
+          {
+            float halfWidth = width / 2;
+            float halfHeigth = height / 2;
+            float centerX = x + halfWidth;
+            float centerY = y + halfHeigth;
+            
+		String side = Config.COLISION_NONE;        
+                
+                //get distance vectors
+		float vx = s.getCenterX() - centerX;
+		float vy = s.getCenterY() - centerY;
+            
+            
+              float combinedHalfWidth = s.getHalfWidth()+halfWidth;
+	      float combinedHalfHeight = s.getHalfHeight()+halfHeigth;
+            
+            if( Math.abs( vx ) < combinedHalfWidth )
+            {
+            
+                if( Math.abs( vy ) < combinedHalfHeight )
+                {
+                //there must be a colision here
+                    
+                    float overlapX = combinedHalfWidth - Math.abs( vx );
+		    float overlapY = combinedHalfHeight - Math.abs( vy );
+                    
+                                if(overlapX >= overlapY)
+				{
+                                    System.out.println("COL ON Y " +overlapY );
+                                    
+					if(vy > 0)
+					{
+                                             System.out.println("-> ");
+//						side = Config.COLISION_TOP;
+//						if(move)s2.setY(s2.getY()-1);
+						s.setY( s.getY() + overlapY );
+                                         }
+					else
+					{
+//						side = Config.COLISION_BOTTOM;
+//						if(move)s2.setY(s2.getY()+1);
+                                            System.out.println("-> "+s.getY()+" - "+overlapY+" "+(s.getY()-overlapY));
+                                                s.setY( s.getY() - overlapY );
+                                                
+					}
+				}//
+                                
+                }//heig
+                
+            }//
+          
+          }//
+          
+          
+          
+          /**
+           * funtion that check colision along X axis and returns TOP and BOTTOM collision
+           * NOTE: this function should be used on update method
+           * @param s
+           * @param x
+           * @param y
+           * @param width
+           * @param height 
+           */
+          public void blockXAxisRectangles( Sprite s, float x, float y, float width, float height )
+          {
+              
+               float halfWidth = width / 2;
+            float halfHeigth = height / 2;
+            float centerX = x + halfWidth;
+            float centerY = y + halfHeigth;
+            
+		String side = Config.COLISION_NONE;        
+                
+                //get distance vectors
+		float vx = s.getCenterX() - centerX;
+		float vy = s.getCenterY() - centerY;
+            
+            
+              float combinedHalfWidth = s.getHalfWidth()+halfWidth;
+	      float combinedHalfHeight = s.getHalfHeight()+halfHeigth;
+            
+            
+            
+            
+            if( Math.abs( vx ) < combinedHalfWidth )
+            {
+            
+                if( Math.abs( vy ) < combinedHalfHeight )
+                {
+                //there must be a colision here
+                    
+                    float overlapX = combinedHalfWidth - Math.abs( vx );
+		    float overlapY = combinedHalfHeight - Math.abs( vy );
+                    
+		                
+                                if( overlapX < overlapY )
+                                {
+                                    System.out.println("COL ON X");            
+                                    if( vx > 0 )
+					{
+//						side= Config.COLISION_LEFT;
+//						if(move)s2.setX(s2.getX()-1);
+						s.setX(s.getX()+overlapX);
+					}
+					else
+					{
+//						side = Config.COLISION_RIGHT;
+//						if(move)s2.setX(s2.getX()+1);
+						s.setX(s.getX()-overlapX);
+					}
+                                    
+                                }//
+                                
+                    
+                }//heig
+                
+            }//
+              
+          }//
+          
+          
+          
+          
 }//collision

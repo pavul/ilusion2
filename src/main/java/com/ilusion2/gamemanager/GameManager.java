@@ -706,10 +706,18 @@ public class GameManager extends Canvas implements
     
         Dimension windowSize = getScaledWindowSize();
         
+        double a =windowSize.getWidth() / currentLevel.getViewWidth();
+        double b =windowSize.getHeight() / currentLevel.getViewHeight();
     //finally we set the scale to the level
-    currentLevel.setGraphicScale(  
-            windowSize.getWidth() / currentLevel.getViewWidth(), 
-            windowSize.getHeight() / currentLevel.getViewHeight() );
+//    currentLevel.setGraphicScale(  
+//            windowSize.getWidth() / currentLevel.getViewWidth(), 
+//            windowSize.getHeight() / currentLevel.getViewHeight() );
+    
+
+        System.err.println(" a = "+a+" b = "+b);
+    currentLevel.setGraphicScale( a, b );
+    
+    
     
     }//seFullScreen
 
@@ -741,11 +749,33 @@ public class GameManager extends Canvas implements
     public Dimension getScaledWindowSize()
     {
     
+        
+         //get Screen size to scale the game
+//    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//    
+//    //we get current device width and heigth
+//    double deviceWidth = screenSize.getWidth();
+//    double deviceHeight = screenSize.getHeight();
+//      
+//    //System.out.println( "valores del device: "+deviceWidth +" - "+deviceHeight );
+//    
+//    //then we get the new width that must have the game,
+//    //keeping the aspect ratio
+//    float aspectRatio = (float)currentLevel.getViewWidth() / (float)currentLevel.getViewHeight();
+//   
+//    double fixedWidth = deviceHeight * ( aspectRatio  );
+//        
+//    screenSize.setSize( fixedWidth, deviceHeight );
+//    
+//    return screenSize;
+        
+        
+        
     //get Screen size to scale the game
     Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     
     
-        System.out.println("pantalla pixels "+screenSize);
+//        System.out.println("pantalla pixels "+screenSize);
     
     /**
      * get screen size if fullscreen is true
@@ -772,11 +802,11 @@ public class GameManager extends Canvas implements
       
         
         
-        System.out.println("X "+  fixedWidth /(float)currentLevel.getViewWidth() );
-        System.out.println("Y "+  screenSize.getHeight() /(float)currentLevel.getViewHeight() );
-        currentLevel.setGraphicScale( 
-                fixedWidth/(float)currentLevel.getViewWidth() , 
-                screenSize.getHeight() /(float)currentLevel.getViewHeight());
+//        System.out.println("X "+  fixedWidth /(float)currentLevel.getViewWidth() );
+//        System.out.println("Y "+  screenSize.getHeight() /(float)currentLevel.getViewHeight() );
+//        currentLevel.setGraphicScale( 
+//                fixedWidth/(float)currentLevel.getViewWidth() , 
+//                screenSize.getHeight() /(float)currentLevel.getViewHeight());
         
     }//
     else
@@ -784,6 +814,8 @@ public class GameManager extends Canvas implements
         screenSize.setSize( this.getWidth() , this.getHeight() );
     }
   
+        
+        
     
     return screenSize;
     }//
@@ -794,23 +826,22 @@ public class GameManager extends Canvas implements
      * ( width of the portion of the screen that must be show )
      * @return 
      */
-    @Override
-    public int getWidth()
-    {
-    return currentLevel.getViewWidth();   
-    }
-    
-    
-    /**
-     * this method return the view port heigth of the level
-     * ( heigth of the portion of the screen that must be show ) 
-     * @return 
-     */
-    @Override
-    public int getHeight()
-    {
-    return currentLevel.getViewHeight();
-    }
+//    public float getWidth()
+//    {
+//    return currentLevel.getViewWidth();   
+//    }
+//    
+//    
+//    /**
+//     * this method return the view port heigth of the level
+//     * ( heigth of the portion of the screen that must be show ) 
+//     * @return 
+//     */
+//    @Override
+//    public float getHeight()
+//    {
+//    return currentLevel.getViewHeight();
+//    }
 
     public void setgameContainer(JFrame gameContainer) {
         this.gameContainer = gameContainer;
