@@ -79,9 +79,9 @@ public class GameManager extends Canvas implements
    
    //these variables are use to fit the game view in the device screen
     //if is gonna be player on full screen
-    protected double xScale = 1;
-    protected double yScale = 1;
-    
+//    protected double xScale = 1;
+//    protected double yScale = 1;
+    Dimension gameSize;
    
    
     /**
@@ -224,6 +224,7 @@ public class GameManager extends Canvas implements
     
         fps = 60;//setea por default a 60 frames por segundo
         this.fullScreen = fullScreen;
+        gameSize = new Dimension();
          loadLvl( gamelevel );
         
     }//
@@ -563,7 +564,14 @@ public class GameManager extends Canvas implements
         currentLevel.setGameManager( this );
           
         if( fullScreen )
-           setFullScreen();
+        {
+        setFullScreen();
+        }
+        else
+        {
+        gameSize.setSize( currentLevel.getViewWidth(),
+                          currentLevel.getViewHeight() );
+        }
         
         //if not persisten init the level again
         if( !currentLevel.isPersistent() )
@@ -576,8 +584,10 @@ public class GameManager extends Canvas implements
         }//
         
         //finally we change dimensions of level
+        //this ussually set the window size every time
+        // a new level is loaded
         if( gameContainer != null )
-        gameContainer.setSize( getScaledWindowSize() );
+        gameContainer.setSize( getGameSize() );
         
         previousLevel = null;
         isLoading = false;
@@ -691,8 +701,6 @@ public class GameManager extends Canvas implements
         this.serverApplication = serverApplication;
     }
 
-   
-    
     /**
      * this function make the game fit the screen device, actualy is gonna 
      * scale the game keeping the aspect ratio, for example:
@@ -703,124 +711,54 @@ public class GameManager extends Canvas implements
      */
     private void setFullScreen()
     {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     
-        Dimension windowSize = getScaledWindowSize();
-        
-        double a =windowSize.getWidth() / currentLevel.getViewWidth();
-        double b =windowSize.getHeight() / currentLevel.getViewHeight();
-    //finally we set the scale to the level
-//    currentLevel.setGraphicScale(  
-//            windowSize.getWidth() / currentLevel.getViewWidth(), 
-//            windowSize.getHeight() / currentLevel.getViewHeight() );
-    
+        //we get current device width and heigth
+        //double deviceWidth = screenSize.getWidth();
+        double deviceHeight = screenSize.getHeight();
 
-        System.err.println(" a = "+a+" b = "+b);
-    currentLevel.setGraphicScale( a, b );
-    
-    
-    
+        System.out.println( "valores del device: "+screenSize );
+
+        //we have to get the aspect ratio
+        float aspectRatio = 
+                currentLevel.getViewWidth() /
+                currentLevel.getViewHeight();
+
+        System.out.println("aspect ratio: "+aspectRatio );
+        
+        double fixedWidth = deviceHeight * aspectRatio;
+
+        System.out.println("fixed widt "+fixedWidth+" --> "+ deviceHeight );
+        
+        gameSize.setSize( (float)fixedWidth, (float)deviceHeight );
+      
+        System.err.println("xS :"+ fixedWidth / ( float )currentLevel.getViewWidth()  );
+        System.err.println("yS :"+ screenSize.getHeight() / currentLevel.getViewHeight() );
+        
+        currentLevel.setGraphicScale( 
+                fixedWidth / ( float )currentLevel.getViewWidth() , 
+                screenSize.getHeight() / ( float )currentLevel.getViewHeight());
+              
     }//seFullScreen
 
-    /**
-    * this method reset xScale and yScale to 1, so the 
-    * game will be shown with the normal size
-    */    
-    private void setNormalScreenMode()
-    {
-    xScale = 1;
-    yScale = 1;
-    }//
-
+    
     public void setFullScreen(boolean atFullScreen) 
     {
         this.fullScreen = atFullScreen;
     }//
     
     
-    
-    
-    
     /**
-     * this method return a dimension object with the width and heigth
-     * of the game at full screen.
-     * NOTE: use this function afther set atFullScreen to true
+     * this method return the game size of the window, 
+     * usually must be the viewWidth but if the game is
+     * set to fullscreen then this method will return the 
+     * new game size window
      * @return 
      */
-    public Dimension getScaledWindowSize()
-    {
-    
-        
-         //get Screen size to scale the game
-//    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-//    
-//    //we get current device width and heigth
-//    double deviceWidth = screenSize.getWidth();
-//    double deviceHeight = screenSize.getHeight();
-//      
-//    //System.out.println( "valores del device: "+deviceWidth +" - "+deviceHeight );
-//    
-//    //then we get the new width that must have the game,
-//    //keeping the aspect ratio
-//    float aspectRatio = (float)currentLevel.getViewWidth() / (float)currentLevel.getViewHeight();
-//   
-//    double fixedWidth = deviceHeight * ( aspectRatio  );
-//        
-//    screenSize.setSize( fixedWidth, deviceHeight );
-//    
-//    return screenSize;
-        
-        
-        
-    //get Screen size to scale the game
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-    
-    
-//        System.out.println("pantalla pixels "+screenSize);
-    
-    /**
-     * get screen size if fullscreen is true
-     */
-    if( fullScreen )
-    {
-    
-        //we get current device width and heigth
-        //double deviceWidth = screenSize.getWidth();
-        double deviceHeight = screenSize.getHeight();
-
-        //System.out.println( "valores del device: "+deviceWidth +" - "+deviceHeight );
-
-        //then we get the new width that must have the game,
-        //keeping the aspect ratio
-        float aspectRatio = (float)currentLevel.getViewWidth() / (float)currentLevel.getViewHeight();
-
-        double fixedWidth = deviceHeight * ( aspectRatio  );
-
-        screenSize.setSize( fixedWidth, deviceHeight );
-        
-//      xScale = (float)currentLevel.getViewWidth() / fixedWidth;
-//      yScale = (float)currentLevel.getViewHeight() / screenSize.getHeight();
-      
-        
-        
-//        System.out.println("X "+  fixedWidth /(float)currentLevel.getViewWidth() );
-//        System.out.println("Y "+  screenSize.getHeight() /(float)currentLevel.getViewHeight() );
-//        currentLevel.setGraphicScale( 
-//                fixedWidth/(float)currentLevel.getViewWidth() , 
-//                screenSize.getHeight() /(float)currentLevel.getViewHeight());
-        
-    }//
-    else
-    {
-        screenSize.setSize( this.getWidth() , this.getHeight() );
+    public Dimension getGameSize() {
+        return gameSize;
     }
-  
-        
-        
-    
-    return screenSize;
-    }//
-    
-    
+
     /**
      * this method return the view port width of the level
      * ( width of the portion of the screen that must be show )
@@ -830,11 +768,11 @@ public class GameManager extends Canvas implements
 //    {
 //    return currentLevel.getViewWidth();   
 //    }
-//    
+//
 //    
 //    /**
 //     * this method return the view port heigth of the level
-//     * ( heigth of the portion of the screen that must be show ) 
+//     * ( heigth of the portion of the screen that must be show )
 //     * @return 
 //     */
 //    @Override
@@ -842,7 +780,6 @@ public class GameManager extends Canvas implements
 //    {
 //    return currentLevel.getViewHeight();
 //    }
-
     public void setgameContainer(JFrame gameContainer) {
         this.gameContainer = gameContainer;
     }
