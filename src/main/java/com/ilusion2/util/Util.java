@@ -5,22 +5,29 @@
  */
 package com.ilusion2.util;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
+import java.awt.AWTException;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import tile.Tile;
 
@@ -384,6 +391,62 @@ public class Util
         return tileList;
     }
     
+    /**
+     * this method is used to take an screen shot of the game
+     * NOTE: fileName is the name of the screenshoot saved, it have
+     * the next format fileName[epochseconds].[extension], i suggest to
+     * pass on the fileName the name of the game
+     * @param w
+     * @param h
+     * @param fileName this is the name of the new screenshot + seconds + png 
+     * @return 
+     */
+    public static boolean takeScreenShoot( float w, float h, String fileName )
+    {
+    
+    
+        try 
+        {
+        Robot robot = new Robot();
+            
+        String format = "png";
+//        String pictureName = fileName + ( Instant.now().getEpochSecond() ) + format;
+        
+        StringBuffer sb = new StringBuffer();
+        sb.append( fileName );
+        sb.append( Instant.now().getEpochSecond() );
+        sb.append( '.' );
+        sb.append( format );
+        
+        Rectangle screenRect = 
+                    new Rectangle( ( int )w, ( int )h );
+        
+        BufferedImage screenFullImage = 
+                    robot.createScreenCapture( screenRect );
+        
+        ImageIO.write( 
+                screenFullImage, 
+                format, 
+                new File( sb.toString() ) );
+        
+            
+        return true;    
+        } 
+        catch (AWTException ex) 
+        {
+            Logger.getLogger(
+                    Util.class.getName()).
+                    log(Level.SEVERE,
+                            null, 
+                    "::: error when trying to take screenshoot "+ex );
+        } catch (IOException ex) {
+            Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
+        }
+         
+        
+        
+        return false;
+    }//
     
     
     
