@@ -171,6 +171,11 @@ public class Sprite implements Movement
      */
     protected int hp;
     
+    
+    protected boolean drawBox;
+    
+    
+    
     /* 
      * CONSTRUCTOR
      */
@@ -195,7 +200,7 @@ public class Sprite implements Movement
         
         this.pivot = new Point( ( int )this.getCenterX() , ( int )this.getCenterY() );
         this.anchor = new Point( 0, 0 );
-        
+        this.drawBox = false;
         
     }//cont 1
 
@@ -734,16 +739,22 @@ public class Sprite implements Movement
      *
      * @param g2
      */
-    public void draw(Graphics2D g2) {
-        if (visible) {
+    public void draw(Graphics2D g2) 
+    {
+        if (visible) 
+        {
             g2.drawImage(frames[currentFrame], (int) x, (int) y, null);
         }
+        
+        drawBox( g2 );
+        
     }//
 
     
     /**
      * this method is used when the sprite has several subanimations
      * @param g2 
+     * @param stopAtEnd 
      */
     public void drawSubanimation(Graphics2D g2, boolean stopAtEnd ) 
     {
@@ -788,6 +799,8 @@ public class Sprite implements Movement
        
         
         }//if visible
+        
+        drawBox( g2 );
         
     }//
     
@@ -924,7 +937,8 @@ public class Sprite implements Movement
      * @param speedX
      */
     @Override
-    public void moveSpeedX(float speedX) {
+    public void moveSpeedX(float speedX) 
+    {
         x += speedX;
         
         if(roomBoundLeft != -1)setBoundLeft();
@@ -938,12 +952,12 @@ public class Sprite implements Movement
      * @param speedY
      */
     @Override
-    public void moveSpeedY(float speedY) {
+    public void moveSpeedY(float speedY) 
+    {
         y += speedY;
         
         if(roomBoundTop != -1)setBoundTop();
         if(roomBoundBottom != -1)setBoundBottom();
-        
     }
 
     /**
@@ -1480,7 +1494,8 @@ public class Sprite implements Movement
             g2.setTransform(oldTransform);
         
         }
-          
+        
+         drawBox( g2 ); 
     }//
   
     
@@ -1507,6 +1522,8 @@ public class Sprite implements Movement
         
         }
           
+        drawBox( g2 );
+        
     }//
     
     
@@ -1534,7 +1551,9 @@ public class Sprite implements Movement
              g2.setTransform(oldTransform);
          
         }
-            
+        
+        drawBox( g2 );
+        
     }// 
     
     
@@ -1715,5 +1734,23 @@ public class Sprite implements Movement
         this.yScale = yScale;
     }
 
+    public boolean isDrawBox() {
+        return drawBox;
+    }
+
+    public void setDrawBox(boolean drawBox) {
+        this.drawBox = drawBox;
+    }
+
+    
+    public void drawBox( Graphics2D g )
+    {
+    if( drawBox )
+        {
+        g.drawRect( (int)x, (int)y, (int)w, (int)h );
+        }
+    }
+    
+    
      
 }//class

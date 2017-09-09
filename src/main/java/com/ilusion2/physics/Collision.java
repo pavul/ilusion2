@@ -8,6 +8,9 @@ package com.ilusion2.physics;
 import com.ilusion2.config.Config;
 import com.ilusion2.sprite.Sprite;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import sun.audio.AudioPlayer;
 import tile.Tile;
 
 /**
@@ -37,10 +40,7 @@ public class Collision
             return new Collision();
         else
             return instance;
-    
-    }
-    
-    
+    }//
     
     /**
          * this function return the total distance from one point to another
@@ -206,16 +206,19 @@ public class Collision
                 float x, float y, float w, float h,
                 float x2, float y2, float w2, float h2)
 	{            
-            boolean hit=false;
 
-            float combinedHalfWidth = getCombineHalf( w, w2 );//  w/2 +w2/2; //  s1.getHalfWidth()+s2.getHalfWidth();
-            float combinedHalfHeight = getCombineHalf( h, h2 );//   h/2 +h2/2; //  s1.getHalfHeight()+s2.getHalfHeight();
+            float combinedHalfWidth = /*getCombineHalf( w, w2 );*/  w/2 +w2/2; //  s1.getHalfWidth()+s2.getHalfWidth();
+            float combinedHalfHeight = /*getCombineHalf( h, h2 );*/   h/2 +h2/2; //  s1.getHalfHeight()+s2.getHalfHeight();
 
+            
             if( getDistance( x, w , x2, w2 ) < combinedHalfWidth )
             {
+                
+//                System.out.println( "d: "+getDistance( y, h, y2, h2 ) +"  "+combinedHalfHeight +" res: "+(getDistance(y, h, y2, h2) < combinedHalfHeight) );
+            
                 return ( getDistance(y, h, y2, h2) < combinedHalfHeight );
             }
-            return hit;
+            return false;
 		
 	}//colision rectangular
         
@@ -479,7 +482,15 @@ public class Collision
         }//checkcolisiontile
         
         
-        public  String checkColsionTile(Sprite spr,
+        
+        /**
+         * method that check collision with tile objects
+         * @param spr
+         * @param tileList
+         * @return 
+         */
+        public  String checkColsionTile(
+                Sprite spr,
                 List<Tile> tileList)
         {
             String side= Config.COLISION_NONE;
@@ -553,12 +564,100 @@ public class Collision
 //
 //            }//
 
-
+//@TODO check if the tile is inside of port view
         Tile t = tileList.stream().filter
-                (
-                        tile -> blockRectangle( spr, tile.getX(),tile.getY(), tile.getW(), tile.getH() )
-                                .equals(Config.COLISION_BOTTOM )
+                (                      
+                    tile -> 
+                    {
+                        switch( tile.getValue() )
+                        {
+                            case 0:
+                                break;
+                            case 1:
+                                return blockRectangle( spr, tile.getX(),tile.getY(), tile.getW(), tile.getH() )
+                            .equals(Config.COLISION_BOTTOM );
+                            
+                            case 2:
+                            case 3:
+                               
+                                System.err.println( "value: "+tile.getValue() );
+                                System.err.println( spr.getAnchor().getX()+" "+spr.getY() 
+                                        +"  tile: "+ tile.getX()+" "+
+                                        tile.getY());
+                                if(
+//                            !blockRectangle( spr, tile.getX(),tile.getY(), tile.getW(), tile.getH() )
+//                             .equals( Config.COLISION_NONE )
+                               rectangleColision(
+                                        spr.getX(),
+                                        spr.getY(),
+                                        spr.getW(),
+                                        spr.getH(),
+                                        tile.getX(),
+                                        tile.getY(),
+                                        tile.getW(),
+                                        tile.getH() 
+                                                ) 
+                                  )
+                                {
+                                
+                                     //check the x positon of anchor
+                               //and iterate slope array
+                               int colpos = spr.getAnchor().x - tile.getX() ;
+//                                       Math.abs( spr.getAnchor().x - tile.getX() );
+                                       
+
+                            System.err.println("anchor: "+ ( spr.getAnchor().x ) );
+                            System.err.println("tilex: "+tile.getX() );
+                            System.err.println("colpos: "+( spr.getAnchor().x - tile.getX() ) );
+
+                                    
+                                    /**
+                                    * 
+                                    */
+                                   if( colpos  > 0 && colpos <= tile.getW() )
+                                   {
+                                       
+//                                       colpos = Math.abs( colpos );
+                                       
+                                       System.err.println("entro a colpos");
+                                    
+                                       int yval = colpos;
+
+                                       
+                                       
+    //                                   if( tile.getValue() == 2 )
+    //                                   {    }
+                                       if( tile.getValue() == 3 )
+                                       { yval = tile.getW() - colpos;   }
+
+                                       
+                               System.err.println("Y: " + (tile.getY()+tile.getH())+" : "+yval );
+
+                               spr.setY( ( tile.getY() - spr.getH() ) + ( tile.getH() - yval ) );
+
+                               System.out.println("yval = "+yval);
+
+                                          
+//                                   try {
+//                                       Thread.sleep(300);
+//                                   } catch (InterruptedException ex) {
+//                                       Logger.getLogger(Collision.class.getName()).log(Level.SEVERE, null, ex);
+//                                   }
+                                       
+                                       return true;
+                                   }//
+                                    
+                                }//if there is any collision
+                                else
+                                {System.err.println("non col");}
+                              
+                                   
+                                   
+                        }//suich
                         
+                    return false;
+                    }
+                            
                 ).findFirst().orElse( null );
         
                 if( null != t )side = Config.COLISION_BOTTOM;
@@ -589,7 +688,7 @@ public class Collision
 //        {
 //            String side= Config.COLISION_NONE;
 //            
-//            if(cols <=0 || rows <= 0)
+//            if(cols <= 0 || rows <= 0)
 //            {
 //                //arrojar excepcion aqui
 //            return side;
@@ -632,13 +731,17 @@ public class Collision
 //                                if( blockRectangle(spr, tilex, tiley, tilewidth,tileHeigth )
 //                                        .equals( Config.COLISION_BOTTOM ) ) 
 //                                side = Config.COLISION_BOTTOM;
-//                                    
 //                                break;
 //                            case 2: //maybe slope
 //                                int tilx = j * tilewidth;
 //                                
 //                                //if there are some kind of collision
-//                                   if( !blockRectangleWithSlope(spr, tilx, tiley, tilewidth,tileHeigth )
+//                                   if( !blockRectangleWithSlope( 
+//                                           spr, 
+//                                           tilx, 
+//                                           tiley, 
+//                                           tilewidth,
+//                                           tileHeigth )
 //                                        .equals( Config.COLISION_NONE ) ) 
 ////                                   if( blockRectang   (spr, tilx, tiley, tilewidth,tileHeigth )
 ////                                        .equals( Config.COLISION_BOTTOM ) ) 
