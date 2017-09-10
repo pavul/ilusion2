@@ -743,7 +743,43 @@ public class Sprite implements Movement
     {
         if (visible) 
         {
-            g2.drawImage(frames[currentFrame], (int) x, (int) y, null);
+//            g2.drawImage(frames[currentFrame], (int) x, (int) y, null);
+        
+            int xxx = (int)x;
+            int yyy = (int)y;
+            int www = (int)w;
+            int hhh = (int)h;
+            
+            //if flip left
+            if( xScale < 0 )
+            {
+            xxx = (int)( x + w );
+            www = (int)( w * -1 );
+            }
+            
+            //flip down
+            if( yScale < 0 )
+            {
+                yyy = (int)( y + h );
+                hhh = (int)( h * -1 );
+            }
+            
+//        g2.drawImage(
+//                frames[currentFrame],
+//                (int)x + (int)w,
+//                (int)y,
+//                (int)-w, 
+//                (int)h,
+//                null);
+        
+                g2.drawImage(
+                    frames[currentFrame],
+                    xxx,
+                    yyy,
+                    www, 
+                    hhh,
+                    null);
+                
         }
         
         drawBox( g2 );
@@ -1358,15 +1394,6 @@ public class Sprite implements Movement
     public float getJumpValue()
     {return this.jumpValue;}
     
-    
-//    public boolean isExecuteJump() {
-//        return executeJump;
-//    }
-//
-//    public void setExecuteJump(boolean executeJump) {
-//        this.executeJump = executeJump;
-//    }
-
     public int getRoomBoundLeft() {
         return roomBoundLeft;
     }
@@ -1737,16 +1764,34 @@ public class Sprite implements Movement
         return xScale;
     }
 
-    public void setxScale( float xScale ) {
+    /**
+     * this set the scale on X axis, when scale is negative then
+     * the sprite will be flipped ( mirroed ), also if scale its greater or less 
+     * that 1 the width will change
+     * @param xScale 
+     */
+    public void setxScale( float xScale ) 
+    {
         this.xScale = xScale;
+        
+        //if sprite is scaled on X then the width is changed
+        this.w = frames[ 0 ].getWidth( null) * Math.abs( xScale );
     }
 
     public float getyScale() {
         return yScale;
     }
 
-    public void setyScale( float yScale ) {
+    /**
+     * this set the scale on Y axis, when scale is negative then
+     * the sprite will be flipped, also if scale its greater or less 
+     * that 1 the heigth will change
+     * @param yScale 
+     */
+    public void setyScale( float yScale ) 
+    {
         this.yScale = yScale;
+        this.h = frames[ 0 ].getWidth( null ) * Math.abs( yScale );
     }
 
     public boolean isDrawBox() {
