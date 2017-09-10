@@ -574,20 +574,20 @@ public class Collision
                             case 0:
                                 break;
                             case 1:
-                                return blockRectangle( spr, tile.getX(),tile.getY(), tile.getW(), tile.getH() )
-                            .equals(Config.COLISION_BOTTOM );
-                            
+                            return ( blockRectangle( spr, tile.getX(),tile.getY(), tile.getW(), tile.getH() )
+                            .equals(Config.COLISION_BOTTOM ) && spr.getJumpValue() > 0 );
                             case 2:
                             case 3:
-                               
-                                System.err.println( "value: "+tile.getValue() );
-                                System.err.println( spr.getAnchor().getX()+" "+spr.getY() 
-                                        +"  tile: "+ tile.getX()+" "+
-                                        tile.getY());
-                                if(
-//                            !blockRectangle( spr, tile.getX(),tile.getY(), tile.getW(), tile.getH() )
-//                             .equals( Config.COLISION_NONE )
-                               rectangleColision(
+                            //collision with slope   
+//                                System.err.println( "value: "+tile.getValue() );
+//                                System.err.println( spr.getAnchor().getX()+" "+spr.getY() 
+//                                        +"  tile: "+ tile.getX()+" "+
+//                                        tile.getY());
+                                
+                                
+                                
+                                
+                                if( rectangleColision(
                                         spr.getX(),
                                         spr.getY(),
                                         spr.getW(),
@@ -595,63 +595,49 @@ public class Collision
                                         tile.getX(),
                                         tile.getY(),
                                         tile.getW(),
-                                        tile.getH() 
-                                                ) 
-                                  )
+                                        tile.getH() )
+                                        //means that if jumpvalue is negative, then
+                                        //the sprite is jumping, there is no point to
+                                        //check collision on slope if sprite is jumping
+                                        //only when falling
+                                        && spr.getJumpValue() > 0
+                                        )
                                 {
                                 
                                      //check the x positon of anchor
                                //and iterate slope array
-                               int colpos = spr.getAnchor().x - tile.getX() ;
+                               int colpos = spr.getAnchor().x - tile.getX();
 //                                       Math.abs( spr.getAnchor().x - tile.getX() );
                                        
+//                            System.err.println("anchor: "+ ( spr.getAnchor().x ) );
+//                            System.err.println("tilex: "+tile.getX() );
+//                            System.err.println("colpos: "+( spr.getAnchor().x - tile.getX() ) );
 
-                            System.err.println("anchor: "+ ( spr.getAnchor().x ) );
-                            System.err.println("tilex: "+tile.getX() );
-                            System.err.println("colpos: "+( spr.getAnchor().x - tile.getX() ) );
-
-                                    
-                                    /**
-                                    * 
-                                    */
+                            /**
+                             * if colpos is greater than 0 and its less that tile width mean
+                             * the anchor is inside that tile, hence we have to calculate
+                             * the correct value for the y position on the slope
+                             */
                                    if( colpos  > 0 && colpos <= tile.getW() )
                                    {
                                        
-//                                       colpos = Math.abs( colpos );
-                                       
-                                       System.err.println("entro a colpos");
-                                    
                                        int yval = colpos;
-
-                                       
-                                       
-    //                                   if( tile.getValue() == 2 )
-    //                                   {    }
+                                        
                                        if( tile.getValue() == 3 )
-                                       { yval = tile.getW() - colpos;   }
+                                       { yval = tile.getW() - colpos; }
 
-                                       
-                               System.err.println("Y: " + (tile.getY()+tile.getH())+" : "+yval );
+//                               System.err.println("Y: " + (tile.getY()+tile.getH())+" : "+yval );
 
                                spr.setY( ( tile.getY() - spr.getH() ) + ( tile.getH() - yval ) );
 
-                               System.out.println("yval = "+yval);
-
-                                          
-//                                   try {
-//                                       Thread.sleep(300);
-//                                   } catch (InterruptedException ex) {
-//                                       Logger.getLogger(Collision.class.getName()).log(Level.SEVERE, null, ex);
-//                                   }
+//                               System.out.println("yval = "+yval);
                                        
                                        return true;
                                    }//
                                     
                                 }//if there is any collision
-                                else
-                                {System.err.println("non col");}
-                              
-                                   
+//                                else
+//                                {System.err.println("non col");}
                                    
                         }//suich
                         
@@ -1157,9 +1143,8 @@ public class Collision
                     
                                 if(overlapX >= overlapY)
 				{
-                                    System.out.println("COL ON Y " +overlapY );
-                                    
-					if(vy > 0)
+                                 
+                                    if(vy > 0)
 					{
                                              System.out.println("-> ");
 //						side = Config.COLISION_TOP;
@@ -1207,12 +1192,8 @@ public class Collision
 		float vx = s.getCenterX() - centerX;
 		float vy = s.getCenterY() - centerY;
             
-            
-              float combinedHalfWidth = s.getHalfWidth()+halfWidth;
-	      float combinedHalfHeight = s.getHalfHeight()+halfHeigth;
-            
-            
-            
+                float combinedHalfWidth = s.getHalfWidth()+halfWidth;
+                float combinedHalfHeight = s.getHalfHeight()+halfHeigth;
             
             if( Math.abs( vx ) < combinedHalfWidth )
             {
@@ -1251,6 +1232,61 @@ public class Collision
           }//
           
           
+          
+          public boolean checkSlopeCollision( int tileValue, Sprite spr, Tile tile )
+          {
+
+              switch( tileValue )
+              {
+                case 1:
+                    return blockRectangle( spr, tile.getX(),tile.getY(), tile.getW(), tile.getH() )
+                            .equals(Config.COLISION_BOTTOM );
+                
+                  case 2:
+                  case 3:
+                      
+                      if( rectangleColision(
+                        spr.getX(),
+                        spr.getY(),
+                        spr.getW(),
+                        spr.getH(),
+                        tile.getX(),
+                        tile.getY(),
+                        tile.getW(),
+                        tile.getH() ) )
+                        {
+                                
+                               //check the x positon of anchor
+                               //and iterate slope array
+                               int colpos = spr.getAnchor().x - tile.getX();
+
+                             /**
+                              * if colpos is greater than 0 and its less that tile width mean
+                              * the anchor is inside that tile, hence we have to calculate
+                              * the correct value for the y position on the slope
+                              */
+                               if( colpos  > 0 && colpos <= tile.getW() )
+                               {
+
+                                   int yval = colpos;
+
+                                   if( tile.getValue() == 3 )
+                                   { yval = tile.getW() - colpos; }
+
+                                   spr.setY( ( tile.getY() - spr.getH() ) + ( tile.getH() - yval ) );
+
+                                   return true;
+                               }//
+                                    
+                        }//if there is any collision
+                      
+                      break;
+                  case 4:
+                  case 5:
+                      break;
+              } 
+              return false;
+          }//
           
           
 }//collision

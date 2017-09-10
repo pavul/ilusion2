@@ -13,7 +13,6 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Robot;
-import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -112,8 +111,8 @@ public class Util
     public static int generatRandomPositiveNegitiveValue(int max , int min) 
     {
     //Random rand = new Random();
-    int ii = -min + (int) (Math.random() * ((max - (-min)) + 1));
-    return ii;
+    return -min + (int) (Math.random() * ((max - (-min)) + 1));
+     
     }
     
     /**
@@ -134,7 +133,7 @@ public class Util
          bigImg = ImageIO.read( java.lang.String.class.getClass().getResourceAsStream( imgRoute )); 
         } 
         catch (IOException ioe) 
-        { }
+        { System.err.println("::: "+ioe.getMessage() ); }
 
         Image[] im = new Image[numFrames];
 
@@ -162,7 +161,8 @@ public class Util
         } 
         catch (IOException e) 
         {
-            System.out.println("No se pudo cargar el Archivo de Propiedaes: "+ pathFile);
+            System.err.println("::: properties file not loaded from: "+ pathFile);
+            System.err.println("::: "+e.getMessage() );
         }//
         
       return prop;
@@ -443,12 +443,29 @@ public class Util
             Logger.getLogger(Util.class.getName()).log(Level.SEVERE, null, ex);
         }
          
-        
-        
         return false;
     }//
     
     
+    /**
+     * this method check if x,y,w,h area or box is inside x2, y2, w2, h2,
+     * usually to check if some sprite is inside cameraView, room, or if a 
+     * pixel is inside a tile...
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param x2
+     * @param y2
+     * @param w2
+     * @param h2
+     * @return 
+     */
+    public static boolean isInside ( float x,float y,float w,float h,
+            float x2,float y2,float w2,float h2 )
+    {
+        return ( x >= x2 && x+w <= x2+w2 && y >= y2 && y+h <= y2+h2 );   
+    }
     
     
 }//class

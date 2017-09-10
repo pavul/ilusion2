@@ -62,7 +62,15 @@ public class Camera implements CameraMovement
      */
     int roomWidth; //el ancho del room del nivel este puede ser de muchos pixeles de ancho
     int roomHeigth; //el alto del room del nivel este puede ser de muchos pizeles de alto
+    
+    /**
+     * this is the width of port view ( viewWidth )
+     */
     float viewXPort; //el ancho de porcion de pantalla que se vera del nivel
+    
+    /**
+     * this is the heigth of the port view ( viewHeigth )
+     */
     float viewYPort; //el alto de porcion de pantalla que se vera del nivel
     
     /**

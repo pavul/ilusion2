@@ -1335,11 +1335,26 @@ public class Sprite implements Movement
      * + y Axis ( down)
      * @param jumpValue
      */
-    public void setJumpValue(float jumpValue)
+    public void setJumpValue(float jumpForce)
     {
     this.jumpValue = jumpForce * -1;
     }
 
+    /**
+     * this method will change the value of JUMPVALUE
+     * for the negative of jumpforce, this jump force value
+     * is defined with the seter for jump force when sprite is
+     * created, that way it will always be the same jumpforce
+     * but you have to to turn it negative in order to make
+     * the jump
+     * NOTE: to use this function you should set JumpValue with
+     * setter setJumpforce( float jumpForce)
+     */
+    public void setJumpValue()
+    {
+    this.jumpValue = jumpForce * -1;
+    }
+    
     public float getJumpValue()
     {return this.jumpValue;}
     
