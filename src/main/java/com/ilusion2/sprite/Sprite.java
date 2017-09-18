@@ -32,8 +32,7 @@ public class Sprite implements Movement
     public static final int FRAME_FIRSTFRAME = 0; //valor del primer frame de 1 animacion
     public static final int ANIM_FOWARD = 10; //valor de la animacion hacia adelante
     public static final int ANIM_BACKWARD = 11; //valor de la animacion hacia atras
-    public static final int ANIM_FRAME = 12; //valor de la animacion por ciertos frames
-    public static final int ANIM_STOPATEND = 13; //valor de la animacion que termina si se llega al frame final
+    public static final int ANIM_STOPATEND = 12; //valor de la animacion que termina si se llega al frame final
     
     
     
@@ -607,6 +606,14 @@ public class Sprite implements Movement
         return frames;
     }
 
+    
+    /**
+     * this function is used to set a new animation to the sprite,
+     * you can have several animations like, idle, walking, jumping, 
+     * when you press button, you can change idle animation to 
+     * jumping, with this method...
+     * @param frames 
+     */
     synchronized public void setFrames(Image[] frames) {
         this.frames = frames;
         this.currentFrame = frames.length - 1;
@@ -859,8 +866,9 @@ public class Sprite implements Movement
             animationSpeed=0;
             
         switch ( loop ) 
-        {
-			case 1:
+        {   
+			case ANIM_FOWARD:
+                        default:
 				currentFrame++;
                                     if (currentFrame >= lastFrame)
                                     {
@@ -868,7 +876,7 @@ public class Sprite implements Movement
                                         animationEnd = true;
                                     }
 				break;
-			case 2:
+			case ANIM_BACKWARD:
 				currentFrame--;
 				if (currentFrame <= FRAME_FIRSTFRAME)
                                     {
@@ -876,50 +884,19 @@ public class Sprite implements Movement
                                         animationEnd = false;
                                     }
 				break;
-                            default:
+                        case ANIM_STOPATEND:
                                 currentFrame++;
-                                    if (currentFrame >= lastFrame)
-                                    {
-                                        currentFrame = FRAME_FIRSTFRAME;
-                                        animationEnd = true;
-                                    }
-                                break;
+                                if( currentFrame > lastFrame )
+                                {
+                                    currentFrame = lastFrame;
+                                }
+                             break;
         }
-//                if(currentFrame != lastFrame)
-//                { animationEnd = false; }
-//                else
-//                {animationEnd = true;}
         
         
         }//animspeed
         return animationEnd;
     }//
-    
-    
-    /**
-     * this function is to make the animation when the sprite have
-     * implemented subanimationstack, this function goes in update method
-     */
-//    public void updateSubanimation()
-//    {
-//            animationSpeed++;
-//        if( animationSpeed >= animationSpeedLimit )
-//        {     
-//            animationSpeed = 0;
-//            
-//            
-////            this.animation
-//            
-//            if( currentFrame == endFrame )
-//            {
-//            currentFrame = iniFrame - 1;//less one to start fom initial frame
-//            }
-//            
-//            currentFrame++;
-//        }
-//        
-//    }//
-    
     
     //-- falta otro metodo draw
     /**
@@ -966,6 +943,17 @@ public class Sprite implements Movement
         move(speedX,speedY);
     }//
     
+    
+    /**
+     * @TEST THIS, add destination on X e Y
+     * this function move the sprite with easing
+     * defined in parameter
+     * @param easing ammount of easing to apply on sprite
+     */
+    public void moveEasing( float easing )
+    {
+    move( speedX * easing, speedY * easing );
+    }
     
     /**
      * para mover el sprite sobre el eje X
@@ -1119,6 +1107,8 @@ public class Sprite implements Movement
     /**
      * this function return the near sprite to this sprite
      * that is inside view port of the game
+     * @param spriteList
+     * @param level
      * @return 
      */
     public Sprite spriteNearest( List<Sprite>spriteList, GameLevel level )
@@ -1239,7 +1229,13 @@ public class Sprite implements Movement
      return spriteList.get( minValuePos );
     }//
     
-    
+    /**
+     * this function will change X and y position of this sprite to
+     * orbit along centerx and centery, the distance will be the radio
+     * @param spr
+     * @param angle
+     * @param radio 
+     */
     public void orbit( Sprite spr,float angle, int radio )
     { 
         orbit(  spr.getCenterX(), spr.getCenterY(), angle, radio );
@@ -1255,16 +1251,10 @@ public class Sprite implements Movement
      * @param radio distance from the center to orbit
      */
     public void orbit( float centerX, float centerY, float angle, int radio )
-    {
-        
-        
-        System.out.println("cx -"+centerX+"  cy -"+centerY);
-        
+    {   
         this.x = centerX + ( (float)Math.cos( Math.toRadians( angle ) ) * radio );
         this.y = centerY - ( (float)Math.sin( Math.toRadians( angle ) ) * radio );
-        //NOTE: if is centerY + will be clockwise, if is centerY - will be counter clockwise
-        
-        
+        //NOTE: if is centerY + will be clockwise, if is centerY - will be counter clockwise   
     }//
     
     
@@ -1275,7 +1265,6 @@ public class Sprite implements Movement
      * NOTE: check if level has 0 cordinate in X and Y exis
      * @param level
      * @return true if the center sprite is inside the view , false otherwise
-     
      */
     public  boolean isInsideView( GameLevel level )
     {
@@ -1284,7 +1273,7 @@ public class Sprite implements Movement
              getCenterY() >= 0 &&
              getCenterY() <= ( 0 + level.getViewHeight()) );
     
-    }
+    }//
     
     /**
      * checl wheter the sprite is outside the view, usually
@@ -1340,15 +1329,10 @@ public class Sprite implements Movement
     }
 
     
-    
-    
     public float getJumpForce() {
-        return jumpForce;
-        
+        return jumpForce;    
     }
 
-    
-    
     /**
      * this function set the jump force, the max limit that jumpvalue
      * will take every time jumvalue is decreased by the gravity
@@ -1369,7 +1353,7 @@ public class Sprite implements Movement
      * this set the jump value to jumpforce * -1;
      * this way it will then go - y Axis ( up ) and then
      * + y Axis ( down)
-     * @param jumpValue
+     * @param jumpForce
      */
     public void setJumpValue(float jumpForce)
     {
@@ -1434,9 +1418,9 @@ public class Sprite implements Movement
      * we cannot set manually this sprite ID
      * @return 
      */
-//    public static void setSpriteId(int spriteId) {
-//        Sprite.spriteId = spriteId;
-//    }
+    //    public static void setSpriteId(int spriteId) {
+    //        Sprite.spriteId = spriteId;
+    //    }
 
     public String getLabel() {
         return label;
@@ -1444,43 +1428,8 @@ public class Sprite implements Movement
 
     public void setLabel(String label) {
         this.label = label;
-    }
+    }//
     
-    
-    
-    
-    
-    /**
-     * funcion que establece los frames inicial y final de la subanimacion 
-     * que se quiere mostrar
-     * @param iniFrame
-     * @param endFrame
-     */
-//    public void setSubanimation(int iniFrame, int endFrame)
-//    {
-//        if(this.iniFrame == iniFrame && this.endFrame == endFrame)
-//          return;
-        
-//        this.iniFrame=iniFrame;
-//        this.endFrame=endFrame;
-        
-        
-//        
-//        this.currentFrame=iniFrame;
-//        this.lastFrame=endFrame;
-//        
-//    }//
-
-//    /**
-//     * metodo que toma un arreglo de enteros como subanimacion
-//     * 
-//     * this method takes and array of in like subanimation
-//     * @param subanimation 
-//     */
-//        public void setSubanimation(int [] subanimation)
-//    {
-//        setSubanimation(subanimation[0], subanimation[ subanimation.length-1 ]);
-//    }//
         
 /**
  * metodo que establece la subanimacion por medio de un estado de animacion,
@@ -1495,22 +1444,16 @@ public class Sprite implements Movement
     {
         if(subAnimationStack == null)
            return;
-
-        
+ 
         currentAnimationState = subanimation;
         
         subanimationCurrentPos= 0;
         //@TODO aqui puede haber algun pedo
         subanimationLastPos = subAnimationStack.get( subanimation ).length - 1;
         
-        
-//        setSubanimation( subAnimationStack.get(subanimation) );
     }//
     
-        
-        
-        
-    
+       
     /**
      * renderiza al sprite rotado segun los grados establecidos
      * 

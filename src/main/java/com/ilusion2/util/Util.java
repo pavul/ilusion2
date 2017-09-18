@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
@@ -45,9 +44,33 @@ public class Util
      */
     public  static Image getImage(String pathFile)throws FileNotFoundException, IOException
     {
-     //BufferedImage bf= ImageIO.read(imgFile);    
-     BufferedImage bf= ImageIO.read( java.lang.String.class.getClass().getResourceAsStream(pathFile));    
+     BufferedImage bf = ImageIO.read( java.lang.String.class.getClass().getResourceAsStream(pathFile));    
      return bf;
+    }//
+    
+    
+    /**
+     * 
+     * @param files
+     * @return 
+     */
+    public static Image[] getImage( String... files )throws FileNotFoundException, IOException
+    {
+        if( files.length > 0 )
+        {
+            Image[] frames = new Image[ files.length ];
+        
+            for( int i = 0 ; i < files.length; i++ )
+            {
+                
+                frames [ i ] = ImageIO.read( java.lang.Object.class.getResourceAsStream( files[ i ] ) ); 
+                
+            }
+            
+            return frames;
+        }//
+        
+            return null;
     }//
     
     
@@ -104,16 +127,22 @@ public class Util
     /**
      * funcion random que regresa un numero entre el maximo y minino establecido,
      * se le pueden agregar numeros negativos
-     * @param max
-     * @param min
+     * 
+     * this function return a number between the min and max stablished 
+     * in the arguments.
+     * NOTE: minimun number must be positive, this function will take
+     * that as negative for example to return a number between range -2 to 2,
+     * should be generatRandomPositiveNegitiveValue( 2, 2 ); 
+     * @param min minimun number to return
+     * @param max maximum number to return
      * @return 
      */
-    public static int generatRandomPositiveNegitiveValue(int max , int min) 
+    public static float generatRandomPositiveNegitiveValue( float min , float max) 
     {
     //Random rand = new Random();
-    return -min + (int) (Math.random() * ((max - (-min)) + 1));
-     
-    }
+    float r = -min + ( float )( Math.random() * ( ( max - ( -min ) ) + 1 ) );
+    return r;
+    }//
     
     /**
      * funcion que regresa el array de imagenes, que acepta uno de los metodos

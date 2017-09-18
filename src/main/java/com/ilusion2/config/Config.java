@@ -28,16 +28,16 @@ public class Config
     
     //medidas del room y de la pantalla del juego
     //coordenadas de canvas son X = 0 e Y = 0 TOP - LEFT
-    public static  int SCREEN_WIDTH=650;// el ancho de la ventana que contiene el juego
-    public static  int SCREEN_HEIGHT=500;// el alto de la ventana que contiene al juego
-    public static  int ROOM_WIDTH = Config.TILE_COLUMNS * Config.TILE_WIDTH;//el ancho del room
-    public static  int ROOM_HEIGHT= Config.TILE_ROWS * Config.TILE_HEIGHT;//el alto del room
-    
-    //VALORES DE LOS TILES
-    public static  int TILE_COLUMNS=28;
-    public static  int TILE_ROWS=10;
-    public static  int TILE_WIDTH=50;
-    public static  int TILE_HEIGHT=50;
+//    public static  int SCREEN_WIDTH=650;// el ancho de la ventana que contiene el juego
+//    public static  int SCREEN_HEIGHT=500;// el alto de la ventana que contiene al juego
+//    public static  int ROOM_WIDTH = Config.TILE_COLUMNS * Config.TILE_WIDTH;//el ancho del room
+//    public static  int ROOM_HEIGHT= Config.TILE_ROWS * Config.TILE_HEIGHT;//el alto del room
+//    
+//    //VALORES DE LOS TILES
+//    public static  int TILE_COLUMNS=28;
+//    public static  int TILE_ROWS=10;
+//    public static  int TILE_WIDTH=50;
+//    public static  int TILE_HEIGHT=50;
     
     //variable para la gravedad
     public static  float GRAVITY=0.98f;

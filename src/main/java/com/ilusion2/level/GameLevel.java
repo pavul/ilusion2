@@ -607,9 +607,9 @@ public abstract class GameLevel
                          //if tile is inside camera limits then is rendered otherwise
                          //not , this save a lot of process
                          if( j * tileWidth  > offsetx - tileWidth 
-                           && (j * tileWidth) + tileWidth < offsetx + cam.getViewXPort() + tileWidth 
+                           && (j * tileWidth) + tileWidth < offsetx + cam.getViewWidth() + tileWidth 
                            && i * tileHeight > offsety - tileHeight
-                           && (i * tileHeight) + tileHeight < offsety + cam.getViewYPort() + tileHeight)
+                           && (i * tileHeight) + tileHeight < offsety + cam.getViewHeigth() + tileHeight)
                          {
                          if( map[ mapIndex ] != -1 )
                             g2.drawImage( img[ map[ mapIndex ] ], width * j, height * i, null );

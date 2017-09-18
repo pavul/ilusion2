@@ -66,12 +66,12 @@ public class Camera implements CameraMovement
     /**
      * this is the width of port view ( viewWidth )
      */
-    float viewXPort; //el ancho de porcion de pantalla que se vera del nivel
+    float viewWidth; //el ancho de porcion de pantalla que se vera del nivel
     
     /**
      * this is the heigth of the port view ( viewHeigth )
      */
-    float viewYPort; //el alto de porcion de pantalla que se vera del nivel
+    float viewHeigth; //el alto de porcion de pantalla que se vera del nivel
     
     /**
      * this is a value that will be in the same place always on the viewport, 
@@ -114,12 +114,12 @@ public class Camera implements CameraMovement
     
     /**
      * constructor 1, 
-     * creates a camera defining the width and heigth values of the room ( these values 
-     * are the boundaries of the camera ),
-     * and the portion that has to show in the screen ( viewXPort, viewYPort )
-     * 
-     * create a camera object definig the size for the room and the size for 
-     * the view port to show in the screen
+ creates a camera defining the width and heigth values of the room ( these values 
+ are the boundaries of the camera ),
+ and the portion that has to show in the screen ( viewWidth, viewHeigth )
+ 
+ create a camera object definig the size for the room and the size for 
+ the view port to show in the screen
      * 
      * @param roomWidth
      * @param roomHeight
@@ -131,8 +131,8 @@ public class Camera implements CameraMovement
         
         this.roomWidth = roomWidth;
         this.roomHeigth = roomHeight;
-        this.viewXPort = viewXPort;
-        this.viewYPort = viewYPort;
+        this.viewWidth = viewXPort;
+        this.viewHeigth = viewYPort;
         
         this.camxMin = 0;
         this.camxMax = -roomWidth + viewXPort;
@@ -207,20 +207,20 @@ public class Camera implements CameraMovement
         this.roomHeigth = roomHeigth;
     }
 
-    public float getViewXPort() {
-        return viewXPort;
+    public float getViewWidth() {
+        return viewWidth;
     }
 
-    public void setViewXPort(float viewXPort) {
-        this.viewXPort = viewXPort;
+    public void setViewWidth(float viewWidth) {
+        this.viewWidth = viewWidth;
     }
 
-    public float getViewYPort() {
-        return viewYPort;
+    public float getViewHeigth() {
+        return viewHeigth;
     }
 
-    public void setViewYPort(float viewYPort) {
-        this.viewYPort = viewYPort;
+    public void setViewHeigth(float viewHeigth) {
+        this.viewHeigth = viewHeigth;
     }
 
     public int getOffsetX() {
@@ -384,7 +384,7 @@ public class Camera implements CameraMovement
     @Override
     public String toString() 
     {
-        return "Camera{" + "camx=" + camx + ", camy=" + camy + ", camxMin=" + camxMin + ", camxMax=" + camxMax + ", camyMin=" + camyMin + ", camyMax=" + camyMax + ", roomWidth=" + roomWidth + ", roomHeigth=" + roomHeigth + ", viewXPort=" + viewXPort + ", viewYPort=" + viewYPort + ", offsetX=" + offsetX + ", offsetY=" + offsetY + ", marginLeft=" + marginLeft + ", marginRight=" + marginRight + ", marginTop=" + marginTop + ", marginBottom=" + marginBottom + '}';
+        return "Camera{" + "camx=" + camx + ", camy=" + camy + ", camxMin=" + camxMin + ", camxMax=" + camxMax + ", camyMin=" + camyMin + ", camyMax=" + camyMax + ", roomWidth=" + roomWidth + ", roomHeigth=" + roomHeigth + ", viewXPort=" + viewWidth + ", viewYPort=" + viewHeigth + ", offsetX=" + offsetX + ", offsetY=" + offsetY + ", marginLeft=" + marginLeft + ", marginRight=" + marginRight + ", marginTop=" + marginTop + ", marginBottom=" + marginBottom + '}';
     }
     
     
