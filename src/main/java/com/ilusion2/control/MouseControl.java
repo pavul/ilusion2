@@ -396,7 +396,7 @@ public class MouseControl implements MouseListener
         if( swipeDown( minDistance ) )
         {
             //if is down then the distance will be dividel by the force
-            return getDistance( (float)pointReleased.getX() , (float)pointPressed.getX() ) / force;
+            return getDistance( (float)pointReleased.getY() , (float)pointPressed.getY() ) / force;
         }
         
         return -1f;
@@ -410,6 +410,8 @@ public class MouseControl implements MouseListener
      * if the swipe distance was 200, then ir greater that minDistance, then
      * 200/10 = 20, that value can be used to set bigger speed or force, 
      * because it means the player did a big swipe ( twice the minDistance permitted )
+     * @param minDistance
+     * @param force
      * @return 
      */
     public float swipeForceUp( int minDistance, float force )
@@ -419,29 +421,30 @@ public class MouseControl implements MouseListener
         if( swipeUp( minDistance ) )
         {
             //if is down then the distance will be dividel by the force
-            return getDistance( (float)pointReleased.getX() , (float)pointPressed.getX() ) / force;
+            return getDistance( (float)pointReleased.getY() , (float)pointPressed.getY() ) / force;
         }
-        
         return -1f;
     }//
     
     
     
      /**
-     * this function check if there was swipe down, the force is going to divide
+     * this function check if there was swipe rigth, the force is going to divide
      * the distance of the swipe to get a value that can be used to define
      * if the swipe was long or no.
      * NOTE: minDistance =100, force =10, 
      * if the swipe distance was 200, then ir greater that minDistance, then
      * 200/10 = 20, that value can be used to set bigger speed or force, 
      * because it means the player did a big swipe ( twice the minDistance permitted )
+     * @param minDistance
+     * @param force
      * @return 
      */
     public float swipeForceRigth( int minDistance, float force )
     {
     
         //check if the swipe is down
-        if( swipeRigth(minDistance ) )
+        if( swipeRigth( minDistance ) )
         {
             //if is down then the distance will be dividel by the force
             return getDistance( (float)pointReleased.getX() , (float)pointPressed.getX() ) / force;
