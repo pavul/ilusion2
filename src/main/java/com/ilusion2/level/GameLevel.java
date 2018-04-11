@@ -334,7 +334,7 @@ public abstract class GameLevel
     * implementation of how a level must be implemented
     * should be done in the class that extends this 
     */
-    public  abstract  void update();
+    public  abstract  void update( double delta );
 //   {}//
    
    /**

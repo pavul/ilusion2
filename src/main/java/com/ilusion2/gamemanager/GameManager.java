@@ -269,14 +269,14 @@ public class GameManager extends Canvas implements
      * i mean, inside this method the update of the logic
      * of the game will be taken, at the same time updates
      * for logic and render of the game will be taken
+     * @param delta
      */
-    public final synchronized void update()
+    public final synchronized void update( double delta )
     {   
         frameCount++;
         if( frameCount == fps )frameCount = 0;
- 
        //aqui se hace el update del level
-       currentLevel.update();
+       currentLevel.update( delta );
     }//
     
     
@@ -348,43 +348,67 @@ public class GameManager extends Canvas implements
     public final void run() 
     {
      
-    long lastTime = System.nanoTime();
-    double amountOfTicks = 60.0;
-    double ns = 1000000000 / amountOfTicks;
-    double delta = 0;
-    long timer = System.currentTimeMillis();
-    //int frames=0;
-    while( running )
-    {
+//    long lastTime = System.nanoTime();
+//    int amountOfTicks = 60;
+//    double ns = 1000000000 / amountOfTicks;
+//    double delta = 0;
+//    long timer = System.currentTimeMillis();
+//    
+//    while( running )
+//    {
+//                long now = System.nanoTime();
+//                delta += (now - lastTime) / ns;
+//                lastTime = now;
+//                while( delta >= 1 )
+//                {
+//                update( delta );
+//                delta--;
+//                }
+//                
+//                
+//                    render();
+//                
+//                //codigo para checar los frames
+//                frames++;
+//                if( System.currentTimeMillis() - timer > 1000 )
+//                {
+//                timer += 1000;
+//                frames = 0; 
+//                }
+//        
+//    }//uail
+//        
     
-                long now = System.nanoTime();
-                delta += (now - lastTime) / ns;
-                lastTime = now;
-                while( delta >= 1 )
-                {
-                    
-                update();
-                //render();
-                delta--;
-                
-                }
-                
-                if(running)
-                    render();
-                
-                //codigo para checar los frames
-                frames++;
-                if(System.currentTimeMillis() - timer > 1000)
-                {
-                timer +=1000;
-                //System.out.println("FPS: "+frames);
-                frames=0; 
-                }
-                
+    
+    
+    /**/
+    long start, end = System.nanoTime(), period = (long)( 1.0e9 / 60 );
+      
+while(running)
+{
+   start = System.nanoTime();
+   
+   update((start - end) / 1.0e9);
+   render();      
+   
+   end = System.nanoTime();
+      
+   try 
+   {
+      long remaining = period - (end - start),
+           sleep_ms = remaining / 1000000;
+            
+      int sleep_ns = (int)( remaining - 1000000 * sleep_ms );
+            
+      if( sleep_ms > 0 )
+         Thread.sleep(sleep_ms, sleep_ns);
+   } 
+   catch (InterruptedException e) {}
+}
+    /**/
         
-    }//uail
-        
-        
+    
+    
     }//run
 
    
