@@ -41,7 +41,7 @@ import java.util.Properties;
  * @author pavulzavala
  */
 public abstract class GameLevel 
-        implements GpioPinListenerDigital
+        implements GpioPinListenerDigital, Renderable, Updatable
 {
     //medidas del room
     protected int roomWidth; //largo total del rooom
@@ -334,7 +334,7 @@ public abstract class GameLevel
     * implementation of how a level must be implemented
     * should be done in the class that extends this 
     */
-    public  abstract  void update( double delta );
+    //public  abstract  void update( double delta );
 //   {}//
    
    /**
@@ -345,6 +345,7 @@ public abstract class GameLevel
      * NOTE: you have to respect that order otherwise only blackground will be render
      * @param g2
     */
+    @Override
    public void render(Graphics2D g2)
    {
        
@@ -358,7 +359,7 @@ public abstract class GameLevel
        //depending on the scale values created by the room class
        //when the game start
 //       System.out.println(":::scales "+xScale+" "+yScale);
-       g2.scale( xScale, yScale );
+        g2.scale( xScale, yScale );
        
         //this function is user to render background
         renderBackground( g2 );
@@ -368,6 +369,12 @@ public abstract class GameLevel
                     
         //this function is user to render HUD
         renderHUD( g2 );
+        
+        
+        //to show framecount
+        g2.drawString( "Count: "+gm.getFrameCount()+" | FPS: "+ gm.getFPS() , 10, 10 );
+        
+        
         
    }//renderiza fondo, foreground y HUD del juego
    

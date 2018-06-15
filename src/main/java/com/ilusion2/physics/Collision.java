@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import sun.audio.AudioPlayer;
-import tile.Tile;
+import com.ilusion2.tile.Tile;
 
 /**
  * clase que tiene los metodos para checar colisiones entre los diferentes sprites

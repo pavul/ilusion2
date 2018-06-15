@@ -17,6 +17,7 @@ import com.ilusion2.net.Server;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.logging.Level;
 import javax.swing.JFrame;
 
 
@@ -72,15 +73,14 @@ public class GameManager extends Canvas implements
     
     //variable que sirve para contar cuantos frames por segundo hay en la aplicacion
    //we store FPS count
-    protected int frames; //contador de FPS
    
     protected int offsetX;  //x_ofset del room para que se renderize el area del dibujo
    
    
    //these variables are use to fit the game view in the device screen
-    //if is gonna be player on full screen
-//    protected double xScale = 1;
-//    protected double yScale = 1;
+   //if is gonna be player on full screen
+   //    protected double xScale = 1;
+   //    protected double yScale = 1;
     Dimension gameSize;
    
    
@@ -242,6 +242,7 @@ public class GameManager extends Canvas implements
             //loadLvl( firsLvlToLoad );
             running = true;  
             gameThread = new Thread( this );
+            gameThread.setName("MAIN-GAME-THREAD");
             gameThread.start();       
     }//start
     
@@ -273,9 +274,7 @@ public class GameManager extends Canvas implements
      */
     public final synchronized void update( double delta )
     {   
-        frameCount++;
-        if( frameCount == fps )frameCount = 0;
-       //aqui se hace el update del level
+        //level update executed
        currentLevel.update( delta );
     }//
     
@@ -331,7 +330,9 @@ public class GameManager extends Canvas implements
                    }
                    catch(Exception e)
                    {  
-                   e.printStackTrace();
+                       Logger.getLogger( this.getName() )
+                               .log(Level.SEVERE, ":::Error GameManager Render!" );
+                       
                    }
 
                 this.closeGraphicsBufferStrategy( (Graphics2D) g, this.getBufferStrategy());
@@ -384,12 +385,21 @@ public class GameManager extends Canvas implements
     /**/
     long start, end = System.nanoTime(), period = (long)( 1.0e9 / 60 );
       
-while(running)
+while( running )
 {
    start = System.nanoTime();
    
-   update((start - end) / 1.0e9);
+   update( (start - end) / 1.0e9 );
    render();      
+   
+   /**
+    * frame count executed every thick
+    */
+   {
+        frameCount++;
+        if( frameCount == fps )frameCount = 0;
+   }
+   
    
    end = System.nanoTime();
       
@@ -403,7 +413,10 @@ while(running)
       if( sleep_ms > 0 )
          Thread.sleep(sleep_ms, sleep_ns);
    } 
-   catch (InterruptedException e) {}
+   catch (InterruptedException e) 
+   {
+   Logger.getLogger( this.getName() ).log(Level.SEVERE, ":::Interrupted Exception in Main Game Thread!" );
+   }
 }
     /**/
         
@@ -422,7 +435,7 @@ while(running)
 //    {
 //        
 //    g2.setColor(Color.yellow);
-//    g2.drawString("FPS: "+frames, cam.getOffsetX() + 10, 10);
+//    g2.drawString("FPS: "+frames,   .getOffsetX() + 10, 10);
 //    g2.drawString("offsetX: "+cam.getOffsetX(), cam.getOffsetX() + 10, 30);
 //    g2.drawString("offsetX+WIDTH: "+(cam.getOffsetX()+cam.getViewXPort()), cam.getOffsetX() + 10, 50);
 //    
@@ -604,7 +617,7 @@ while(running)
             //the state to PLAYING
             currentLevel.init();
             
-            System.out.println(" currentLvl INIT");
+          //  System.out.println(" currentLvl INIT");
         }//
         
         //finally we change dimensions of level
@@ -741,23 +754,23 @@ while(running)
         //double deviceWidth = screenSize.getWidth();
         double deviceHeight = screenSize.getHeight();
 
-        System.out.println( "valores del device: "+screenSize );
+        //System.out.println( "valores del device: "+screenSize );
 
         //we have to get the aspect ratio
         float aspectRatio = 
                 currentLevel.getViewWidth() /
                 currentLevel.getViewHeight();
 
-        System.out.println("aspect ratio: "+aspectRatio );
+        //System.out.println("aspect ratio: "+aspectRatio );
         
         double fixedWidth = deviceHeight * aspectRatio;
 
-        System.out.println("fixed widt "+fixedWidth+" --> "+ deviceHeight );
+        //System.out.println("fixed widt "+fixedWidth+" --> "+ deviceHeight );
         
         gameSize.setSize( (float)fixedWidth, (float)deviceHeight );
       
-        System.err.println("xS :"+ fixedWidth / ( float )currentLevel.getViewWidth()  );
-        System.err.println("yS :"+ screenSize.getHeight() / currentLevel.getViewHeight() );
+        //System.err.println("xS :"+ fixedWidth / ( float )currentLevel.getViewWidth()  );
+        //System.err.println("yS :"+ screenSize.getHeight() / currentLevel.getViewHeight() );
         
         currentLevel.setGraphicScale( 
                 fixedWidth / ( float )currentLevel.getViewWidth() , 
@@ -808,7 +821,23 @@ while(running)
         this.gameContainer = gameContainer;
     }
     
+    /**
+     * this method return the current FPS the game must run
+     * @return 
+     */
+    public int getFPS()
+    {
+    return this.fps;
+    }
     
+    /**
+     * this method return the frameCount of the game
+     * @return 
+     */
+    public int getFrameCount()
+    {
+    return this.frameCount;
+    }
     
     
 }//class

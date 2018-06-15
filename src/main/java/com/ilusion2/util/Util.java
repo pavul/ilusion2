@@ -27,7 +27,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
-import tile.Tile;
+import com.ilusion2.tile.Tile;
 
 /**
  * clase de utilidades
