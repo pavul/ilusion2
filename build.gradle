@@ -50,6 +50,7 @@ dependencies
     //used to play mp3
     compile group: 'com.googlecode.soundlibs', name: 'jlayer', version: '1.0.1-1'
 
-
+    //for JOGL
+    compile 'org.jogamp.jogl:jogl-all-main:2.0.2'
     
 }
